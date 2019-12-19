@@ -154,28 +154,26 @@ def count_affected(program: Program, size: int) -> int:
 
 
 def find_square(program: Program, size: int) -> Tuple[int, int]:
-    horizontal: Dict[Tuple[int, int], int] = {}
-    vertical: Dict[Tuple[int, int], int] = {}
     square: Dict[Tuple[int, int], int] = {}
 
     j = 0
     while True:
         for i in range(j):
-            if i > 30 and (i - 1, j) not in horizontal and (i, j - 1) not in horizontal:
+            if i > 30 and (i - 1, j) not in square and (i, j - 1) not in square:
                 continue
 
             if not evaluate(program, i, j):
                 continue
 
-            prev_h = horizontal.get((i, j - 1), 0)
-            prev_v = vertical.get((i - 1, j), 0)
-            new_square = min(prev_h, prev_v, square.get((i - 1, j - 1), 0)) + 1
+            new_square = min(
+                square.get((i, j - 1), 0),
+                square.get((i - 1, j), 0),
+                square.get((i - 1, j - 1), 0),
+            ) + 1
 
             if new_square >= 100:
                 return i - size + 1, j - size + 1
 
-            horizontal[i, j] = prev_h + 1
-            vertical[i, j] = prev_v + 1
             square[i, j] = new_square
 
         j += 1
