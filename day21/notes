@@ -1,0 +1,51 @@
+OR B T
+OR E T
+NOT T J
+NOT A T
+AND A T
+OR C T
+OR E T
+OR F T
+NOT T T
+OR T J
+NOT A T
+OR T J
+RUN
+
+
+J = (NOT A) OR
+    (NOT (B OR E)) OR
+    (NOT (C OR E OR F)) OR
+
+
+OR E J
+AND I J
+OR H J
+AND D J
+RUN
+
+J = D AND (H OR (E AND I))
+
+OR E J
+AND I J
+OR H J
+AND D J
+OR A T
+AND B T
+AND C T
+NOT T T
+AND T J
+NOT A T
+OR T J
+RUN
+
+J = (NOT A OR NOT B OR NOT C) AND D AND (H OR (E AND I))
+J = NOT (A AND B AND C) AND D AND (H OR (E AND I))
+
+J = NOT A OR NOT (A AND B AND C) AND D AND (H OR (E AND I))
+
+.................
+.................
+....@............
+#####...####..###
+     ABCDEFGHI
