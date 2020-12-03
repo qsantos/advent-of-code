@@ -30,6 +30,8 @@ void puzzle1(void) {
         }
         seen[a] = 1;
     }
+
+    fclose(f);
 }
 
 void puzzle2(void) {
@@ -62,6 +64,8 @@ void puzzle2(void) {
         }
         seen[a] = 1;
     }
+
+    fclose(f);
 }
 
 int main(void) {
