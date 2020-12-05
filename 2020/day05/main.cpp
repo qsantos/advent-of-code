@@ -17,11 +17,9 @@ int main(void) {
     while (getline(f, line)) {
         replace(line.begin(), line.end(), 'F', '0');
         replace(line.begin(), line.end(), 'B', '1');
-        int row = stoi(line.substr(0, 7), NULL, 2);
         replace(line.begin(), line.end(), 'L', '0');
         replace(line.begin(), line.end(), 'R', '1');
-        int col = stoi(line.substr(7), NULL, 2);
-        seat_ids.insert(row * 8 + col);
+        seat_ids.insert(stoi(line, NULL, 2));
     }
 
     // puzzle 1
