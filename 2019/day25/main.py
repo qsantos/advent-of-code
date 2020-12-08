@@ -1,6 +1,6 @@
 from collections import defaultdict, deque
 from itertools import combinations
-from typing import DefaultDict, Deque, Dict, Iterator, List, Optional, Tuple
+from typing import DefaultDict, Deque, Dict, Iterator, List, Tuple
 
 Program = List[int]
 Grid = Dict[Tuple[int, int], str]
@@ -252,7 +252,7 @@ def main() -> None:
             print(selected)
             for item in selected:
                 run.write(f'drop {item}\n')
-            run.write(f'north\n')
+            run.write('north\n')
             try:
                 while True:
                     print(run.read_line().strip())

@@ -1,6 +1,6 @@
+import re
 from collections import defaultdict
 from typing import DefaultDict, Dict
-import re
 
 
 def main() -> None:

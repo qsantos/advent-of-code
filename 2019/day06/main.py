@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Set
+from typing import Dict
 
 Node = str
 Tree = Dict[Node, Node]

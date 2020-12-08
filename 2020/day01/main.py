@@ -1,9 +1,11 @@
 from typing import Iterator, Set
 
+
 def read_input() -> Iterator[int]:
     with open('input') as f:
         for line in f:
             yield int(line)
+
 
 def puzzle1() -> None:
     seen: Set[int] = set()

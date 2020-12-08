@@ -1,5 +1,5 @@
 from collections import deque
-from heapq import heappush, heappop
+from heapq import heappop, heappush
 from string import ascii_lowercase, ascii_uppercase
 from typing import Deque, FrozenSet, Iterator, List, Set, Tuple
 

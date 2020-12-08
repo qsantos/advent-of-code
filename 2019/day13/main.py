@@ -154,8 +154,8 @@ def clear_screen() -> None:
 
 def getch() -> str:
     import sys
-    import tty
     import termios
+    import tty
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:

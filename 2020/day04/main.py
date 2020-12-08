@@ -1,7 +1,6 @@
 import re
 from typing import Dict, Iterator, List
 
-
 Passport = Dict[str, str]
 
 
@@ -38,8 +37,7 @@ def puzzle2(passports: List[Passport]) -> None:
             hgt = passport['hgt']
             if not (
                 (hgt.endswith('cm') and 150 <= int(hgt[:-2]) <= 193)
-                or
-                (hgt.endswith('in') and 59 <= int(hgt[:-2]) <= 76)
+                or (hgt.endswith('in') and 59 <= int(hgt[:-2]) <= 76)
             ):
                 continue
             if not re.fullmatch(r'#[0-9a-f]{6}', passport['hcl']):

@@ -1,4 +1,4 @@
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 from itertools import permutations
 from typing import Deque, Dict, Iterable, Iterator, List, Sequence
 

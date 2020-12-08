@@ -1,5 +1,5 @@
 from collections import defaultdict, deque
-from typing import DefaultDict, Dict, Deque, Iterator, List, Tuple
+from typing import DefaultDict, Deque, Dict, Iterator, List, Tuple
 
 
 def read_program(filename: str) -> List[int]:
