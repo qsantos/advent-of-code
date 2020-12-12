@@ -2,3 +2,6 @@
 .mypy_cache/
 *.o
 main
+main-c
+main-cpp
+main-rs
