@@ -1,0 +1,11 @@
+[package]
+name = "main-rs"
+version = "1.0.0"
+
+[[bin]]
+name = "main-rs"
+path = "main-rs.rs"
+
+[dependencies]
+regex = "1"
+bytecount = ""
