@@ -1,0 +1,207 @@
+-- Round 1 --
+Player 1's deck: 9, 2, 6, 3, 1
+Player 2's deck: 5, 8, 4, 7, 10
+Player 1 plays: 9
+Player 2 plays: 5
+Player 1 wins the round!
+
+-- Round 2 --
+Player 1's deck: 2, 6, 3, 1, 9, 5
+Player 2's deck: 8, 4, 7, 10
+Player 1 plays: 2
+Player 2 plays: 8
+Player 2 wins the round!
+
+-- Round 3 --
+Player 1's deck: 6, 3, 1, 9, 5
+Player 2's deck: 4, 7, 10, 8, 2
+Player 1 plays: 6
+Player 2 plays: 4
+Player 1 wins the round!
+
+-- Round 4 --
+Player 1's deck: 3, 1, 9, 5, 6, 4
+Player 2's deck: 7, 10, 8, 2
+Player 1 plays: 3
+Player 2 plays: 7
+Player 2 wins the round!
+
+-- Round 5 --
+Player 1's deck: 1, 9, 5, 6, 4
+Player 2's deck: 10, 8, 2, 7, 3
+Player 1 plays: 1
+Player 2 plays: 10
+Player 2 wins the round!
+
+-- Round 6 --
+Player 1's deck: 9, 5, 6, 4
+Player 2's deck: 8, 2, 7, 3, 10, 1
+Player 1 plays: 9
+Player 2 plays: 8
+Player 1 wins the round!
+
+-- Round 7 --
+Player 1's deck: 5, 6, 4, 9, 8
+Player 2's deck: 2, 7, 3, 10, 1
+Player 1 plays: 5
+Player 2 plays: 2
+Player 1 wins the round!
+
+-- Round 8 --
+Player 1's deck: 6, 4, 9, 8, 5, 2
+Player 2's deck: 7, 3, 10, 1
+Player 1 plays: 6
+Player 2 plays: 7
+Player 2 wins the round!
+
+-- Round 9 --
+Player 1's deck: 4, 9, 8, 5, 2
+Player 2's deck: 3, 10, 1, 7, 6
+Player 1 plays: 4
+Player 2 plays: 3
+Player 1 wins the round!
+
+-- Round 10 --
+Player 1's deck: 9, 8, 5, 2, 4, 3
+Player 2's deck: 10, 1, 7, 6
+Player 1 plays: 9
+Player 2 plays: 10
+Player 2 wins the round!
+
+-- Round 11 --
+Player 1's deck: 8, 5, 2, 4, 3
+Player 2's deck: 1, 7, 6, 10, 9
+Player 1 plays: 8
+Player 2 plays: 1
+Player 1 wins the round!
+
+-- Round 12 --
+Player 1's deck: 5, 2, 4, 3, 8, 1
+Player 2's deck: 7, 6, 10, 9
+Player 1 plays: 5
+Player 2 plays: 7
+Player 2 wins the round!
+
+-- Round 13 --
+Player 1's deck: 2, 4, 3, 8, 1
+Player 2's deck: 6, 10, 9, 7, 5
+Player 1 plays: 2
+Player 2 plays: 6
+Player 2 wins the round!
+
+-- Round 14 --
+Player 1's deck: 4, 3, 8, 1
+Player 2's deck: 10, 9, 7, 5, 6, 2
+Player 1 plays: 4
+Player 2 plays: 10
+Player 2 wins the round!
+
+-- Round 15 --
+Player 1's deck: 3, 8, 1
+Player 2's deck: 9, 7, 5, 6, 2, 10, 4
+Player 1 plays: 3
+Player 2 plays: 9
+Player 2 wins the round!
+
+-- Round 16 --
+Player 1's deck: 8, 1
+Player 2's deck: 7, 5, 6, 2, 10, 4, 9, 3
+Player 1 plays: 8
+Player 2 plays: 7
+Player 1 wins the round!
+
+-- Round 17 --
+Player 1's deck: 1, 8, 7
+Player 2's deck: 5, 6, 2, 10, 4, 9, 3
+Player 1 plays: 1
+Player 2 plays: 5
+Player 2 wins the round!
+
+-- Round 18 --
+Player 1's deck: 8, 7
+Player 2's deck: 6, 2, 10, 4, 9, 3, 5, 1
+Player 1 plays: 8
+Player 2 plays: 6
+Player 1 wins the round!
+
+-- Round 19 --
+Player 1's deck: 7, 8, 6
+Player 2's deck: 2, 10, 4, 9, 3, 5, 1
+Player 1 plays: 7
+Player 2 plays: 2
+Player 1 wins the round!
+
+-- Round 20 --
+Player 1's deck: 8, 6, 7, 2
+Player 2's deck: 10, 4, 9, 3, 5, 1
+Player 1 plays: 8
+Player 2 plays: 10
+Player 2 wins the round!
+
+-- Round 21 --
+Player 1's deck: 6, 7, 2
+Player 2's deck: 4, 9, 3, 5, 1, 10, 8
+Player 1 plays: 6
+Player 2 plays: 4
+Player 1 wins the round!
+
+-- Round 22 --
+Player 1's deck: 7, 2, 6, 4
+Player 2's deck: 9, 3, 5, 1, 10, 8
+Player 1 plays: 7
+Player 2 plays: 9
+Player 2 wins the round!
+
+-- Round 23 --
+Player 1's deck: 2, 6, 4
+Player 2's deck: 3, 5, 1, 10, 8, 9, 7
+Player 1 plays: 2
+Player 2 plays: 3
+Player 2 wins the round!
+
+-- Round 24 --
+Player 1's deck: 6, 4
+Player 2's deck: 5, 1, 10, 8, 9, 7, 3, 2
+Player 1 plays: 6
+Player 2 plays: 5
+Player 1 wins the round!
+
+-- Round 25 --
+Player 1's deck: 4, 6, 5
+Player 2's deck: 1, 10, 8, 9, 7, 3, 2
+Player 1 plays: 4
+Player 2 plays: 1
+Player 1 wins the round!
+
+-- Round 26 --
+Player 1's deck: 6, 5, 4, 1
+Player 2's deck: 10, 8, 9, 7, 3, 2
+Player 1 plays: 6
+Player 2 plays: 10
+Player 2 wins the round!
+
+-- Round 27 --
+Player 1's deck: 5, 4, 1
+Player 2's deck: 8, 9, 7, 3, 2, 10, 6
+Player 1 plays: 5
+Player 2 plays: 8
+Player 2 wins the round!
+
+-- Round 28 --
+Player 1's deck: 4, 1
+Player 2's deck: 9, 7, 3, 2, 10, 6, 8, 5
+Player 1 plays: 4
+Player 2 plays: 9
+Player 2 wins the round!
+
+-- Round 29 --
+Player 1's deck: 1
+Player 2's deck: 7, 3, 2, 10, 6, 8, 5, 9, 4
+Player 1 plays: 1
+Player 2 plays: 7
+Player 2 wins the round!
+
+
+== Post-game results ==
+Player 1's deck: 
+Player 2's deck: 3, 2, 10, 6, 8, 5, 9, 4, 7, 1
