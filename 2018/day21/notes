@@ -1,0 +1,68 @@
+                    #ip 1
+initial check
+                    0: $4 = 123
+                    1: $4 &= 456 (START)
+                    2: $4 = ($4 == 72)
+                    3: IP += $4
+                    4: jmp START
+
+$4 = 0
+                    5: $4 = 0
+
+while True:
+    $3 = $4 | 0x10000
+    $4 = 10552971
+                    6: $3 = $4 | 0x10000 (BEGIN)
+                    7: $4 = 10552971
+
+    while True:
+        $4 += $3 & 255
+        $4 &= 0xffffff
+        $4 *= 65899
+        $4 &= 0xffffff
+                    8: $5 = $3 & 255 (LABEL0)
+                    9: $4 += $5
+                    10: $4 &= 0xffffff
+                    11: $4 *= 65899
+                    12: $4 &= 0xffffff
+
+        if $3 < 256:
+            break
+                    13: $5 = (256 > $3) → break if true
+                    14: IP += $5
+                    15: IP += 1
+                    16: jmp LABEL4
+
+        # BEGIN $3 /= 256
+        $5 = 0
+                    17: $5 = 0
+        while True:
+            $2 = $5 + 1
+                    18: $2 = $5 + 1 (LABEL2)
+            $2 *= 256
+                    19: $2 *= 256
+
+            if $2 > $3:
+                break
+                    20: $2 = ($2 > $3) → break if true
+                    21: IP += $2
+                    22: IP += 1  (?skip)
+                    23: jmp LABEL1  (?when $2 > $3)
+
+            $5 += 1
+                    24: $5 += 1
+
+                    25: jmp LABEL2
+
+        $3 = $5
+                    26: $3 = $5 (LABEL1)
+        # END $3 /= 256
+
+                    27: jmp LABEL0
+
+    if $4 == $0:
+        break
+                    28: $5 = ($4 == $0) (LABEL4)
+                    29: IP += $5  (?exit)
+
+                    30: jmp BEGIN
