@@ -42,7 +42,7 @@ def read_transitions_and_program(filename: str) -> Problem:
 
 opcode_names = [
     'addr',
-    'addri',
+    'addi',
     'mulr',
     'muli',
     'banr',
@@ -63,7 +63,7 @@ opcode_names = [
 def run_opcode_by_name(mem: List[int], name: str, a: int, b: int, c: int) -> None:
     if name == 'addr':
         mem[c] = mem[a] + mem[b]
-    elif name == 'addri':
+    elif name == 'addi':
         mem[c] = mem[a] + b
     elif name == 'mulr':
         mem[c] = mem[a] * mem[b]
