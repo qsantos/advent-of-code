@@ -16,7 +16,7 @@ def sparse_hash(list_size: int, lengths: List[int], n_rounds: int) -> List[int]:
     return numbers
 
 
-def single_round(list_size: int, s: str) -> int:
+def single_round(s: str, list_size: int = 256) -> int:
     lengths = [int(x) for x in s.split(',')]
     numbers = sparse_hash(list_size, lengths, 1)
     a, b, *_ = numbers
@@ -35,7 +35,7 @@ def to_hexa(numbers: List[int]) -> str:
     return bytes(numbers).hex()
 
 
-def full_hash(list_size: int, s: str) -> str:
+def knot_hash(s: str, list_size: int = 256) -> str:
     lengths = [ord(c) for c in s] + [17, 31, 73, 47, 23]
     numbers = sparse_hash(list_size, lengths, 64)
     return to_hexa(dense_hash(numbers))
@@ -45,10 +45,10 @@ def main() -> None:
     example = '3,4,1,5'
     input = '225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110'
 
-    assert single_round(5, example) == 12
-    assert single_round(256, input) == 23874
+    assert single_round(example, 5) == 12
+    assert single_round(input) == 23874
 
-    assert full_hash(256, input) == 'e1a65bfb5a5ce396025fab5528c25a87'
+    assert knot_hash(input) == 'e1a65bfb5a5ce396025fab5528c25a87'
 
 
 if __name__ == '__main__':
