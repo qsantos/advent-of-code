@@ -23,7 +23,7 @@ def strongest_bridge(components: Set[Component]) -> int:
             return best
         # try other components
         best = 0
-        for component in components:
+        for component in list(components):
             a, b = component
             if a == current_port:
                 components.remove(component)
@@ -34,7 +34,6 @@ def strongest_bridge(components: Set[Component]) -> int:
                 best = max(best, aux(a) + a + b)
                 components.add(component)
         return best
-    components = set(components)
     return aux(0)
 
 
@@ -51,7 +50,7 @@ def longest_bridge(components: Set[Component]) -> Tuple[int, int]:
             return length, strength
         # try other components
         best = 0, 0
-        for component in components:
+        for component in list(components):
             a, b = component
             if a == current_port:
                 components.remove(component)
@@ -68,7 +67,6 @@ def longest_bridge(components: Set[Component]) -> Tuple[int, int]:
                 best = max(best, (length, strength))
                 components.add(component)
         return best
-    components = set(components)
     return aux(0)
 
 
