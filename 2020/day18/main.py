@@ -3,7 +3,7 @@ import re
 re_lexem = re.compile(r'\(|\)|[0-9]+|[+*]')
 
 
-def evaluate_left_to_write(expr: str) -> int:
+def evaluate_left_to_right(expr: str) -> int:
     lexems = re_lexem.finditer(expr)
 
     def parse_operand() -> int:
@@ -79,7 +79,7 @@ def evaluate_precedence(expr: str) -> int:
 def puzzle1() -> None:
     with open('input') as f:
         print(sum(
-            evaluate_left_to_write(line)
+            evaluate_left_to_right(line)
             for line in f
         ))
 
