@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import DefaultDict, List, Set, Tuple
+from typing import DefaultDict, List, Tuple
 
 Claim = Tuple[int, int, int, int, int]
 
@@ -42,6 +42,7 @@ def not_overlapping(claims: List[Claim]) -> int:
     for a in claims:
         if not any(overlap(a, b) for b in claims if a != b):
             return a[0]
+    assert False
 
 
 example = read_claims('example')

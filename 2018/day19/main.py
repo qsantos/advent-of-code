@@ -72,6 +72,7 @@ def sum_divisors(n: int) -> int:
         if n % d == 0
     )
 
+
 def main() -> None:
     example = read_program('example')
     input = read_program('input')

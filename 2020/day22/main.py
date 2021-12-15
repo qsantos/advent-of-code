@@ -55,6 +55,7 @@ def play_combat(player1: List[int], player2: List[int], log: bool) -> int:
 
 def play_recursive_combat(player1: List[int], player2: List[int], log: bool) -> int:
     game_counter = 0
+
     def aux(player1: List[int], player2: List[int]) -> Tuple[bool, List[int], List[int]]:
         nonlocal game_counter
         game_counter += 1

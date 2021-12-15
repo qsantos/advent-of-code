@@ -21,7 +21,10 @@ def step(state: State) -> State:
                 if 0 <= a < h and 0 <= b < w
                 if state[a][b] == '#'
             )
-            bug = '#' if (state[i][j] == '#' and c == 1) or (state[i][j] == '.' and c in (1, 2)) else '.'
+            if (state[i][j] == '#' and c == 1) or (state[i][j] == '.' and c in (1, 2)):
+                bug = '#'
+            else:
+                bug = '.'
             row.append(bug)
         ret.append(''.join(row))
     return ret

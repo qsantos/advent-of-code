@@ -69,4 +69,3 @@ assert basin(example, (4, 6)) == 9
 
 assert product_three_largest_basin(example) == 1134
 assert product_three_largest_basin(input) == 1048128
-

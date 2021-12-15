@@ -1,4 +1,4 @@
-from typing import Dict, Iterator, List, Optional, Set, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 Coord = Tuple[int, int, int]
 Nanobot = Tuple[Coord, int]

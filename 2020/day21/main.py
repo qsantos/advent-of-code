@@ -82,6 +82,7 @@ def find_allergen_of_ingredient(foods: List[Food]) -> Dict[str, str]:
             break
         else:
             return dict(zip(sorted_ingredients, sorted_allergens))
+    assert False
 
 
 def puzzle2(foods: List[Food]) -> str:

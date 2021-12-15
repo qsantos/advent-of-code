@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import List, Tuple
+from typing import List
 
 
 def read_box_ids(filename: str) -> List[str]:
