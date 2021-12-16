@@ -1,0 +1,52 @@
+                                        d = a + 4 * 643
+cpy a d     d = a
+cpy 4 c     c = 4
+            do
+cpy 643 b       b = 643
+                do
+inc d                d += 1
+dec b                b -= 1
+jnz b -2        loop b
+dec c           c -= 1
+jnz c -5    while c
+
+
+
+
+            do
+cpy d a         a = d
+jnz 0 0         nop
+
+                do
+
+                                        a = a // 2
+cpy a b             b = a
+cpy 0 a             a = 0
+                    maybe do
+
+                                        b = max(0, b - 2)
+cpy 2 c                 c = 2
+                        do
+jnz b 2                     if b == 0:
+jnz 1 6                         double break
+dec b                       b -= 1
+dec c                       c -= 1
+jnz c -4                while c
+
+inc a                   a += 1
+jnz 1 -7            while 1
+
+                                        b = 2 - c  (prev_a % 2)
+cpy 2 b             b = 2
+                    loop
+jnz c 2                 if c == 0:
+jnz 1 4                     break
+dec b                   b -= 1
+dec c                   c -= 1
+jnz 1 -4            while 1
+
+jnz 0 0             nop
+out b               out b
+jnz a -19       while a
+
+jnz 1 -21   while 1
