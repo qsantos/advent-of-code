@@ -1,0 +1,61 @@
+a = 12
+
+                                            b = a - 1    # 11
+cpy a b     b = a
+dec b       b -= 1
+
+
+This whole thing just toggles all the instructions at an even offset after the tgl until tgl itself
+
+            while True:
+                                            a *= b    # 132
+cpy a d         d = a
+cpy 0 a         a = 0
+                while True:
+cpy b c             c = b
+                    while True:
+inc a                   a += 1
+dec c                   c -= 1
+jnz c -2                if c == 0: break
+dec d               d -= 1
+jnz d -5            if d == 0: break
+
+dec b           b -= 1                                  # 10
+
+                                            c = 2 * b   # 20
+cpy b c         c = b
+cpy c d         d = c
+                while True:
+dec d               d -= 1
+inc c               c += 1
+jnz d -2            if d == 0: break
+
+Before toggling:
+tgl c
+cpy -16 c
+jnz 1 c
+cpy 75 c
+jnz 85 d
+inc a
+inc d
+jnz d -2
+inc c
+jnz c -5
+
+
+After toggling:
+inc c       c += 1
+cpy -16 c   c = -16
+cpy 1 c     c = 1
+
+Note: at this point: a = 12!
+                                            a += 85 * 75
+cpy 75 c    c == 75
+            while True:
+cpy 85 d        d = 85
+                while True:
+inc a               a += 1
+dec d               d -= 1
+jnz d -2            if d == 0: break
+dec c           c -= 1
+jnz c -5        if c == 0: break
