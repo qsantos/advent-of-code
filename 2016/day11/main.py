@@ -1,4 +1,3 @@
-from copy import deepcopy
 from itertools import combinations
 from typing import List, Set, Tuple
 
@@ -88,7 +87,7 @@ def solve(things: Things) -> int:
                 for n_things in (1, 2):
                     for luggage in combinations(candidates, r=n_things):
                         new_lift = lift + dh
-                        new_things = deepcopy(things)
+                        new_things = [list(thing) for thing in things]
                         for kind, is_generator in luggage:
                             new_things[kind][is_generator] += dh
                         if not is_valid(new_things):
