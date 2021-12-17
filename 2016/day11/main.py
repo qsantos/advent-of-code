@@ -64,7 +64,7 @@ def is_valid(things: Things) -> bool:
 
 
 def freeze(lift: int, things: Things) -> State:
-    return (lift, tuple(tuple(thing) for thing in things))
+    return (lift, tuple(sorted(tuple(thing) for thing in things)))
 
 
 def print_state(n_floors: int, state: State) -> None:
@@ -126,15 +126,17 @@ def solve(things: Things) -> int:
 
 
 def main() -> None:
-    # example = read_initial_state('example')
+    example = read_initial_state('example')
     input = read_initial_state('input')
+
+    assert solve(example) == 11
+    assert solve(input) == 33
 
     # puzzle 2
     input.append([0, 0])
     input.append([0, 0])
 
-    # print(solve(example))
-    print(solve(input))
+    assert solve(input) == 57
 
 
 if __name__ == '__main__':
