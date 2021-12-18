@@ -1,11 +1,12 @@
 import re
 from itertools import permutations
-from heapq import heapify, heappop, heappush
 from typing import Dict, Tuple
 
 Graph = Dict[str, Dict[str, int]]
 
-pattern = re.compile(r'^(\S+) would (lose|gain) (\d+) happiness units? by sitting next to (\S+)\.$')
+pattern = re.compile(
+    r'^(\S+) would (lose|gain) (\d+) happiness units? by sitting next to (\S+)\.$',
+)
 
 
 def read_graph(filename: str) -> Graph:
@@ -20,30 +21,6 @@ def read_graph(filename: str) -> Graph:
             points = int(p)
             graph[a][b] = points if lose_gain == 'gain' else -points
     return graph
-
-
-def furthest_from(graph: Graph, node: str) -> Tuple[int, str]:
-    def aux(cur: str) -> Tuple[int, str]:
-        candidates = [(0, cur)]
-        for neighbor, distance in graph[cur].items():
-            if neighbor not in to_visit:
-                continue
-            to_visit.remove(neighbor)
-            rev_distance = graph[neighbor][cur]
-            total_change = distance + rev_distance
-            d, other = aux(neighbor)
-            candidates.append((d + total_change, other))
-            to_visit.add(neighbor)
-        return max(candidates)
-    to_visit = set(graph)
-    return aux(node)
-
-
-def longest_route(graph: Graph) -> int:
-    start = next(iter(graph))
-    _, start = furthest_from(graph, start)
-    d, _ = furthest_from(graph, start)
-    return d
 
 
 def total_change_in_happiness(graph: Graph, seating: Tuple[str, ...]) -> int:
