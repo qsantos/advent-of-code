@@ -31,6 +31,7 @@ def print_pixels(pixels: Set[Coord]) -> None:
 
 def do_steps(problem: Problem, n_steps: int) -> Set[Coord]:
     algorithm, pixels = problem
+    outside = '0'
     for _ in range(n_steps):
         min_x = min(x for x, y in pixels)
         min_y = min(y for x, y in pixels)
@@ -41,13 +42,13 @@ def do_steps(problem: Problem, n_steps: int) -> Set[Coord]:
             for x in range(min_x - 2, max_x + 3)
             for y in range(min_y - 2, max_y + 3)
             if algorithm[int(''.join(
-                '1' if (x + sx, y + sy) in pixels else '0'
-                for sy in range(-1, 2)
-                for sx in range(-1, 2)
+                ('1' if (sx, sy) in pixels else '0')
+                if min_x <= sx <= max_x and min_y <= sy <= max_y else outside
+                for sy in range(y - 1, y + 2)
+                for sx in range(x - 1, x + 2)
             ), 2)] == '#'
         }
-        print_pixels(pixels)
-        print()
+        outside = '1' if algorithm[int(''.join(outside * 9), 2)] == '#' else '0'
     return pixels
 
 
@@ -56,9 +57,8 @@ def main() -> None:
     input = read_problem('input')
 
     assert len(do_steps(example, 2)) == 35
-    print(len(do_steps(input, 2)))  # 4964
-    # assert len(do_steps(example, 50))  # 3351
-    print(len(do_steps(input, 50)))  # 13202
+    assert len(do_steps(input, 2)) == 4964
+    assert len(do_steps(input, 50)) == 13202
 
 
 if __name__ == '__main__':
