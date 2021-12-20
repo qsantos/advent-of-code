@@ -31,15 +31,15 @@ def print_pixels(pixels: Set[Coord]) -> None:
 
 def do_steps(problem: Problem, n_steps: int) -> Set[Coord]:
     algorithm, pixels = problem
-    min_x = min(x for x, y in pixels)
-    min_y = min(y for x, y in pixels)
-    max_x = max(x for x, y in pixels)
-    max_y = max(y for x, y in pixels)
     for _ in range(n_steps):
+        min_x = min(x for x, y in pixels)
+        min_y = min(y for x, y in pixels)
+        max_x = max(x for x, y in pixels)
+        max_y = max(y for x, y in pixels)
         pixels = {
             (x, y)
-            for x in range(min_x - 300, max_x + 301)
-            for y in range(min_y - 300, max_y + 301)
+            for x in range(min_x - 2, max_x + 3)
+            for y in range(min_y - 2, max_y + 3)
             if algorithm[int(''.join(
                 '1' if (x + sx, y + sy) in pixels else '0'
                 for sy in range(-1, 2)
