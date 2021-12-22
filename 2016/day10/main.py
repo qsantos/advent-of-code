@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple
+from typing import Dict, Set, Tuple
 
 Assignments = Dict[str, Set[int]]
 Rules = Dict[str, Tuple[str, str]]

@@ -56,5 +56,6 @@ def main() -> None:
     input.append((11, 0))
     assert when_to_press_the_button(input) == 2353212
 
+
 if __name__ == '__main__':
     main()

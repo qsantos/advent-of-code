@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, Iterable, Iterator, List, Optional, Set, Tuple
+from typing import Iterable, List, Optional, Set, Tuple
 
 Orientation = Tuple[int, int, int, int, int, int]
 Vec3 = Tuple[int, int, int]
