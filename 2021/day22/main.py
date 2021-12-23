@@ -67,79 +67,74 @@ class Cuboid(NamedTuple):
             return [self]
         if self in b:
             return []
-        parts_x = [
-            (self.start_x, b.start_x),
-            (max(self.start_x, b.start_x), min(b.stop_x, self.stop_x)),
-            (b.stop_x, self.stop_x),
-        ]
-        parts_y = [
-            (self.start_y, b.start_y),
-            (max(self.start_y, b.start_y), min(b.stop_y, self.stop_y)),
-            (b.stop_y, self.stop_y),
-        ]
-        parts_z = [
-            (self.start_z, b.start_z),
-            (max(self.start_z, b.start_z), min(b.stop_z, self.stop_z)),
-            (b.stop_z, self.stop_z),
-        ]
         cuboids = []
-        for xi in range(3):
-            start_x, stop_x = parts_x[xi]
-            if not start_x < stop_x:
-                continue
-            for yi in range(3):
-                start_y, stop_y = parts_y[yi]
-                if not start_y < stop_y:
-                    continue
-                for zi in range(3):
-                    if (xi, yi, zi) == (1, 1, 1):
-                        continue
-                    start_z, stop_z = parts_z[zi]
-                    if not start_z < stop_z:
-                        continue
-                    cuboids.append(Cuboid(
-                        start_x=start_x,
-                        start_y=start_y,
-                        start_z=start_z,
-                        stop_x=stop_x,
-                        stop_y=stop_y,
-                        stop_z=stop_z,
-                    ))
+
+        if self.start_x < b.start_x:
+            cuboids.append(Cuboid(
+                start_x=self.start_x,
+                start_y=self.start_y,
+                start_z=self.start_z,
+                stop_x=b.start_x,
+                stop_y=self.stop_y,
+                stop_z=self.stop_z,
+            ))
+
+        if b.stop_x < self.stop_x:
+            cuboids.append(Cuboid(
+                start_x=b.stop_x,
+                start_y=self.start_y,
+                start_z=self.start_z,
+                stop_x=self.stop_x,
+                stop_y=self.stop_y,
+                stop_z=self.stop_z,
+            ))
+
+        if self.start_y < b.start_y:
+            cuboids.append(Cuboid(
+                start_x=max(self.start_x, b.start_x),
+                start_y=self.start_y,
+                start_z=self.start_z,
+                stop_x=min(self.stop_x, b.stop_x),
+                stop_y=b.start_y,
+                stop_z=self.stop_z,
+            ))
+
+        if b.stop_y < self.stop_y:
+            cuboids.append(Cuboid(
+                start_x=max(self.start_x, b.start_x),
+                start_y=b.stop_y,
+                start_z=self.start_z,
+                stop_x=min(self.stop_x, b.stop_x),
+                stop_y=self.stop_y,
+                stop_z=self.stop_z,
+            ))
+
+        if self.start_z < b.start_z:
+            cuboids.append(Cuboid(
+                start_x=max(self.start_x, b.start_x),
+                start_y=max(self.start_y, b.start_y),
+                start_z=self.start_z,
+                stop_x=min(self.stop_x, b.stop_x),
+                stop_y=min(self.stop_y, b.stop_y),
+                stop_z=b.start_z,
+            ))
+
+        if b.stop_z < self.stop_z:
+            cuboids.append(Cuboid(
+                start_x=max(self.start_x, b.start_x),
+                start_y=max(self.start_y, b.start_y),
+                start_z=b.stop_z,
+                stop_x=min(self.stop_x, b.stop_x),
+                stop_y=min(self.stop_y, b.stop_y),
+                stop_z=self.stop_z,
+            ))
+
         return cuboids
 
 
 a = Cuboid(10, 10, 10, 30, 30, 30)
 b = Cuboid(15, 15, 15, 25, 25, 25)
-d = [
-    Cuboid(start_x=10, start_y=10, start_z=10, stop_x=15, stop_y=15, stop_z=15),
-    Cuboid(start_x=10, start_y=10, start_z=15, stop_x=15, stop_y=15, stop_z=25),
-    Cuboid(start_x=10, start_y=10, start_z=25, stop_x=15, stop_y=15, stop_z=30),
-    Cuboid(start_x=10, start_y=15, start_z=10, stop_x=15, stop_y=25, stop_z=15),
-    Cuboid(start_x=10, start_y=15, start_z=15, stop_x=15, stop_y=25, stop_z=25),
-    Cuboid(start_x=10, start_y=15, start_z=25, stop_x=15, stop_y=25, stop_z=30),
-    Cuboid(start_x=10, start_y=25, start_z=10, stop_x=15, stop_y=30, stop_z=15),
-    Cuboid(start_x=10, start_y=25, start_z=15, stop_x=15, stop_y=30, stop_z=25),
-    Cuboid(start_x=10, start_y=25, start_z=25, stop_x=15, stop_y=30, stop_z=30),
-    Cuboid(start_x=15, start_y=10, start_z=10, stop_x=25, stop_y=15, stop_z=15),
-    Cuboid(start_x=15, start_y=10, start_z=15, stop_x=25, stop_y=15, stop_z=25),
-    Cuboid(start_x=15, start_y=10, start_z=25, stop_x=25, stop_y=15, stop_z=30),
-    Cuboid(start_x=15, start_y=15, start_z=10, stop_x=25, stop_y=25, stop_z=15),
-    Cuboid(start_x=15, start_y=15, start_z=25, stop_x=25, stop_y=25, stop_z=30),
-    Cuboid(start_x=15, start_y=25, start_z=10, stop_x=25, stop_y=30, stop_z=15),
-    Cuboid(start_x=15, start_y=25, start_z=15, stop_x=25, stop_y=30, stop_z=25),
-    Cuboid(start_x=15, start_y=25, start_z=25, stop_x=25, stop_y=30, stop_z=30),
-    Cuboid(start_x=25, start_y=10, start_z=10, stop_x=30, stop_y=15, stop_z=15),
-    Cuboid(start_x=25, start_y=10, start_z=15, stop_x=30, stop_y=15, stop_z=25),
-    Cuboid(start_x=25, start_y=10, start_z=25, stop_x=30, stop_y=15, stop_z=30),
-    Cuboid(start_x=25, start_y=15, start_z=10, stop_x=30, stop_y=25, stop_z=15),
-    Cuboid(start_x=25, start_y=15, start_z=15, stop_x=30, stop_y=25, stop_z=25),
-    Cuboid(start_x=25, start_y=15, start_z=25, stop_x=30, stop_y=25, stop_z=30),
-    Cuboid(start_x=25, start_y=25, start_z=10, stop_x=30, stop_y=30, stop_z=15),
-    Cuboid(start_x=25, start_y=25, start_z=15, stop_x=30, stop_y=30, stop_z=25),
-    Cuboid(start_x=25, start_y=25, start_z=25, stop_x=30, stop_y=30, stop_z=30),
-]
-assert a.subtract(b) == d
-assert a.volume() - b.volume() == sum(c.volume() for c in d)
+assert a.volume() - b.volume() == sum(c.volume() for c in a.subtract(b))
 
 
 Steps = List[Tuple[Cuboid, bool]]
