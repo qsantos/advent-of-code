@@ -1,5 +1,5 @@
 import re
-from typing import List, NamedTuple, Set, Tuple
+from typing import List, NamedTuple, Optional, Set, Tuple
 
 
 class Cuboid(NamedTuple):
@@ -61,6 +61,18 @@ class Cuboid(NamedTuple):
         if other.stop_z <= self.start_z:
             return True
         return False
+
+    def intersect(self, other: 'Cuboid') -> Optional['Cuboid']:
+        if self.is_outside(other):
+            return None
+        return Cuboid(
+            start_x=max(self.start_x, other.start_x),
+            start_y=max(self.start_y, other.start_y),
+            start_z=max(self.start_z, other.start_z),
+            stop_x=min(self.stop_x, other.stop_x),
+            stop_y=min(self.stop_y, other.stop_y),
+            stop_z=min(self.stop_z, other.stop_z),
+        )
 
     def subtract(self, b: 'Cuboid') -> List['Cuboid']:
         if self.is_outside(b):
@@ -166,22 +178,15 @@ def read_steps(filename: str) -> Steps:
         return cuboids
 
 
-def count_cubes_in_initialization_area(steps: Steps) -> int:
-    cubes = set()
-    for cuboid, on in steps:
-        for x in range(max(-50, cuboid.start_x), min(+51, cuboid.stop_x)):
-            for y in range(max(-50, cuboid.start_y), min(+51, cuboid.stop_y)):
-                for z in range(max(-50, cuboid.start_z), min(+51, cuboid.stop_z)):
-                    if on:
-                        cubes.add((x, y, z))
-                    else:
-                        cubes.discard((x, y, z))
-    return len(cubes)
-
-
-def count_cubes(steps: Steps) -> int:
+def count_cubes(steps: Steps, initialization_area_only: bool = False) -> int:
+    initialization_area = Cuboid(-50, -50, -50, 51, 51, 51)
     on_cuboids: Set[Cuboid] = set()
     for target, on in steps:
+        if initialization_area_only:
+            new_target = target.intersect(initialization_area)
+            if new_target is None:
+                continue
+            target = new_target
         on_cuboids = {
             c
             for cuboid in on_cuboids
@@ -198,9 +203,9 @@ def main() -> None:
     example3 = read_steps('example3')
     input = read_steps('input')
 
-    assert count_cubes_in_initialization_area(example1) == 39
-    assert count_cubes_in_initialization_area(example2) == 590784
-    assert count_cubes_in_initialization_area(input) == 620241
+    assert count_cubes(example1, True) == 39
+    assert count_cubes(example2, True) == 590784
+    assert count_cubes(input, True) == 620241
     assert count_cubes(example3) == 2758514936282235
     assert count_cubes(input) == 1284561759639324
 
