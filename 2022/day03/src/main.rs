@@ -21,7 +21,7 @@ fn priority_of_filename(filename: &str) -> u32 {
         let [s1, s2] = [r1, r2].map(|r| r.chars().collect::<HashSet<_>>());
         let d: Vec<_> = s1.intersection(&s2).copied().collect();
         assert_eq!(d.len(), 1);
-        let c = *d.iter().next().unwrap();
+        let c = *d.first().unwrap();
         total_priority += char_priority(c);
     }
     total_priority
@@ -32,10 +32,9 @@ fn badges_of_filename(filename: &str) -> u32 {
     let contents = read_to_string(filename).expect("Could not read file");
     let lines: Vec<_> = contents.lines().collect();
     for group in lines.chunks_exact(3) {
-        let rucksacks: Vec<HashSet<char>> =
-            group.iter().map(|line| line.chars().collect()).collect();
-        let d = rucksacks
-            .into_iter()
+        let d = group
+            .iter()
+            .map(|line| line.chars().collect::<HashSet<char>>())
             .reduce(|a, b| a.intersection(&b).copied().collect())
             .unwrap();
         assert_eq!(d.len(), 1);

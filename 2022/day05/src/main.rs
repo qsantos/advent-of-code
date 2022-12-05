@@ -21,16 +21,16 @@ impl Map {
     }
 
     #[allow(dead_code)]
-    fn display(self: &Self) {
+    fn display(self) {
         for stack in &self.stacks {
             for item in stack {
                 print!("{} ", item);
             }
-            println!("");
+            println!();
         }
     }
 
-    fn code(self: &Self) -> String {
+    fn code(self) -> String {
         self.stacks
             .iter()
             .map(|stack| stack.last().unwrap())

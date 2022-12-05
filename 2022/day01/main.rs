@@ -8,7 +8,7 @@ fn read_elves(filename: &str) -> Vec<i32> {
     let mut current_elf = 0;
     for line in reader.lines() {
         let line = line.expect("Failed to read line");
-        if line.len() == 0 {
+        if line.is_empty() {
             ret.push(current_elf);
             current_elf = 0;
         } else {
@@ -38,7 +38,7 @@ fn most_caloric_elves(filename: &str, count: usize) -> i32 {
 
 fn puzzle2() {
     assert_eq!(most_caloric_elves("example", 3), 45000);
-    println!("{}", most_caloric_elves("input", 3));
+    assert_eq!(most_caloric_elves("input", 3), 206104);
 }
 
 fn main() {
