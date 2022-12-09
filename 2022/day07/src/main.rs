@@ -47,14 +47,11 @@ impl FSNode {
         let mut lines = contents.lines().peekable();
         while let Some(command) = lines.next() {
             if command == "$ cd /" {
-                println!("Moving back to root");
                 current_path.clear();
                 current_path.push(Rc::clone(&root));
             } else if command == "$ cd .." {
-                println!("Moving back up");
                 drop(current_path.pop());
             } else if let Some(name) = command.strip_prefix("$ cd ") {
-                println!("Moving to {}", name);
                 let node_ref;
                 {
                     let current_node = current_path.last().unwrap();
@@ -70,9 +67,6 @@ impl FSNode {
                     }
                 }
                 current_path.push(node_ref);
-
-                // let parent = current_path.last().unwrap().borrow();
-                // println!("Now in {}", parent.name);
             } else if command == "$ ls" {
                 while let Some(&entry) = lines
                     .peek()
@@ -84,16 +78,13 @@ impl FSNode {
                     let size_or_dir = parts[0];
                     let name = parts[1];
                     let node = if size_or_dir == "dir" {
-                        println!("New directory {}", name);
                         FSNode::Directory(DirectoryNode::new(name))
                     } else {
-                        println!("New file {}", name);
                         let size = size_or_dir.parse().unwrap();
                         FSNode::File(FileNode::new(name, size))
                     };
                     let mut parent = current_path.last().unwrap().borrow_mut();
                     if let FSNode::Directory(parent) = &mut *parent {
-                        println!("Adding to {}", parent._name);
                         parent
                             .children
                             .insert(name.to_owned(), Rc::new(RefCell::new(node)));
@@ -120,17 +111,9 @@ impl FSNode {
                         .map(|n| aux(&n.borrow(), threshold))
                         .reduce(|acc, item| (acc.0 + item.0, acc.1 + item.1))
                         .unwrap_or((0, 0));
-                    println!(
-                        "children={}, size={}, above={}",
-                        dir.children.len(),
-                        size,
-                        above
-                    );
                     if size <= threshold {
-                        println!("! {}", size);
                         (size, above + size)
                     } else {
-                        println!("nope {}", size);
                         (size, above)
                     }
                 }
