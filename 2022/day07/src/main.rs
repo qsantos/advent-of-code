@@ -123,6 +123,45 @@ impl FSNode {
         let (_, above) = aux(self, threshold);
         above
     }
+
+    fn total_size(&self) -> u32 {
+        match self {
+            FSNode::File(f) => f.size,
+            FSNode::Directory(d) => d.children.values().map(|n| n.borrow().total_size()).sum(),
+        }
+    }
+
+    fn smallest_above(&self, threshold: u32) -> Option<u32> {
+        fn aux(node: &FSNode, threshold: u32) -> (u32, Option<u32>) {
+            match node {
+                FSNode::File(f) => (f.size, None),
+                FSNode::Directory(d) => {
+                    let (size, smallest) = d
+                        .children
+                        .values()
+                        .map(|n| aux(&n.borrow(), threshold))
+                        .reduce(|acc, item| {
+                            (
+                                acc.0 + item.0,
+                                if let (Some(a), Some(b)) = (acc.1, item.1) {
+                                    Some(a.min(b))
+                                } else {
+                                    acc.1.or(item.1)
+                                },
+                            )
+                        })
+                        .unwrap_or((0, None));
+                    if smallest.is_some() || size < threshold {
+                        (size, smallest)
+                    } else {
+                        (size, Some(size))
+                    }
+                }
+            }
+        }
+        let (_, smallest) = aux(self, threshold);
+        smallest
+    }
 }
 
 fn small_dirs(filename: &str) -> u32 {
@@ -130,10 +169,24 @@ fn small_dirs(filename: &str) -> u32 {
     fs.sizes_below(100_000)
 }
 
+fn smallest_big_enough(filename: &str) -> u32 {
+    let total_space = 70_000_000;
+    let needed_space = 30_000_000;
+    let fs = FSNode::from_commands(filename);
+    let missing_space = needed_space - (total_space - fs.total_size());
+    fs.smallest_above(missing_space).unwrap()
+}
+
 fn puzzle1() {
     assert_eq!(small_dirs("example"), 95437);
     assert_eq!(small_dirs("input"), 2104783);
 }
+
+fn puzzle2() {
+    assert_eq!(smallest_big_enough("example"), 24933642);
+    assert_eq!(smallest_big_enough("input"), 5883165);
+}
 fn main() {
     puzzle1();
+    puzzle2();
 }
