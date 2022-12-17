@@ -1,5 +1,4 @@
 use std::cmp::Ord;
-use std::collections::BinaryHeap;
 
 #[derive(Eq, Hash, PartialEq)]
 struct Coord {
@@ -44,8 +43,8 @@ impl Sensor {
 
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
 enum BoundType {
-    Close,
     Open,
+    Close,
 }
 
 #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -72,21 +71,22 @@ impl IntervalBound {
 fn count_not_beacons_at(filename: &str, y: i64) -> i64 {
     let contents = std::fs::read_to_string(filename).unwrap();
     let sensors: Vec<Sensor> = contents.lines().map(Sensor::read).collect();
-    let mut bounds = BinaryHeap::new();
+    let mut bounds = Vec::new();
     for sensor in sensors {
         let dy = sensor.position.y.abs_diff(y);
         if sensor.cell_radius < dy {
             continue;
         }
         let rem = (sensor.cell_radius - dy) as i64;
-        bounds.push(IntervalBound::open(sensor.position.x + rem));
-        bounds.push(IntervalBound::close(sensor.position.x - rem));
+        bounds.push(IntervalBound::open(sensor.position.x - rem));
+        bounds.push(IntervalBound::close(sensor.position.x + rem));
     }
+    bounds.sort();
 
     let mut count = 0;
     let mut depth = 0u64;
     let mut first_open = None;
-    while let Some(bound) = bounds.pop() {
+    for bound in bounds {
         match bound.kind {
             BoundType::Open => {
                 if depth == 0 {
@@ -97,7 +97,7 @@ fn count_not_beacons_at(filename: &str, y: i64) -> i64 {
             BoundType::Close => {
                 depth -= 1;
                 if depth == 0 {
-                    count += first_open.unwrap() - bound.position;
+                    count += bound.position - first_open.unwrap();
                     first_open = None;
                 }
             }
@@ -111,29 +111,27 @@ fn find_distress_beacon(filename: &str, size: i64) -> i64 {
     let sensors: Vec<Sensor> = contents.lines().map(Sensor::read).collect();
 
     for y in 0..size {
-        let mut bounds = BinaryHeap::new();
+        let mut bounds = Vec::new();
         for sensor in &sensors {
             let dy = sensor.position.y.abs_diff(y);
             if sensor.cell_radius < dy {
                 continue;
             }
             let rem = (sensor.cell_radius - dy) as i64;
-            bounds.push((sensor.position.x + rem, sensor.position.x - rem));
+            bounds.push((sensor.position.x - rem, sensor.position.x + rem));
         }
+        bounds.sort();
 
-        let mut cover_start = size;
-        while let Some((end, start)) = bounds.pop() {
-            if end < cover_start - 1 {
-                let c = Coord {
-                    x: cover_start - 1,
-                    y,
-                };
+        let mut cover_stop = 0;
+        for (start, end) in bounds {
+            if start > cover_stop {
+                let c = Coord { x: cover_stop, y };
                 return c.tuning_frequency();
             }
-            if start < cover_start {
-                cover_start = start;
+            if end > cover_stop {
+                cover_stop = end + 1;
             }
-            if cover_start <= 0 {
+            if cover_stop >= size {
                 break;
             }
         }
