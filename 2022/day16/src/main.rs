@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Clone, Copy, Eq, Ord, Hash, PartialEq, PartialOrd)]
@@ -102,20 +102,20 @@ impl Cave {
     }
 
     fn max_release(&self) -> u32 {
-        let mut active_valves: HashSet<ValveID> = self
+        // only consider the valves with a positive flow rate
+        let valves: HashMap<&ValveID, &Valve> = self
             .valves
-            .values()
-            .filter(|valve| valve.flow_rate > 0)
-            .map(|valve| valve.id)
+            .iter()
+            .filter(|&(_, valve)| valve.flow_rate > 0)
             .collect();
 
         let distances = self.valve_distances();
 
         // try every ordering of the valves
         fn aux(
-            valves: &HashMap<ValveID, Valve>,
+            valves: &HashMap<&ValveID, &Valve>,
             distances: &HashMap<(ValveID, ValveID), u32>,
-            remaining_valves: &mut HashSet<ValveID>,
+            open_valves: usize,
             location: ValveID,
             flow: u32,
             released_pressure: u32,
@@ -125,36 +125,28 @@ impl Cave {
                 return released_pressure;
             }
             let mut best_released_pressure = released_pressure + remaining_time * flow;
-            let iterable: Vec<ValveID> = remaining_valves.iter().copied().collect();
-            for valve_id in iterable {
+            for (i, &&valve_id) in valves.keys().enumerate() {
+                if open_valves & (1 << i) != 0 {
+                    continue;
+                }
                 let d = 1 + distances[&(location, valve_id)];
                 if d > remaining_time {
                     continue;
                 }
-                remaining_valves.remove(&valve_id);
                 let released_pressure = aux(
                     valves,
                     distances,
-                    remaining_valves,
+                    open_valves | (1 << i),
                     valve_id,
                     flow + valves[&valve_id].flow_rate,
                     released_pressure + flow * d,
                     remaining_time - d,
                 );
-                remaining_valves.insert(valve_id);
                 best_released_pressure = best_released_pressure.max(released_pressure);
             }
             best_released_pressure
         }
-        aux(
-            &self.valves,
-            &distances,
-            &mut active_valves,
-            ValveID::from("AA"),
-            0,
-            0,
-            30,
-        )
+        aux(&valves, &distances, 0, ValveID::from("AA"), 0, 0, 30)
     }
 }
 
