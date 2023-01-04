@@ -117,14 +117,13 @@ impl Cave {
             distances: &HashMap<(ValveID, ValveID), u32>,
             open_valves: usize,
             location: ValveID,
-            flow: u32,
             released_pressure: u32,
             remaining_time: u32,
         ) -> u32 {
             if remaining_time == 0 {
                 return released_pressure;
             }
-            let mut best_released_pressure = released_pressure + remaining_time * flow;
+            let mut best_released_pressure = released_pressure;
             for (i, &&valve_id) in valves.keys().enumerate() {
                 if open_valves & (1 << i) != 0 {
                     continue;
@@ -133,20 +132,24 @@ impl Cave {
                 if d > remaining_time {
                     continue;
                 }
+                // immediately account for all the pressure that will be released by this valve
+                let remaining_time = remaining_time - d;
+                let released_pressure =
+                    released_pressure + valves[&valve_id].flow_rate * remaining_time;
+                // recurse
                 let released_pressure = aux(
                     valves,
                     distances,
                     open_valves | (1 << i),
                     valve_id,
-                    flow + valves[&valve_id].flow_rate,
-                    released_pressure + flow * d,
-                    remaining_time - d,
+                    released_pressure,
+                    remaining_time,
                 );
                 best_released_pressure = best_released_pressure.max(released_pressure);
             }
             best_released_pressure
         }
-        aux(&valves, &distances, 0, ValveID::from("AA"), 0, 0, 30)
+        aux(&valves, &distances, 0, ValveID::from("AA"), 0, 30)
     }
 }
 
