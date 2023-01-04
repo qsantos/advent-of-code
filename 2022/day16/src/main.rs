@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::fmt;
 
 #[derive(Clone, Copy, Eq, Ord, Hash, PartialEq, PartialOrd)]
@@ -43,13 +43,11 @@ struct Cave {
     valves: HashMap<ValveID, Valve>,
 }
 
-#[derive(Eq, Ord, Hash, PartialEq, PartialOrd)]
+#[derive(Eq, Hash, PartialEq)]
 struct State {
-    released_pressure: u32,
+    open_valves: usize,
+    location: ValveID,
     remaining_time: u32,
-    current_valve: ValveID,
-    current_flow: u32,
-    open_valves: Vec<ValveID>,
 }
 
 impl Cave {
@@ -101,7 +99,7 @@ impl Cave {
         distances
     }
 
-    fn max_release(&self) -> u32 {
+    fn end_states(&self, timeout: u32) -> HashMap<State, u32> {
         // only consider the valves with a positive flow rate
         let valves: HashMap<&ValveID, &Valve> = self
             .valves
@@ -111,19 +109,32 @@ impl Cave {
 
         let distances = self.valve_distances();
 
-        // try every ordering of the valves
-        fn aux(
-            valves: &HashMap<&ValveID, &Valve>,
-            distances: &HashMap<(ValveID, ValveID), u32>,
-            open_valves: usize,
-            location: ValveID,
-            released_pressure: u32,
-            remaining_time: u32,
-        ) -> u32 {
-            if remaining_time == 0 {
-                return released_pressure;
+        let mut end_states = HashMap::new();
+
+        let mut q = VecDeque::new();
+        q.push_back((
+            State {
+                open_valves: 0,
+                location: ValveID::from("AA"),
+                remaining_time: timeout,
+            },
+            0,
+        ));
+
+        while let Some((state, released_pressure)) = q.pop_front() {
+            let State {
+                open_valves,
+                location,
+                remaining_time,
+            } = state;
+            if released_pressure < end_states.get(&state).copied().unwrap_or(0) {
+                continue;
             }
-            let mut best_released_pressure = released_pressure;
+            end_states.insert(state, released_pressure);
+            if remaining_time == 0 {
+                continue;
+            }
+
             for (i, &&valve_id) in valves.keys().enumerate() {
                 if open_valves & (1 << i) != 0 {
                     continue;
@@ -136,26 +147,40 @@ impl Cave {
                 let remaining_time = remaining_time - d;
                 let released_pressure =
                     released_pressure + valves[&valve_id].flow_rate * remaining_time;
-                // recurse
-                let released_pressure = aux(
-                    valves,
-                    distances,
-                    open_valves | (1 << i),
-                    valve_id,
+                q.push_back((
+                    State {
+                        open_valves: open_valves | (1 << i),
+                        location: valve_id,
+                        remaining_time,
+                    },
                     released_pressure,
-                    remaining_time,
-                );
-                best_released_pressure = best_released_pressure.max(released_pressure);
+                ));
             }
-            best_released_pressure
         }
-        aux(&valves, &distances, 0, ValveID::from("AA"), 0, 30)
+
+        end_states
     }
 }
 
 fn single(filename: &str) -> u32 {
     let cave = Cave::read(filename);
-    cave.max_release()
+    let end_states = cave.end_states(30);
+    *end_states.values().max().unwrap()
+}
+
+fn pair(filename: &str) -> u32 {
+    let cave = Cave::read(filename);
+    let end_states = cave.end_states(26);
+
+    let mut best = 0;
+    for (s1, v1) in &end_states {
+        for (s2, v2) in &end_states {
+            if s1.open_valves & s2.open_valves == 0 {
+                best = best.max(v1 + v2)
+            }
+        }
+    }
+    best
 }
 
 fn puzzle1() {
@@ -164,8 +189,8 @@ fn puzzle1() {
 }
 
 fn puzzle2() {
-    // println!("{}", single("example"));
-    // println!("{}", single("input"));
+    assert_eq!(pair("example"), 1707);
+    assert_eq!(pair("input"), 2469);
 }
 
 fn main() {
