@@ -74,6 +74,7 @@ impl Blueprint {
                 continue;
             }
             let mut is_buildable = [false; 4];
+            #[allow(clippy::needless_range_loop)]
             for robot in 0..4 {
                 if self.costs[robot]
                     .iter()
@@ -90,6 +91,7 @@ impl Blueprint {
                 let mut new_counts = counts;
                 new_counts[3] += 1;
                 let mut new_amounts = amounts;
+                #[allow(clippy::needless_range_loop)]
                 for material in 0..4 {
                     new_amounts[material] -= self.costs[3][material];
                 }
@@ -103,6 +105,7 @@ impl Blueprint {
                     let mut new_counts = counts;
                     new_counts[robot] += 1;
                     let mut new_amounts = amounts;
+                    #[allow(clippy::needless_range_loop)]
                     for material in 0..4 {
                         new_amounts[material] -= self.costs[robot][material];
                     }
