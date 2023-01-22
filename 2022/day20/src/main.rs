@@ -8,12 +8,12 @@ fn decrypt(filename: &str, decryption_key: i64, iterations: usize) -> i64 {
     for _ in 0..iterations {
         for i in 0..numbers.len() {
             let pos = numbers.iter().position(|&(j, _)| i == j).unwrap();
-            let (_, number) = numbers.remove(pos);
-            let new_pos = (pos as i64 + number).rem_euclid(numbers.len() as i64) as usize;
-            if new_pos == 0 {
-                numbers.push((i, number));
+            let (_, number) = numbers[pos];
+            let new_pos = (pos as i64 + number).rem_euclid((numbers.len() - 1) as i64) as usize;
+            if new_pos < pos {
+                numbers[new_pos..=pos].rotate_right(1);
             } else {
-                numbers.insert(new_pos, (i, number));
+                numbers[pos..=new_pos].rotate_left(1);
             }
         }
     }
