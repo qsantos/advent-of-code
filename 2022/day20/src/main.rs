@@ -1,26 +1,32 @@
 fn decrypt(filename: &str, decryption_key: i64, iterations: usize) -> i64 {
     let contents = std::fs::read_to_string(filename).unwrap();
-    let mut numbers: Vec<(usize, i64)> = contents
+    let numbers: Vec<i64> = contents
         .lines()
-        .enumerate()
-        .map(|(i, line)| (i, line.parse::<i64>().unwrap() * decryption_key))
+        .map(|line| line.parse::<i64>().unwrap() * decryption_key)
         .collect();
+    let n = (numbers.len() - 1) as i64;
+    let mut number_refs: Vec<&i64> = numbers.iter().collect();
     for _ in 0..iterations {
-        for i in 0..numbers.len() {
-            let pos = numbers.iter().position(|&(j, _)| i == j).unwrap();
-            let (_, number) = numbers[pos];
-            let new_pos = (pos as i64 + number).rem_euclid((numbers.len() - 1) as i64) as usize;
+        for number_ref in &numbers {
+            let pos = number_refs
+                .iter()
+                .position(|&other_ref| std::ptr::eq(number_ref, other_ref))
+                .unwrap();
+            let new_pos = (pos as i64 + number_ref).rem_euclid(n) as usize;
             if new_pos < pos {
-                numbers[new_pos..=pos].rotate_right(1);
+                number_refs[new_pos..=pos].rotate_right(1);
             } else {
-                numbers[pos..=new_pos].rotate_left(1);
+                number_refs[pos..=new_pos].rotate_left(1);
             }
         }
     }
-    let pos = numbers.iter().position(|&(_, n)| n == 0).unwrap();
-    let (_, a) = numbers[(pos + 1000) % numbers.len()];
-    let (_, b) = numbers[(pos + 2000) % numbers.len()];
-    let (_, c) = numbers[(pos + 3000) % numbers.len()];
+    let pos = number_refs
+        .iter()
+        .position(|&number_ref| *number_ref == 0)
+        .unwrap();
+    let a = *number_refs[(pos + 1000) % numbers.len()];
+    let b = *number_refs[(pos + 2000) % numbers.len()];
+    let c = *number_refs[(pos + 3000) % numbers.len()];
     a + b + c
 }
 
