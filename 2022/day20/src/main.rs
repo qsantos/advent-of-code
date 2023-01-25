@@ -1,32 +1,35 @@
+mod implicit_treap;
+
+use implicit_treap::ImplicitTreap;
+
 fn decrypt(filename: &str, decryption_key: i64, iterations: usize) -> i64 {
     let contents = std::fs::read_to_string(filename).unwrap();
-    let numbers: Vec<i64> = contents
-        .lines()
-        .map(|line| line.parse::<i64>().unwrap() * decryption_key)
-        .collect();
-    let n = (numbers.len() - 1) as i64;
-    let mut number_refs: Vec<&i64> = numbers.iter().collect();
-    for _ in 0..iterations {
-        for number_ref in &numbers {
-            let pos = number_refs
-                .iter()
-                .position(|&other_ref| std::ptr::eq(number_ref, other_ref))
-                .unwrap();
-            let new_pos = (pos as i64 + number_ref).rem_euclid(n) as usize;
-            if new_pos < pos {
-                number_refs[new_pos..=pos].rotate_right(1);
-            } else {
-                number_refs[pos..=new_pos].rotate_left(1);
-            }
+    let mut treap = ImplicitTreap::new();
+    let mut node_keys = Vec::new();
+    let mut zero_idx = 0;
+    for (i, line) in contents.lines().enumerate() {
+        let number = line.parse::<i64>().unwrap();
+        let node_key = treap.push(number * decryption_key);
+        node_keys.push(node_key);
+        if number == 0 {
+            zero_idx = i;
         }
     }
-    let pos = number_refs
-        .iter()
-        .position(|&number_ref| *number_ref == 0)
-        .unwrap();
-    let a = *number_refs[(pos + 1000) % numbers.len()];
-    let b = *number_refs[(pos + 2000) % numbers.len()];
-    let c = *number_refs[(pos + 3000) % numbers.len()];
+    let n = (node_keys.len() - 1) as i64;
+    for _ in 0..iterations {
+        for node_key in &mut node_keys {
+            let pos = treap.node_index(*node_key);
+            let number = treap.remove_at(pos).unwrap();
+            let new_pos = (pos as i64 + number).rem_euclid(n) as usize;
+            *node_key = treap.insert(new_pos, number);
+        }
+    }
+    let zero_node = node_keys[zero_idx];
+    let pos = treap.node_index(zero_node);
+    assert_eq!(treap[pos], 0);
+    let a = treap[(pos + 1000) % treap.len()];
+    let b = treap[(pos + 2000) % treap.len()];
+    let c = treap[(pos + 3000) % treap.len()];
     a + b + c
 }
 
