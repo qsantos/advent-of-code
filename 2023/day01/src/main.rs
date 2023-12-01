@@ -1,0 +1,72 @@
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+
+const DIGIT_VALUES: [(&str, u32); 20] = [
+    ("0", 0),
+    ("1", 1),
+    ("2", 2),
+    ("3", 3),
+    ("4", 4),
+    ("5", 5),
+    ("6", 6),
+    ("7", 7),
+    ("8", 8),
+    ("9", 9),
+    ("zero", 0),
+    ("one", 1),
+    ("two", 2),
+    ("three", 3),
+    ("four", 4),
+    ("five", 5),
+    ("six", 6),
+    ("seven", 7),
+    ("eight", 8),
+    ("nine", 9),
+];
+
+fn part1(filename: &str) -> u32 {
+    let f = File::open(filename).unwrap();
+    let reader = BufReader::new(f);
+    let mut total = 0;
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let mut digits = line.chars().filter(|c| c.is_digit(10));
+        let first = digits.next().unwrap();
+        let last = digits.last().unwrap_or(first);
+        let value: u32 = format!("{first}{last}").parse().unwrap();
+        total += value;
+    }
+    total
+}
+
+fn first_digit<I: IntoIterator<Item = usize>>(bytes: &[u8], range: I) -> u32 {
+    range.into_iter().find_map(|i| {
+        DIGIT_VALUES
+            .iter()
+            .find_map(|(digit, value)| bytes[i..].starts_with(digit.as_bytes()).then(|| *value) )
+    })
+    .unwrap()
+}
+
+fn part2(filename: &str) -> u32 {
+    let f = File::open(filename).unwrap();
+    let reader = BufReader::new(f);
+    let mut total = 0;
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let bytes = line.as_bytes();
+        let first = first_digit(bytes, 0..bytes.len());
+        let last = first_digit(bytes, (0..bytes.len()).rev());
+        let value = first * 10 + last;
+        total += value;
+    }
+    total
+}
+
+fn main() {
+    assert_eq!(part1("example1"), 142);
+    assert_eq!(part1("input"), 54388);
+
+    assert_eq!(part2("example2"), 281);
+    assert_eq!(part2("input"), 53515);
+}
