@@ -26,15 +26,17 @@ const DIGIT_VALUES: [(&str, u32); 20] = [
 
 fn part1(filename: &str) -> u32 {
     let f = File::open(filename).unwrap();
-    let reader = BufReader::new(f);
+    let mut reader = BufReader::new(f);
+    let mut buf = String::new();
     let mut total = 0;
-    for line in reader.lines() {
-        let line = line.unwrap();
+    while reader.read_line(&mut buf).unwrap() != 0 {
+        let line = buf.trim();
         let mut digits = line.chars().filter(|c| c.is_digit(10));
         let first = digits.next().unwrap();
         let last = digits.last().unwrap_or(first);
         let value: u32 = format!("{first}{last}").parse().unwrap();
         total += value;
+        buf.clear();
     }
     total
 }
@@ -50,15 +52,17 @@ fn first_digit<I: IntoIterator<Item = usize>>(bytes: &[u8], range: I) -> u32 {
 
 fn part2(filename: &str) -> u32 {
     let f = File::open(filename).unwrap();
-    let reader = BufReader::new(f);
+    let mut reader = BufReader::new(f);
+    let mut buf = String::new();
     let mut total = 0;
-    for line in reader.lines() {
-        let line = line.unwrap();
+    while reader.read_line(&mut buf).unwrap() != 0 {
+        let line = buf.trim();
         let bytes = line.as_bytes();
         let first = first_digit(bytes, 0..bytes.len());
         let last = first_digit(bytes, (0..bytes.len()).rev());
         let value = first * 10 + last;
         total += value;
+        buf.clear();
     }
     total
 }

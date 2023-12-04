@@ -3,12 +3,13 @@ use std::io::{BufRead, BufReader};
 
 fn part12(filename: &str) -> (u32, u32) {
     let f = File::open(filename).unwrap();
-    let reader = BufReader::new(f);
+    let mut reader = BufReader::new(f);
+    let mut buf = String::new();
     let mut sum = 0;
     let mut total_power = 0;
     let mut game_id = 1;
-    for line in reader.lines() {
-        let line = line.unwrap();
+    while reader.read_line(&mut buf).unwrap() != 0 {
+        let line = buf.trim();
         let (_, sets) = line.split_once(": ").unwrap();
         let mut max_red = 0;
         let mut max_green = 0;
@@ -34,6 +35,7 @@ fn part12(filename: &str) -> (u32, u32) {
         let power = max_red * max_green * max_blue;
         total_power += power;
         game_id += 1;
+        buf.clear();
     }
     (sum, total_power)
 }
