@@ -15,17 +15,8 @@ fn race_winning_possibilities(time: u64, distance: u64) -> u64 {
     // t = (time ± √(time * time - 4 * d)) / 2
     let delta = time * time - 4 * distance;
     let sq_delta = (delta as f64).sqrt();
-
-    let t1 = ((time as f64 - sq_delta) / 2.).ceil() as u64;
-    let t1 = if t1 * (time - t1) == distance { t1 + 1 } else { t1 };
-    assert!((t1 - 1) * (time - (t1 - 1)) <= distance);
-    assert!(t1 * (time - t1) > distance);
-
-    let t2 = ((time as f64 + sq_delta) / 2.).floor() as u64;
-    let t2 = if t2 * (time - t2) == distance { t2 - 1 } else { t2 };
-    assert!(t2 * (time - t2) > distance);
-    assert!((t2 + 1) * (time - (t2 + 1)) <= distance);
-
+    let t1 = ((time as f64 - sq_delta) / 2.).floor() as u64 + 1;
+    let t2 = ((time as f64 + sq_delta) / 2.).ceil() as u64 - 1;
     t2 - t1 + 1
 }
 
