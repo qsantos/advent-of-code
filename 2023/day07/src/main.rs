@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-const STRENGHTS1: &[u8; 13] = b"AKQJT98765432";
-const STRENGHTS2: &[u8; 13] = b"AKQT98765432J";
+const STRENGTHS1: &[u8; 13] = b"AKQJT98765432";
+const STRENGTHS2: &[u8; 13] = b"AKQT98765432J";
 
 #[derive(Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 enum HandType {
@@ -101,7 +101,7 @@ impl Hand {
             type_: HandType::from_cards1(&cards),
             strengths: cards
                 .into_iter()
-                .map(|card| STRENGHTS1.iter().position(|o| *o == card).unwrap() as u8)
+                .map(|card| STRENGTHS1.iter().position(|o| *o == card).unwrap() as u8)
                 .collect::<Vec<u8>>()
                 .try_into()
                 .unwrap(),
@@ -113,7 +113,7 @@ impl Hand {
             type_: HandType::from_cards2(&cards),
             strengths: cards
                 .into_iter()
-                .map(|card| STRENGHTS2.iter().position(|o| *o == card).unwrap() as u8)
+                .map(|card| STRENGTHS2.iter().position(|o| *o == card).unwrap() as u8)
                 .collect::<Vec<u8>>()
                 .try_into()
                 .unwrap(),

@@ -3,7 +3,7 @@ from typing import DefaultDict, Deque, Dict, Iterator, List, Tuple
 
 Program = List[int]
 Grid = Dict[Tuple[int, int], str]
-Scafold = List[str]
+Scaffold = List[str]
 
 
 def read_program(filename: str) -> Program:

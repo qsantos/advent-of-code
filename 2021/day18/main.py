@@ -59,10 +59,10 @@ def split(n: Number) -> Tuple[bool, Number]:
             return True, [h, n - h]
         return False, n
     a, b = n
-    splitted, a = split(a)
-    if not splitted:
-        splitted, b = split(b)
-    return splitted, [a, b]
+    is_split, a = split(a)
+    if not is_split:
+        is_split, b = split(b)
+    return is_split, [a, b]
 
 
 def reduce_number(number: Number) -> Number:
@@ -70,8 +70,8 @@ def reduce_number(number: Number) -> Number:
         exploded, number = explode(number)
         if exploded:
             continue
-        splitted, number = split(number)
-        if splitted:
+        is_split, number = split(number)
+        if is_split:
             continue
         break
     return number

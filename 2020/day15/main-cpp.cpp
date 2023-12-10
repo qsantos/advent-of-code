@@ -12,8 +12,8 @@ uint64_t nth_number(std::vector<uint64_t> numbers, uint64_t last_turn) {
         last_seen[numbers[i]] = i;
     }
     while (turn < last_turn - 1) {
-        auto occurence = last_seen.find(last);
-        uint64_t number = occurence != last_seen.end() ? turn - occurence->second : 0;
+        auto occurrence = last_seen.find(last);
+        uint64_t number = occurrence != last_seen.end() ? turn - occurrence->second : 0;
         last_seen[last] = turn;
         last = number;
         turn++;

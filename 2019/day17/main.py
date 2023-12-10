@@ -3,7 +3,7 @@ from typing import DefaultDict, Deque, Dict, Iterator, List, Tuple
 
 Program = List[int]
 Grid = Dict[Tuple[int, int], str]
-Scafold = List[str]
+Scaffold = List[str]
 
 
 def read_program(filename: str) -> Program:
@@ -128,7 +128,7 @@ def run(program: Program, *inputs: int) -> List[int]:
     return list(r)
 
 
-def read_scafold(program: Program) -> Scafold:
+def read_scaffold(program: Program) -> Scaffold:
     r = ProgramRun(program)
     return ''.join(
         chr(c)
@@ -136,54 +136,54 @@ def read_scafold(program: Program) -> Scafold:
     ).strip().split('\n')
 
 
-def scafold_alignment(scafold: Scafold) -> int:
+def scaffold_alignment(scaffold: Scaffold) -> int:
     r = 0
-    for i in range(1, len(scafold) - 1):
-        for j in range(1, len(scafold[0]) - 1):
-            if scafold[i][j] != '#':
+    for i in range(1, len(scaffold) - 1):
+        for j in range(1, len(scaffold[0]) - 1):
+            if scaffold[i][j] != '#':
                 continue
-            if scafold[i - 1][j] != '#':
+            if scaffold[i - 1][j] != '#':
                 continue
-            if scafold[i + 1][j] != '#':
+            if scaffold[i + 1][j] != '#':
                 continue
-            if scafold[i][j - 1] != '#':
+            if scaffold[i][j - 1] != '#':
                 continue
-            if scafold[i][j + 1] != '#':
+            if scaffold[i][j + 1] != '#':
                 continue
             r += i * j
     return r
 
 
-def show_scafold(scafold: Scafold, robot_i: int, robot_j: int, robot_d: str) -> None:
-    h, w = len(scafold), len(scafold[0])
+def show_scaffold(scaffold: Scaffold, robot_i: int, robot_j: int, robot_d: str) -> None:
+    h, w = len(scaffold), len(scaffold[0])
     for i in range(h):
         print(''.join(
-            robot_d if (robot_i, robot_j) == (i, j) else scafold[i][j]
+            robot_d if (robot_i, robot_j) == (i, j) else scaffold[i][j]
             for j in range(w)
         ))
 
 
-def follow_path(scafold: Scafold) -> Iterator[str]:
+def follow_path(scaffold: Scaffold) -> Iterator[str]:
     directions = '<^>v'
-    h, w = len(scafold), len(scafold[0])
+    h, w = len(scaffold), len(scaffold[0])
 
     for i in range(h):
         for j in range(w):
-            if scafold[i][j] in directions:
+            if scaffold[i][j] in directions:
                 break
         else:
             continue
         break
-    robot_dir = scafold[i][j]
-    assert scafold[i][j] in directions
+    robot_dir = scaffold[i][j]
+    assert scaffold[i][j] in directions
 
-    if i > 0 and scafold[i - 1][j] == '#':
+    if i > 0 and scaffold[i - 1][j] == '#':
         start_dir = '^'
-    elif i < h - 1 and scafold[i + 1][j] == '#':
+    elif i < h - 1 and scaffold[i + 1][j] == '#':
         start_dir = 'v'
-    elif j > 0 and scafold[i][j - 1] == '#':
+    elif j > 0 and scaffold[i][j - 1] == '#':
         start_dir = '<'
-    elif j < w - 1 and scafold[i][j + 1] == '#':
+    elif j < w - 1 and scaffold[i][j + 1] == '#':
         start_dir = '>'
     else:
         assert False
@@ -211,36 +211,36 @@ def follow_path(scafold: Scafold) -> Iterator[str]:
         steps = 0
         dir = directions[(directions.index(dir) + 1) % 4]
 
-    while scafold[i][j] != '.':
+    while scaffold[i][j] != '.':
         if dir == '^':
-            if i == 0 or scafold[i - 1][j] == '.':
-                if j > 0 and scafold[i][j - 1] == '#':
+            if i == 0 or scaffold[i - 1][j] == '.':
+                if j > 0 and scaffold[i][j - 1] == '#':
                     yield from turn_left()
-                elif j < w - 1 and scafold[i][j + 1] == '#':
+                elif j < w - 1 and scaffold[i][j + 1] == '#':
                     yield from turn_right()
                 else:
                     break
         elif dir == 'v':
-            if i == h - 1 or scafold[i + 1][j] == '.':
-                if j > 0 and scafold[i][j - 1] == '#':
+            if i == h - 1 or scaffold[i + 1][j] == '.':
+                if j > 0 and scaffold[i][j - 1] == '#':
                     yield from turn_right()
-                elif j < w - 1 and scafold[i][j + 1] == '#':
+                elif j < w - 1 and scaffold[i][j + 1] == '#':
                     yield from turn_left()
                 else:
                     break
         elif dir == '<':
-            if j == 0 or scafold[i][j - 1] == '.':
-                if i > 0 and scafold[i - 1][j] == '#':
+            if j == 0 or scaffold[i][j - 1] == '.':
+                if i > 0 and scaffold[i - 1][j] == '#':
                     yield from turn_right()
-                elif i < h - 1 and scafold[i + 1][j] == '#':
+                elif i < h - 1 and scaffold[i + 1][j] == '#':
                     yield from turn_left()
                 else:
                     break
         elif dir == '>':
-            if j == w - 1 or scafold[i][j + 1] == '.':
-                if i > 0 and scafold[i - 1][j] == '#':
+            if j == w - 1 or scaffold[i][j + 1] == '.':
+                if i > 0 and scaffold[i - 1][j] == '#':
                     yield from turn_left()
-                elif i < h - 1 and scafold[i + 1][j] == '#':
+                elif i < h - 1 and scaffold[i + 1][j] == '#':
                     yield from turn_right()
                 else:
                     break
@@ -328,13 +328,13 @@ def main() -> None:
     assert run([104, 1125899906842624, 99]) == [1125899906842624]
 
     program = read_program('input')
-    scafold = read_scafold(program)
+    scaffold = read_scaffold(program)
 
     # puzzle  1
-    assert scafold_alignment(scafold) == 9544
+    assert scaffold_alignment(scaffold) == 9544
 
     # puzzle 2
-    path = list(follow_path(scafold))
+    path = list(follow_path(scaffold))
     assert path == [
         'L', '12', 'L', '12', 'R', '12', 'L', '12', 'L', '12', 'R', '12', 'L',
         '8', 'L', '8', 'R', '12', 'L', '8', 'L', '8', 'L', '10', 'R', '8', 'R',
