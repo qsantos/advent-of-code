@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 type Position = (usize, usize);
 
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
@@ -7,6 +9,13 @@ enum Direction {
     Right,
     Down,
 }
+
+const DIRECTIONS: [Direction; 4] = [
+    Direction::Left,
+    Direction::Up,
+    Direction::Right,
+    Direction::Down,
+];
 
 struct Grid<'a> {
     rows: usize,
@@ -36,28 +45,36 @@ impl<'a> Grid<'a> {
         unreachable!();
     }
 
+    fn can_connect_to(&self, pos: Position, dir: Direction) -> bool {
+        if let Some(n) = self.peek(pos, dir) {
+            match dir {
+                Direction::Left => n == b'-' || n == b'F' || n == b'L',
+                Direction::Up => n == b'|' || n == b'F' || n == b'7',
+                Direction::Right => n == b'-' || n == b'7' || n == b'J',
+                Direction::Down => n == b'|' || n == b'L' || n == b'J',
+            }
+        } else {
+            false
+        }
+    }
+
     fn start_dir(&self, start: Position) -> Direction {
-        if let Some(n) = self.peek(start, Direction::Left) {
-            if n == b'-' || n == b'F' || n == b'L' {
-                return Direction::Left;
-            }
-        }
-        if let Some(n) = self.peek(start, Direction::Up) {
-            if n == b'|' || n == b'F' || n == b'7' {
-                return Direction::Up;
-            }
-        }
-        if let Some(n) = self.peek(start, Direction::Right) {
-            if n == b'-' || n == b'7' || n == b'J' {
-                return Direction::Right;
-            }
-        }
-        if let Some(n) = self.peek(start, Direction::Down) {
-            if n == b'|' || n == b'L' || n == b'J' {
-                return Direction::Down;
+        for dir in DIRECTIONS {
+            if self.can_connect_to(start, dir) {
+                return dir;
             }
         }
         panic!("start is not connected to any pipes");
+    }
+
+    fn start_equivalent(&self, start: Position) -> u8 {
+        match DIRECTIONS.map(|dir| self.can_connect_to(start, dir)) {
+            [false, false, true, true] => b'F',
+            [true, false, false, true] => b'7',
+            [true, true, false, false] => b'J',
+            [false, true, true, false] => b'L',
+            _ => panic!("impossible situation for start"),
+        }
     }
 
     fn neighbor(&self, (i, j): Position, dir: Direction) -> Option<Position> {
@@ -73,7 +90,7 @@ impl<'a> Grid<'a> {
         self.neighbor(pos, dir).map(|n| self.at(n))
     }
 
-    fn follow_pipe(&self, dir: Direction, pos: Position) -> Direction {
+    fn next_dir(&self, dir: Direction, pos: Position) -> Direction {
         let c = self.at(pos);
         match (dir, c) {
             (Direction::Left, b'-') => Direction::Left,
@@ -95,6 +112,12 @@ impl<'a> Grid<'a> {
             ),
         }
     }
+
+    fn follow_pipe(&self, pos: Position, dir: Direction) -> (Position, Direction) {
+        let pos = self.neighbor(pos, dir).unwrap();
+        let dir = self.next_dir(dir, pos);
+        (pos, dir)
+    }
 }
 
 fn part1(filename: &str) -> usize {
@@ -105,8 +128,7 @@ fn part1(filename: &str) -> usize {
     let mut dir = grid.start_dir(pos);
     let mut steps = 0;
     loop {
-        pos = grid.neighbor(pos, dir).unwrap();
-        dir = grid.follow_pipe(dir, pos);
+        (pos, dir) = grid.follow_pipe(pos, dir);
         steps += 1;
         if pos == start {
             break;
@@ -115,10 +137,67 @@ fn part1(filename: &str) -> usize {
     (steps + 1) / 2
 }
 
+fn part2(filename: &str) -> usize {
+    let data = std::fs::read_to_string(filename).unwrap();
+    let grid = Grid::from(data.trim().as_bytes());
+    let start = grid.find_start();
+    let mut pos = start;
+    let mut dir = grid.start_dir(pos);
+    let mut r#loop = HashSet::new();
+    loop {
+        (pos, dir) = grid.follow_pipe(pos, dir);
+        r#loop.insert(pos);
+        if pos == start {
+            break;
+        }
+    }
+
+    let mut count = 0;
+    for i in 0..grid.rows {
+        for j in 0..grid.cols {
+            if r#loop.contains(&(i, j)) {
+                continue;
+            }
+            let mut n = 0;
+            for oi in 0..i {
+                if !r#loop.contains(&(oi, j)) {
+                    continue;
+                }
+                let mut c = grid.at((oi, j));
+                if c == b'S' {
+                    c = grid.start_equivalent((oi, j));
+                }
+                if c == b'-' {
+                    n += 2;
+                } else if c == b'F' || c == b'J' {
+                    n += 1;
+                } else if c == b'7' || c == b'L' {
+                    n -= 1;
+                }
+            }
+            assert_eq!(n % 2, 0);
+            if (n / 2) % 2 != 0 {
+                // inside
+                count += 1
+            }
+        }
+    }
+    count
+}
+
 fn main() {
     assert_eq!(part1("example1"), 4);
     assert_eq!(part1("example2"), 4);
     assert_eq!(part1("example3"), 8);
     assert_eq!(part1("example4"), 8);
     assert_eq!(part1("input"), 7102);
+
+    assert_eq!(part2("example1"), 1);
+    assert_eq!(part2("example2"), 1);
+    assert_eq!(part2("example3"), 1);
+    assert_eq!(part2("example4"), 1);
+    assert_eq!(part2("example5"), 4);
+    assert_eq!(part2("example6"), 8);
+    assert_eq!(part2("example7"), 10);
+    assert_eq!(part2("input"), 363);
 }
