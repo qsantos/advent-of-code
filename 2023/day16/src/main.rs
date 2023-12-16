@@ -32,17 +32,9 @@ impl Direction {
     }
 }
 
-fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
+fn count_energized(grid: &[&[u8]], start: State) -> usize {
     let rows = grid.len() as isize;
     let cols = grid[0].len() as isize;
-
-    let start = State {
-        position: Position { i: 0, j: -1 },
-        direction: Direction::Right,
-    };
-
     let mut q = Vec::new();
     let mut visited_states = HashSet::new();
     let mut visited_tiles = HashSet::new();
@@ -128,7 +120,49 @@ fn part1(filename: &str) -> usize {
     visited_tiles.len() - 1
 }
 
+fn part1(filename: &str) -> usize {
+    let data = std::fs::read_to_string(filename).unwrap();
+    let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
+    count_energized(&grid, State {
+        position: Position { i: 0, j: -1 },
+        direction: Direction::Right,
+    })
+}
+
+fn part2(filename: &str) -> usize {
+    let data = std::fs::read_to_string(filename).unwrap();
+    let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
+    let rows = grid.len() as isize;
+    let cols = grid[0].len() as isize;
+
+    let mut v = Vec::new();
+    for i in 0..rows {
+        v.push(count_energized(&grid, State {
+            position: Position { i, j: -1 },
+            direction: Direction::Right,
+        }));
+        v.push(count_energized(&grid, State {
+            position: Position { i, j: cols },
+            direction: Direction::Left,
+        }));
+    }
+    for j in 0..cols {
+        v.push(count_energized(&grid, State {
+            position: Position { i: -1, j },
+            direction: Direction::Down,
+        }));
+        v.push(count_energized(&grid, State {
+            position: Position { i: rows, j },
+            direction: Direction::Up,
+        }));
+    }
+    v.into_iter().max().unwrap()
+}
+
 fn main() {
     assert_eq!(part1("example"), 46);
     assert_eq!(part1("input"), 7632);
+
+    assert_eq!(part2("example"), 51);
+    assert_eq!(part2("input"), 8023);
 }
