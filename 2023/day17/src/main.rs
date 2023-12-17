@@ -116,7 +116,7 @@ fn show_path(grid: &[&[u8]], previous: &HashMap<State, State>, state: &State) {
     }
 }
 
-fn part1(filename: &str) -> usize {
+fn part12(filename: &str, min_steps: usize, max_steps: usize) -> usize {
     let data = std::fs::read_to_string(filename).unwrap();
     let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
     let rows = grid.len();
@@ -152,14 +152,15 @@ fn part1(filename: &str) -> usize {
             // show_path(&grid, &previous, &state);
             return heat_loss;
         }
-        for (direction, straight_steps) in [
-            (direction, straight_steps + 1),
-            (direction.turn_left(), 1),
-            (direction.turn_right(), 1),
-        ] {
-            if straight_steps > 3 {
-                continue;
-            }
+        let mut candidates = Vec::new();
+        if straight_steps < max_steps {
+            candidates.push((direction, straight_steps + 1));
+        }
+        if straight_steps >= min_steps {
+            candidates.push((direction.turn_left(), 1));
+            candidates.push((direction.turn_right(), 1));
+        }
+        for (direction, straight_steps) in candidates {
             if let Some(position) = direction.next_position(rows, cols, &position) {
                 let heat_loss = heat_loss + (grid[position.i][position.j] - b'0') as usize;
                 let next_state = State {
@@ -180,7 +181,20 @@ fn part1(filename: &str) -> usize {
     unreachable!()
 }
 
+fn part1(filename: &str) -> usize {
+    part12(filename, 1, 3)
+}
+
+fn part2(filename: &str) -> usize {
+    part12(filename, 4, 10)
+}
+
 fn main() {
-    assert_eq!(part1("example"), 102);
+    assert_eq!(part1("example1"), 102);
     assert_eq!(part1("input"), 1128);
+
+    assert_eq!(part2("example1"), 94);
+    // NOTE: the route shown as an example is not optimal and has a heat loss of 71
+    assert_eq!(part2("example2"), 55);
+    assert_eq!(part2("input"), 1268);
 }
