@@ -9,8 +9,8 @@ fn part1(filename: &str) -> usize {
     for j in 0..cols {
         let mut stack_start = 0;
         let mut stack_size = 0;
-        for i in 0..rows {
-            let c = grid[i][j];
+        for (i, row) in grid.iter().enumerate() {
+            let c = row[j];
             if c == b'#' {
                 stack_start = i + 1;
                 stack_size = 0;
@@ -60,11 +60,10 @@ fn rotate(grid: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
 
 fn total_load(grid: &Vec<Vec<u8>>) -> usize {
     let rows = grid.len();
-    let cols = grid[0].len();
     let mut total_load = 0;
-    for i in 0..rows {
-        for j in 0..cols {
-            if grid[i][j] == b'O' {
+    for (i, row) in grid.iter().enumerate() {
+        for c in row {
+            if c == &b'O' {
                 total_load += rows - i;
             }
         }

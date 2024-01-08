@@ -54,10 +54,14 @@ impl Direction {
     fn next_position(&self, rows: usize, cols: usize, position: &Position) -> Option<Position> {
         let &Position { i, j } = position;
         match self {
+            // using then_some() will cause j - 1 to underflow
+            #[allow(clippy::unnecessary_lazy_evaluations)]
             Direction::Left => (j > 0).then(|| Position { i, j: j - 1 }),
+            // using then_some() will cause i - 1 to underflow
+            #[allow(clippy::unnecessary_lazy_evaluations)]
             Direction::Up => (i > 0).then(|| Position { i: i - 1, j }),
-            Direction::Right => (j < cols - 1).then(|| Position { i, j: j + 1 }),
-            Direction::Down => (i < rows - 1).then(|| Position { i: i + 1, j }),
+            Direction::Right => (j < cols - 1).then_some(Position { i, j: j + 1 }),
+            Direction::Down => (i < rows - 1).then_some(Position { i: i + 1, j }),
         }
     }
 }
@@ -86,7 +90,7 @@ impl HeatLossAndState {
 
 impl PartialOrd for HeatLossAndState {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.key().partial_cmp(&other.key())
+        Some(self.cmp(other))
     }
 }
 
@@ -96,6 +100,7 @@ impl Ord for HeatLossAndState {
     }
 }
 
+/*
 fn show_path(grid: &[&[u8]], previous: &HashMap<State, State>, state: &State) {
     let mut visited = HashMap::new();
     let mut state = state;
@@ -104,8 +109,8 @@ fn show_path(grid: &[&[u8]], previous: &HashMap<State, State>, state: &State) {
         state = prev;
         visited.insert(state.position.clone(), state.direction);
     }
-    for (i, row) in grid.into_iter().enumerate() {
-        for (j, c) in row.into_iter().enumerate() {
+    for (i, row) in grid.iter().enumerate() {
+        for (j, c) in row.iter().enumerate() {
             if let Some(direction) = visited.get(&Position { i, j }) {
                 print!("{direction:?}");
             } else {
@@ -115,6 +120,7 @@ fn show_path(grid: &[&[u8]], previous: &HashMap<State, State>, state: &State) {
         println!();
     }
 }
+*/
 
 fn part12(filename: &str, min_steps: usize, max_steps: usize) -> usize {
     let data = std::fs::read_to_string(filename).unwrap();

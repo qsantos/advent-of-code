@@ -8,9 +8,7 @@ fn arrangements(springs: &[u8], groups: &Vec<i32>) -> usize {
     {
         let mut first_row = Vec::new();
         first_row.push(1);
-        for _ in 1..=groups.len() {
-            first_row.push(0);
-        }
+        first_row.resize(groups.len() + 1, 0);
         c.push(first_row);
     }
 

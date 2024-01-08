@@ -31,7 +31,7 @@ fn part1(filename: &str) -> u32 {
     let mut total = 0;
     while reader.read_line(&mut buf).unwrap() != 0 {
         let line = buf.trim();
-        let mut digits = line.chars().filter(|c| c.is_digit(10));
+        let mut digits = line.chars().filter(|c| c.is_ascii_digit());
         let first = digits.next().unwrap();
         let last = digits.last().unwrap_or(first);
         let value: u32 = format!("{first}{last}").parse().unwrap();
@@ -45,7 +45,7 @@ fn first_digit<I: IntoIterator<Item = usize>>(bytes: &[u8], range: I) -> u32 {
     range.into_iter().find_map(|i| {
         DIGIT_VALUES
             .iter()
-            .find_map(|(digit, value)| bytes[i..].starts_with(digit.as_bytes()).then(|| *value) )
+            .find_map(|(digit, value)| bytes[i..].starts_with(digit.as_bytes()).then_some(*value) )
     })
     .unwrap()
 }

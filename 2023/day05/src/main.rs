@@ -42,7 +42,7 @@ fn part1(filename: &str) -> u64 {
         }
         maps.push(map);
 
-        if buf.len() == 0 {
+        if buf.is_empty() {
             break;
         }
     }
@@ -116,7 +116,7 @@ fn part2(filename: &str) -> u64 {
         }
         maps.push(map);
 
-        if buf.len() == 0 {
+        if buf.is_empty() {
             break;
         }
     }
@@ -141,7 +141,7 @@ fn part2(filename: &str) -> u64 {
                         new_ranges.push((start - *map_src_start + *map_dst_start, mapped_range_len));
                         // remaining part
                         start = *map_src_start + *map_len;
-                        len = len - mapped_range_len;
+                        len -= mapped_range_len;
                     }
                 } else if *map_src_start <= start + len {
                     // map range starts in range

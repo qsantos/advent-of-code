@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-fn next_of(numbers: &Vec<i64>) -> i64 {
+fn next_of(numbers: &[i64]) -> i64 {
     if numbers.iter().all(|n| *n == 0) {
         0
     } else {
@@ -24,7 +24,7 @@ fn part1(filename: &str) -> i64 {
     sum
 }
 
-fn prev_of(numbers: &Vec<i64>) -> i64 {
+fn prev_of(numbers: &[i64]) -> i64 {
     if numbers.iter().all(|n| *n == 0) {
         0
     } else {
