@@ -12,7 +12,7 @@ enum Category {
     /// Shiny
     S,
     /// Number of categories
-    SIZE,
+    Size,
 }
 
 impl Category {
@@ -37,7 +37,7 @@ impl Debug for Category {
                 Category::M => 'm',
                 Category::A => 'a',
                 Category::S => 's',
-                Category::SIZE => unreachable!(),
+                Category::Size => unreachable!(),
             }
         )
     }
@@ -219,7 +219,7 @@ struct Workflow<'a> {
 impl<'a> Workflow<'a> {
     fn from(s: &'a str) -> (&'a str, Self) {
         let (name, rules) = s.strip_suffix('}').unwrap().split_once('{').unwrap();
-        let rules = rules.split(',').map(|line| Rule::from(line)).collect();
+        let rules = rules.split(',').map(Rule::from).collect();
         (name, Workflow { rules })
     }
 
@@ -261,18 +261,18 @@ impl<'a> Debug for Workflow<'a> {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Part {
-    ratings: [u64; Category::SIZE as usize],
+    ratings: [u64; Category::Size as usize],
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct PartSet {
-    start_ratings: [u64; Category::SIZE as usize],
-    end_ratings: [u64; Category::SIZE as usize],
+    start_ratings: [u64; Category::Size as usize],
+    end_ratings: [u64; Category::Size as usize],
 }
 
 impl Part {
     fn from(s: &str) -> Self {
-        let mut ratings = [0; Category::SIZE as usize];
+        let mut ratings = [0; Category::Size as usize];
         for rating in s
             .strip_prefix('{')
             .unwrap()
@@ -294,14 +294,14 @@ struct System<'a> {
 
 impl<'a> System<'a> {
     fn from(s: &'a str) -> Self {
-        let workflows = s.split('\n').map(|line| Workflow::from(line)).collect();
+        let workflows = s.split('\n').map(Workflow::from).collect();
         System { workflows }
     }
 
     fn is_part_accepted(&self, part: &Part) -> bool {
         let mut workflow = &self.workflows["in"];
         loop {
-            match workflow.apply(&part) {
+            match workflow.apply(part) {
                 "A" => break true,
                 "R" => break false,
                 name => workflow = &self.workflows[name],
@@ -346,7 +346,7 @@ fn part1(filename: &str) -> u64 {
     let system = System::from(workflows);
     parts
         .split('\n')
-        .map(|line| Part::from(line))
+        .map(Part::from)
         .filter(|part| system.is_part_accepted(part))
         .map(|part| part.ratings.iter().sum::<u64>())
         .sum()
