@@ -72,16 +72,6 @@ impl<'a> Module<'a> {
             }
         }
     }
-
-    fn is_start(&self) -> bool {
-        match &self.ext {
-            ModuleExt::Broadcaster => true,
-            ModuleExt::FlipFlop(ext) => !ext.is_on,
-            ModuleExt::Conjunction(ext) => {
-                ext.last_pulse.values().all(|pulse| pulse == &Pulse::Low)
-            }
-        }
-    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -133,7 +123,7 @@ impl<'a> Modules<'a> {
         Modules { modules }
     }
 
-    fn press_button1(&mut self) -> (usize, usize) {
+    fn press_button(&mut self) -> (usize, usize) {
         let mut low_pulses = 0;
         let mut high_pulses = 0;
         let mut q = VecDeque::new();
@@ -154,28 +144,6 @@ impl<'a> Modules<'a> {
         }
         (low_pulses, high_pulses)
     }
-
-    fn press_button2(&mut self) -> bool {
-        let mut q = VecDeque::new();
-        q.push_back(("broadcaster", "button", Pulse::Low));
-        while let Some((name, from, pulse)) = q.pop_front() {
-            if pulse == Pulse::Low && name == "rx" {
-                return true;
-            }
-            if let Some(module) = self.modules.get_mut(name) {
-                if let Some(pulse) = module.apply(from, pulse) {
-                    for destination in &module.destinations {
-                        q.push_back((destination, name, pulse));
-                    }
-                }
-            }
-        }
-        false
-    }
-
-    fn is_start(&self) -> bool {
-        self.modules.values().all(Module::is_start)
-    }
 }
 
 fn part1(filename: &str) -> usize {
@@ -185,7 +153,7 @@ fn part1(filename: &str) -> usize {
     let mut low_pulses = 0;
     let mut high_pulses = 0;
     for _ in 0..1000 {
-        let (low, high) = modules.press_button1();
+        let (low, high) = modules.press_button();
         low_pulses += low;
         high_pulses += high;
     }
@@ -286,5 +254,5 @@ fn main() {
     //
     // The first time rx turns to HIGH corresponds to the first time all four of ds/dt/bd/cs turn to HHIGH.
     // So it first turns HIGH when the number of button presses is the a smallest number which is a multiple of these four numbers.
-    assert_eq!(lcm_many([3889, 3943, 3761, 3821].into_iter()), 0);
+    assert_eq!(lcm_many([3889, 3943, 3761, 3821].into_iter()), 220366255099387);
 }
