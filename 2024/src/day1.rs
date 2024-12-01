@@ -66,22 +66,68 @@ fn parse_slow(input: &str) -> (Vec<u64>, Vec<u64>) {
     (left, right)
 }
 
-fn parse_5digits(input: &str) -> (Vec<u64>, Vec<u64>) {
-    let mut left = Vec::new();
-    let mut right = Vec::new();
-    for line in input.lines() {
-        let line = line.as_bytes();
-        let l: u64 = parse_number(&line[..5]);
-        let r: u64 = parse_number(&line[8..]);
-        left.push(l);
-        right.push(r);
-    }
-    (left, right)
+macro_rules! make_parse_digits {
+    ($name:ident, $digits:expr) => {
+        fn $name(input: &str) -> (Vec<u64>, Vec<u64>) {
+            let mut left = Vec::new();
+            let mut right = Vec::new();
+            for line in input.lines() {
+                let line = line.as_bytes();
+                let l: u64 = parse_number(&line[..$digits]);
+                let r: u64 = parse_number(&line[line.len() - $digits..]);
+                left.push(l);
+                right.push(r);
+            }
+            (left, right)
+        }
+    };
 }
+
+// generate parse functions for 1 to 20 digits
+make_parse_digits!(parse_1digit, 1);
+make_parse_digits!(parse_2digits, 2);
+make_parse_digits!(parse_3digits, 3);
+make_parse_digits!(parse_4digits, 4);
+make_parse_digits!(parse_5digits, 5);
+make_parse_digits!(parse_6digits, 6);
+make_parse_digits!(parse_7digits, 7);
+make_parse_digits!(parse_8digits, 8);
+make_parse_digits!(parse_9digits, 9);
+make_parse_digits!(parse_10digits, 10);
+make_parse_digits!(parse_11digits, 11);
+make_parse_digits!(parse_12digits, 12);
+make_parse_digits!(parse_13digits, 13);
+make_parse_digits!(parse_14digits, 14);
+make_parse_digits!(parse_15digits, 15);
+make_parse_digits!(parse_16digits, 16);
+make_parse_digits!(parse_17digits, 17);
+make_parse_digits!(parse_18digits, 18);
+make_parse_digits!(parse_19digits, 19);
+make_parse_digits!(parse_20digits, 20);
+
 
 fn parse(input: &str) -> (Vec<u64>, Vec<u64>) {
     match analyze_digits(input) {
+        Some(1) => parse_1digit(input),
+        Some(2) => parse_2digits(input),
+        Some(3) => parse_3digits(input),
+        Some(4) => parse_4digits(input),
         Some(5) => parse_5digits(input),
+        Some(6) => parse_6digits(input),
+        Some(7) => parse_7digits(input),
+        Some(8) => parse_8digits(input),
+        Some(9) => parse_9digits(input),
+        Some(10) => parse_10digits(input),
+        Some(11) => parse_11digits(input),
+        Some(12) => parse_12digits(input),
+        Some(13) => parse_13digits(input),
+        Some(14) => parse_14digits(input),
+        Some(15) => parse_15digits(input),
+        Some(16) => parse_16digits(input),
+        Some(17) => parse_17digits(input),
+        Some(18) => parse_18digits(input),
+        Some(19) => parse_19digits(input),
+        Some(20) => parse_20digits(input),
         _ => parse_slow(input),
     }
 }
