@@ -13,13 +13,13 @@ fn is_5digits(input: &str) -> bool {
         if line.len() != EXPECTED_LINE_LENGTH {
             return false;
         }
-        if line[..5].chars().any(|c| !c.is_digit(10)) {
+        if line[..5].chars().any(|c| !c.is_ascii_digit()) {
             return false;
         }
         if &line[5..8] != "   " {
             return false;
         }
-        if line[8..].chars().any(|c| !c.is_digit(10)) {
+        if line[8..].chars().any(|c| !c.is_ascii_digit()) {
             return false;
         }
     }
