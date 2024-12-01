@@ -26,6 +26,10 @@ fn is_5digits(input: &str) -> bool {
     true
 }
 
+fn parse_number(s: &[u8]) -> u64 {
+    s.iter().fold(0, |acc, c| acc * 10 + (*c - b'0') as u64)
+}
+
 fn parse_slow(input: &str) -> (Vec<u64>, Vec<u64>) {
     let mut left = Vec::new();
     let mut right = Vec::new();
@@ -44,8 +48,8 @@ fn parse_5digits(input: &str) -> (Vec<u64>, Vec<u64>) {
     let mut right = Vec::new();
     for line in input.lines() {
         let line = line.as_bytes();
-        let l: u64 = (0..5).fold(0, |acc, i| acc * 10 + (line[i] - b'0') as u64);
-        let r: u64 = (8..13).fold(0, |acc, i| acc * 10 + (line[i] - b'0') as u64);
+        let l: u64 = parse_number(&line[..5]);
+        let r: u64 = parse_number(&line[8..]);
         left.push(l);
         right.push(r);
     }
