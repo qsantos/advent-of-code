@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::fmt::Display;
 
 fn parse_lists(input: &str) -> (Vec<u64>, Vec<u64>) {
@@ -26,7 +26,7 @@ pub fn part1(input: &str) -> impl Display {
 
 pub fn part2(input: &str) -> impl Display {
     let (left, right) = parse_lists(input);
-    let mut counts = BTreeMap::new();
+    let mut counts = HashMap::new();
     for v in right.into_iter() {
         *counts.entry(v).or_insert(0) += 1;
     }
