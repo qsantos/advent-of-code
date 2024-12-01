@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = { version = "2.7.2", package = "codspeed-criterion-compat" }
 
 [[bench]]
 name = "bench"
