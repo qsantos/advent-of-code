@@ -1,29 +1,52 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-fn is_5digits(input: &str) -> bool {
-    // 5 digits per number, 3 digits per space, 5 digits per number
-    const EXPECTED_LINE_LENGTH: usize = 5 + 3 + 5;
+fn analyze_digits(input: &str) -> Option<usize> {
+    let line = input.lines().next()?;
+    let line_length = line.len();
+    let left_digits = line.chars().take_while(|c| c.is_ascii_digit()).count();
+    let right_digits = line
+        .chars()
+        .rev()
+        .take_while(|c| c.is_ascii_digit())
+        .count();
+    if left_digits != right_digits {
+        return None;
+    }
+    let digits = left_digits;
+    // check if input is multiple of line length
     // +1 for newline
-    if input.len() % (EXPECTED_LINE_LENGTH + 1) != 0 {
-        return false;
+    if input.len() % (line_length + 1) != 0 {
+        // not a regular line length
+        return None;
     }
     // check format of first 3 lines
     for line in input.lines().take(3) {
-        if line.len() != EXPECTED_LINE_LENGTH {
-            return false;
+        let line = line.as_bytes();
+        if line.len() != line_length {
+            // not a regular line length
+            return None;
         }
-        if line[..5].chars().any(|c| !c.is_ascii_digit()) {
-            return false;
+        if line[..digits].iter().any(|c| !c.is_ascii_digit()) {
+            // not just digits in the left column
+            return None;
         }
-        if &line[5..8] != "   " {
-            return false;
+        if line[digits..line_length - digits]
+            .iter()
+            .any(|c| *c != b' ')
+        {
+            // not just spaces in the middle column
+            return None;
         }
-        if line[8..].chars().any(|c| !c.is_ascii_digit()) {
-            return false;
+        if line[line_length - digits..]
+            .iter()
+            .any(|c| !c.is_ascii_digit())
+        {
+            // not just digits in the right column
+            return None;
         }
     }
-    true
+    Some(digits)
 }
 
 fn parse_number(s: &[u8]) -> u64 {
@@ -57,10 +80,9 @@ fn parse_5digits(input: &str) -> (Vec<u64>, Vec<u64>) {
 }
 
 fn parse(input: &str) -> (Vec<u64>, Vec<u64>) {
-    if is_5digits(input) {
-        parse_5digits(input)
-    } else {
-        parse_slow(input)
+    match analyze_digits(input) {
+        Some(5) => parse_5digits(input),
+        _ => parse_slow(input),
     }
 }
 
