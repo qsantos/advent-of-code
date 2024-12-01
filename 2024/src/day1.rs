@@ -74,8 +74,7 @@ pub fn part1(input: &str) -> impl Display {
         .sum::<u64>()
 }
 
-fn part2_slow(input: &str) -> u64 {
-    let (left, right) = parse_slow(input);
+fn part2_slow(left: Vec<u64>, right: Vec<u64>) -> u64 {
     let mut counts = HashMap::new();
     for v in right.into_iter() {
         *counts.entry(v).or_insert(0) += 1;
@@ -85,9 +84,13 @@ fn part2_slow(input: &str) -> u64 {
         .sum::<u64>()
 }
 
-fn part2_5digits(input: &str) -> u64 {
-    let (left, right) = parse_5digits(input);
-    let mut counts = vec![0; 100000];
+fn part2_fast(left: Vec<u64>, right: Vec<u64>) -> u64 {
+    let mut counts = Vec::new();
+    let size = *right.iter().max().unwrap() as usize + 1;
+    if counts.try_reserve(size).is_err() {
+        return part2_slow(left, right);
+    }
+    counts.resize(size, 0u64);
     for v in right.into_iter() {
         counts[v as usize] += 1;
     }
@@ -97,11 +100,8 @@ fn part2_5digits(input: &str) -> u64 {
 }
 
 pub fn part2(input: &str) -> impl Display {
-    if is_5digits(input) {
-        part2_5digits(input)
-    } else {
-        part2_slow(input)
-    }
+    let (left, right) = parse(input);
+    part2_fast(left, right)
 }
 
 #[cfg(test)]
