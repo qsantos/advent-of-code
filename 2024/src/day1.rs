@@ -39,13 +39,7 @@ pub fn part2(input: &str) -> impl Display {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str = r#"3   4
-    4   3
-    2   5
-    1   3
-    3   9
-    3   3"#;
-
+    const EXAMPLE: &str = include_str!("../examples/day1.txt");
     const INPUT: &str = include_str!("../inputs/day1.txt");
 
     #[test]
