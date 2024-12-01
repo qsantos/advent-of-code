@@ -56,12 +56,16 @@ fn parse_5digits(input: &str) -> (Vec<u64>, Vec<u64>) {
     (left, right)
 }
 
-pub fn part1(input: &str) -> impl Display {
-    let (mut left, mut right) = if is_5digits(input) {
+fn parse(input: &str) -> (Vec<u64>, Vec<u64>) {
+    if is_5digits(input) {
         parse_5digits(input)
     } else {
         parse_slow(input)
-    };
+    }
+}
+
+pub fn part1(input: &str) -> impl Display {
+    let (mut left, mut right) = parse(input);
     left.sort();
     right.sort();
     left.into_iter()
