@@ -44,20 +44,8 @@ fn parse_5digits(input: &str) -> (Vec<u64>, Vec<u64>) {
     let mut right = Vec::new();
     for line in input.lines() {
         let line = line.as_bytes();
-        let l: u64 = unsafe {
-            (line.get_unchecked(0) - b'0') as u64 * 10000
-                + (line.get_unchecked(1) - b'0') as u64 * 1000
-                + (line.get_unchecked(2) - b'0') as u64 * 100
-                + (line.get_unchecked(3) - b'0') as u64 * 10
-                + (line.get_unchecked(4) - b'0') as u64
-        };
-        let r: u64 = unsafe {
-            (line.get_unchecked(8) - b'0') as u64 * 10000
-                + (line.get_unchecked(9) - b'0') as u64 * 1000
-                + (line.get_unchecked(10) - b'0') as u64 * 100
-                + (line.get_unchecked(11) - b'0') as u64 * 10
-                + (line.get_unchecked(12) - b'0') as u64
-        };
+        let l: u64 = (0..5).fold(0, |acc, i| acc * 10 + (line[i] - b'0') as u64);
+        let r: u64 = (8..13).fold(0, |acc, i| acc * 10 + (line[i] - b'0') as u64);
         left.push(l);
         right.push(r);
     }
