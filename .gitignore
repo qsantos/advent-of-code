@@ -6,3 +6,8 @@ main-c
 main-cpp
 main-rs
 target/
+
+
+# Added by cargo
+
+/target
