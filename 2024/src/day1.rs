@@ -105,7 +105,6 @@ make_parse_digits!(parse_18digits, 18);
 make_parse_digits!(parse_19digits, 19);
 make_parse_digits!(parse_20digits, 20);
 
-
 fn parse(input: &str) -> (Vec<u64>, Vec<u64>) {
     match analyze_digits(input) {
         Some(1) => parse_1digit(input),
