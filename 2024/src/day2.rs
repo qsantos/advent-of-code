@@ -13,18 +13,15 @@ fn is_safe_decreasing_tolerance(levels: &mut Vec<u32>) -> bool {
         return true;
     };
     let mut original = levels.remove(i - 1);
-    let safe = is_safe_decreasing(levels);
-    if safe {
-        levels.insert(i - 1, original);
+    if is_safe_decreasing(levels) {
         return true;
     }
-    // combine the two operations below in one to avoid moving all elements
-    //levels.insert(i - 1, original);
-    //let original = levels.remove(i);
     (levels[i - 1], original) = (original, levels[i - 1]);
-    let safe = is_safe_decreasing(levels);
+    if is_safe_decreasing(levels) {
+        return true;
+    }
     levels.insert(i, original);
-    safe
+    false
 }
 
 fn find_unsafe_pair_increasing(levels: &[u32]) -> Option<usize> {
@@ -40,14 +37,10 @@ fn is_safe_increasing_tolerance(mut levels: Vec<u32>) -> bool {
         return true;
     };
     let original = levels.remove(i - 1);
-    let safe = is_safe_increasing(&levels);
-    if safe {
+    if is_safe_increasing(&levels) {
         return true;
     }
-    // combine the two operations below in one to avoid moving all elements
     levels[i - 1] = original;
-    //levels.insert(i - 1, original);
-    //levels.remove(i);
     is_safe_increasing(&levels)
 }
 
