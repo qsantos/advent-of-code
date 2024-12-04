@@ -37,6 +37,30 @@ pub fn part1(input: &str) -> impl Display {
     count
 }
 
+pub fn part2(input: &str) -> impl Display {
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
+    let mut count = 0;
+    let rows = grid.len();
+    let cols = grid[0].len();
+    for i in 1..(rows - 1) {
+        for j in 1..(cols - 1) {
+            if grid[i][j] != b'A' {
+                continue;
+            }
+            let (a, b) = (grid[i - 1][j - 1], grid[i + 1][j + 1]);
+            if (a, b) != (b'M', b'S') && (a, b) != (b'S', b'M') {
+                continue;
+            }
+            let (a, b) = (grid[i - 1][j + 1], grid[i + 1][j - 1]);
+            if (a, b) != (b'M', b'S') && (a, b) != (b'S', b'M') {
+                continue;
+            }
+            count += 1;
+        }
+    }
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -48,5 +72,11 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE).to_string(), "18");
         assert_eq!(part1(INPUT).to_string(), "2532");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE).to_string(), "9");
+        assert_eq!(part2(INPUT).to_string(), "1941");
     }
 }
