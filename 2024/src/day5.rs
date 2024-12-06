@@ -1,16 +1,30 @@
+use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fmt::Display;
 
-fn parse(input: &str) -> (HashSet<(u64, u64)>, impl Iterator<Item = Vec<u64>> + use<'_>) {
+fn parse(
+    input: &str,
+) -> (
+    HashSet<(u64, u64)>,
+    impl Iterator<Item = Vec<u64>> + use<'_>,
+) {
     let (orders, updates) = input.split_once("\n\n").unwrap();
-    let orders = orders.lines().map(|line| {
-        let (left, right) = line.split_once("|").unwrap();
-        let left: u64 = left.parse().unwrap();
-        let right: u64 = right.parse().unwrap();
-        (left, right)
-    }).collect();
+    let orders = orders
+        .lines()
+        .map(|line| {
+            let (left, right) = line.split_once("|").unwrap();
+            let left: u64 = left.parse().unwrap();
+            let right: u64 = right.parse().unwrap();
+            (left, right)
+        })
+        .collect();
 
-    let updates = updates.lines().map(|update| update.split(",").map(|page| page.parse().unwrap()).collect());
+    let updates = updates.lines().map(|update| {
+        update
+            .split(",")
+            .map(|page| page.parse().unwrap())
+            .collect()
+    });
 
     (orders, updates)
 }
@@ -29,7 +43,6 @@ fn is_ordered(orders: &HashSet<(u64, u64)>, pages: &[u64]) -> bool {
 pub fn part1(input: &str) -> impl Display {
     let (orders, updates) = parse(input);
     let mut count = 0;
-    'outer:
     for pages in updates {
         if is_ordered(&orders, &pages) {
             count += pages[pages.len() / 2];
@@ -51,12 +64,10 @@ fn quickselect(orders: &HashSet<(u64, u64)>, pages: &mut [u64], k: usize) -> u64
             }
         }
         pages.swap(i, right);
-        if i == k {
-            return pivot;
-        } else if i < k {
-            left = i + 1;
-        } else {
-            right = i - 1;
+        match i.cmp(&k) {
+            Ordering::Equal => return pivot,
+            Ordering::Less => left = i + 1,
+            Ordering::Greater => right = i - 1,
         }
     }
     pages[left]
@@ -67,7 +78,8 @@ pub fn part2(input: &str) -> impl Display {
     let mut count = 0;
     for mut pages in updates {
         if !is_ordered(&orders, &pages) {
-            count += quickselect(&orders, &mut pages, pages.len() / 2);
+            let n = pages.len();
+            count += quickselect(&orders, &mut pages, n / 2);
         }
     }
     count
@@ -89,6 +101,6 @@ mod tests {
     #[test]
     fn test_part2() {
         assert_eq!(part2(EXAMPLE).to_string(), "123");
-        assert_eq!(part2(INPUT).to_string(), "");
+        assert_eq!(part2(INPUT).to_string(), "4260");
     }
 }
