@@ -79,10 +79,10 @@ impl<'a> Grid<'a> {
 
     fn neighbor(&self, (i, j): Position, dir: Direction) -> Option<Position> {
         match dir {
-            Direction::Left => (j > 0).then_some((i, j - 1)),
-            Direction::Up => (i > 0).then_some((i - 1, j)),
-            Direction::Right => (j < self.cols - 1).then_some((i, j + 1)),
-            Direction::Down => (i < self.rows - 1).then_some((i + 1, j)),
+            Direction::Left => (j > 0).then(|| (i, j - 1)),
+            Direction::Up => (i > 0).then(|| (i - 1, j)),
+            Direction::Right => (j < self.cols - 1).then(|| (i, j + 1)),
+            Direction::Down => (i < self.rows - 1).then(|| (i + 1, j)),
         }
     }
 

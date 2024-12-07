@@ -54,14 +54,10 @@ impl Direction {
     fn next_position(&self, rows: usize, cols: usize, position: &Position) -> Option<Position> {
         let &Position { i, j } = position;
         match self {
-            // using then_some() will cause j - 1 to underflow
-            #[allow(clippy::unnecessary_lazy_evaluations)]
             Direction::Left => (j > 0).then(|| Position { i, j: j - 1 }),
-            // using then_some() will cause i - 1 to underflow
-            #[allow(clippy::unnecessary_lazy_evaluations)]
             Direction::Up => (i > 0).then(|| Position { i: i - 1, j }),
-            Direction::Right => (j < cols - 1).then_some(Position { i, j: j + 1 }),
-            Direction::Down => (i < rows - 1).then_some(Position { i: i + 1, j }),
+            Direction::Right => (j < cols - 1).then(|| Position { i, j: j + 1 }),
+            Direction::Down => (i < rows - 1).then(|| Position { i: i + 1, j }),
         }
     }
 }
