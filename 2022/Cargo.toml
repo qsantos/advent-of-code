@@ -1,0 +1,9 @@
+[package]
+name = "aoc-2022"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+regex = "1.7.0"
+rand = "0.8.5"
+slotmap = "1.0.6"
