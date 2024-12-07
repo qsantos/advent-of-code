@@ -16,17 +16,13 @@ fn parse(input: &str) -> Vec<&[u8]> {
     input.trim().as_bytes().split(|&b| b == b'\n').collect()
 }
 
-fn path(grid: &[&[u8]], obstable: Option<(usize, usize)>) -> Option<HashSet<(usize, usize)>> {
+fn count_steps(grid: &[&[u8]]) -> usize {
     let rows = grid.len() as i64;
     let cols = grid[0].len() as i64;
     let (mut i, mut j) = find_start(grid);
     let (mut di, mut dj) = (-1, 0); // up
     let mut visited = HashSet::new();
-    let mut states = HashSet::new();
     while (0..rows).contains(&i) && (0..cols).contains(&j) {
-        if !states.insert((i, j, di, dj)) {
-            return None;
-        }
         visited.insert((i as usize, j as usize));
         loop {
             let (ni, nj) = (i + di, j + dj);
@@ -35,31 +31,79 @@ fn path(grid: &[&[u8]], obstable: Option<(usize, usize)>) -> Option<HashSet<(usi
                 break;
             }
             let (si, sj) = (ni as usize, nj as usize);
-            if Some((si, sj)) != obstable && grid[si][sj] != b'#' {
+            if grid[si][sj] != b'#' {
                 (i, j) = (ni, nj);
                 break;
             }
             (di, dj) = (dj, -di)
         }
     }
-    Some(visited)
+    visited.len()
 }
 
 pub fn part1(input: &str) -> impl Display {
     let grid = parse(input);
-    path(&grid, None).unwrap().len()
+    count_steps(&grid)
+}
+
+fn loops_with_obstacle(grid: &[&[u8]], pos: (i64, i64), dir: (i64, i64), obstacle: (i64, i64)) -> bool {
+    let rows = grid.len() as i64;
+    let cols = grid[0].len() as i64;
+    let (mut i, mut j) = pos;
+    let (mut di, mut dj) = dir;
+    let mut states = HashSet::new();
+    while (0..rows).contains(&i) && (0..cols).contains(&j) {
+        if !states.insert((i, j, di, dj)) {
+            return true;
+        }
+        loop {
+            let (ni, nj) = (i + di, j + dj);
+            if !(0..rows).contains(&ni) || !(0..cols).contains(&nj) {
+                (i, j) = (ni, nj);
+                break;
+            }
+            if (ni, nj) != obstacle && grid[ni as usize][nj as usize] != b'#' {
+                (i, j) = (ni, nj);
+                break;
+            }
+            (di, dj) = (dj, -di)
+        }
+    }
+    false
+}
+
+fn count_loops(grid: &[&[u8]]) -> usize {
+    let rows = grid.len() as i64;
+    let cols = grid[0].len() as i64;
+    let (mut i, mut j) = find_start(grid);
+    let (mut di, mut dj) = (-1, 0); // up
+    let mut count = 0;
+    let mut visited = HashSet::new();
+    while (0..rows).contains(&i) && (0..cols).contains(&j) {
+        visited.insert((i, j));
+        let (ni, nj) = loop {
+            let (ni, nj) = (i + di, j + dj);
+            if !(0..rows).contains(&ni) || !(0..cols).contains(&nj) {
+                break (ni, nj);
+            }
+            let (si, sj) = (ni as usize, nj as usize);
+            if grid[si][sj] != b'#' {
+                break (ni, nj);
+            }
+            (di, dj) = (dj, -di)
+        };
+        // try to put an obstacle on the next cell (unless we already visited it)
+        if !visited.contains(&(ni, nj)) && loops_with_obstacle(grid, (i, j), (di, dj), (ni, nj)) {
+            count += 1;
+        }
+        (i, j) = (ni, nj);
+    }
+    count
 }
 
 pub fn part2(input: &str) -> impl Display {
     let grid = parse(input);
-    let mut count = 0;
-    let visited = path(&grid, None).unwrap();
-    for (i, j) in visited {
-        if path(&grid, Some((i, j))).is_none() {
-            count += 1;
-        }
-    }
-    count
+    count_loops(&grid)
 }
 
 #[cfg(test)]
