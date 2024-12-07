@@ -146,9 +146,8 @@ impl<'a> Modules<'a> {
     }
 }
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let mut modules = Modules::from(&data);
+pub fn part1(input: &str) -> usize {
+    let mut modules = Modules::from(input);
 
     let mut low_pulses = 0;
     let mut high_pulses = 0;

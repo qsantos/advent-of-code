@@ -1,6 +1,4 @@
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 const STRENGTHS1: &[u8; 13] = b"AKQJT98765432";
 const STRENGTHS2: &[u8; 13] = b"AKQT98765432J";
@@ -121,18 +119,13 @@ impl Hand {
     }
 }
 
-pub fn part1(filename: &str) -> usize {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part1(input: &str) -> usize {
     let mut hands = Vec::new();
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let (cards, bid) = line.split_once(' ').unwrap();
         let cards: [u8; 5] = cards.as_bytes().try_into().unwrap();
         let bid: usize = bid.parse().unwrap();
         hands.push((Hand::new1(cards), bid));
-        buf.clear();
     }
     hands.sort();
     hands.reverse();
@@ -143,18 +136,13 @@ pub fn part1(filename: &str) -> usize {
         .sum()
 }
 
-pub fn part2(filename: &str) -> usize {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part2(input: &str) -> usize {
     let mut hands = Vec::new();
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let (cards, bid) = line.split_once(' ').unwrap();
         let cards: [u8; 5] = cards.as_bytes().try_into().unwrap();
         let bid: usize = bid.parse().unwrap();
         hands.push((Hand::new2(cards), bid));
-        buf.clear();
     }
     hands.sort();
     hands.reverse();

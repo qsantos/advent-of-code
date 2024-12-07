@@ -21,9 +21,8 @@ fn parse_input(data: &str) -> (&str, HashMap<&str, [&str; 2]>) {
     (directions, network)
 }
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let (directions, network) = parse_input(&data);
+pub fn part1(input: &str) -> usize {
+    let (directions, network) = parse_input(input);
 
     let mut node = "AAA";
     let mut steps = 0;
@@ -87,9 +86,8 @@ fn detect_cycle(directions: &str, network: &HashMap<&str, [&str; 2]>, start: &st
     unreachable!();
 }
 
-pub fn part2(filename: &str) -> i64 {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let (directions, network) = parse_input(&data);
+pub fn part2(input: &str) -> i64 {
+    let (directions, network) = parse_input(input);
     let nodes: Vec<&str> = network
         .keys()
         .copied()

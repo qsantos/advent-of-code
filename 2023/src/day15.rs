@@ -8,19 +8,17 @@ fn hash(s: &[u8]) -> u8 {
     ret
 }
 
-pub fn part1(filename: &str) -> u64 {
-    let data = std::fs::read_to_string(filename).unwrap();
+pub fn part1(input: &str) -> u64 {
     let mut total = 0u64;
-    for part in data.trim().as_bytes().split(|b| *b == b',') {
+    for part in input.trim().as_bytes().split(|b| *b == b',') {
         total += hash(part) as u64;
     }
     total
 }
 
-pub fn part2(filename: &str) -> u64 {
-    let data = std::fs::read_to_string(filename).unwrap();
+pub fn part2(input: &str) -> u64 {
     let mut boxes: BTreeMap<u8, Vec<(Vec<u8>, u8)>> = BTreeMap::new();
-    for part in data.trim().as_bytes().split(|b| *b == b',') {
+    for part in input.trim().as_bytes().split(|b| *b == b',') {
         let c = *part.last().unwrap();
         if c == b'-' {
             let label = &part[..part.len() - 1];

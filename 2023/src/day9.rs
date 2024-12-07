@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
 fn next_of(numbers: &[i64]) -> i64 {
     if numbers.iter().all(|n| *n == 0) {
         0
@@ -10,16 +7,11 @@ fn next_of(numbers: &[i64]) -> i64 {
     }
 }
 
-pub fn part1(filename: &str) -> i64 {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part1(input: &str) -> i64 {
     let mut sum = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let numbers: Vec<i64> = line.split(' ').map(|n| n.parse().unwrap()).collect();
         sum += next_of(&numbers);
-        buf.clear();
     }
     sum
 }
@@ -33,16 +25,11 @@ fn prev_of(numbers: &[i64]) -> i64 {
     }
 }
 
-pub fn part2(filename: &str) -> i64 {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part2(input: &str) -> i64 {
     let mut sum = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let numbers: Vec<i64> = line.split(' ').map(|n| n.parse().unwrap()).collect();
         sum += prev_of(&numbers);
-        buf.clear();
     }
     sum
 }

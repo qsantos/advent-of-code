@@ -118,9 +118,8 @@ fn show_path(grid: &[&[u8]], previous: &HashMap<State, State>, state: &State) {
 }
 */
 
-pub fn part12(filename: &str, min_steps: usize, max_steps: usize) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
+pub fn part12(input: &str, min_steps: usize, max_steps: usize) -> usize {
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|b| *b == b'\n').collect();
     let rows = grid.len();
     let cols = grid[0].len();
     let mut q = BinaryHeap::new();
@@ -183,12 +182,12 @@ pub fn part12(filename: &str, min_steps: usize, max_steps: usize) -> usize {
     unreachable!()
 }
 
-pub fn part1(filename: &str) -> usize {
-    part12(filename, 1, 3)
+pub fn part1(input: &str) -> usize {
+    part12(input, 1, 3)
 }
 
-pub fn part2(filename: &str) -> usize {
-    part12(filename, 4, 10)
+pub fn part2(input: &str) -> usize {
+    part12(input, 4, 10)
 }
 
 #[cfg(test)]

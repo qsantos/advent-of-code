@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid: Vec<&[u8]> = data.trim().as_bytes().split(|b| *b == b'\n').collect();
+pub fn part1(input: &str) -> usize {
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|b| *b == b'\n').collect();
     let rows = grid.len();
     let cols = grid[0].len();
     let mut total_load = 0;
@@ -83,9 +82,8 @@ fn cycle(mut grid: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
     grid
 }
 
-pub fn part2(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let mut grid: Vec<Vec<u8>> = data
+pub fn part2(input: &str) -> usize {
+    let mut grid: Vec<Vec<u8>> = input
         .trim()
         .as_bytes()
         .split(|b| *b == b'\n')

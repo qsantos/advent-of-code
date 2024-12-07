@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
 const DIGIT_VALUES: [(&str, u32); 20] = [
     ("0", 0),
     ("1", 1),
@@ -24,19 +21,14 @@ const DIGIT_VALUES: [(&str, u32); 20] = [
     ("nine", 9),
 ];
 
-pub fn part1(filename: &str) -> u32 {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part1(input: &str) -> u32 {
     let mut total = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let mut digits = line.chars().filter(|c| c.is_ascii_digit());
         let first = digits.next().unwrap();
         let last = digits.last().unwrap_or(first);
         let value: u32 = format!("{first}{last}").parse().unwrap();
         total += value;
-        buf.clear();
     }
     total
 }
@@ -50,19 +42,14 @@ fn first_digit<I: IntoIterator<Item = usize>>(bytes: &[u8], range: I) -> u32 {
     .unwrap()
 }
 
-pub fn part2(filename: &str) -> u32 {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part2(input: &str) -> u32 {
     let mut total = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let bytes = line.as_bytes();
         let first = first_digit(bytes, 0..bytes.len());
         let last = first_digit(bytes, (0..bytes.len()).rev());
         let value = first * 10 + last;
         total += value;
-        buf.clear();
     }
     total
 }

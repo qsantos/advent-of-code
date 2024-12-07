@@ -20,9 +20,8 @@ fn race_winning_possibilities(time: u64, distance: u64) -> u64 {
     t2 - t1 + 1
 }
 
-pub fn part1(filename: &str) -> u64 {
-    let text = std::fs::read_to_string(filename).unwrap();
-    let mut lines = text.lines();
+pub fn part1(input: &str) -> u64 {
+    let mut lines = input.lines();
     let times = parse_line1(&mut lines);
     let distances = parse_line1(&mut lines);
     let mut ret = 1;
@@ -44,9 +43,8 @@ fn parse_line2<'a, I: Iterator<Item = &'a str>>(lines: &mut I) -> u64 {
         .unwrap()
 }
 
-pub fn part2(filename: &str) -> u64 {
-    let text = std::fs::read_to_string(filename).unwrap();
-    let mut lines = text.lines();
+pub fn part2(input: &str) -> u64 {
+    let mut lines = input.lines();
     let time = parse_line2(&mut lines);
     let distance = parse_line2(&mut lines);
     race_winning_possibilities(time, distance)

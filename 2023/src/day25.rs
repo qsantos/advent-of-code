@@ -75,11 +75,10 @@ fn min_cut<'a>(
     }
 }
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
+pub fn part1(input: &str) -> usize {
     let mut graph = HashMap::new();
     let mut edges = Vec::new();
-    for line in data.lines() {
+    for line in input.lines() {
         let (node, neighbors) = line.split_once(": ").unwrap();
         for neighbor in neighbors.split(' ') {
             edges.push((node, neighbor));

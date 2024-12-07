@@ -1,5 +1,4 @@
 use std::collections::{HashMap, HashSet};
-use std::fs::read_to_string;
 
 macro_rules! test_is_engine {
     ($b:ident, $lines:ident, $i:expr, $j:expr, $di:expr, $dj:expr) => {{
@@ -19,9 +18,8 @@ macro_rules! test_is_engine {
     }};
 }
 
-pub fn part1(filename: &str) -> u32 {
-    let data = read_to_string(filename).unwrap();
-    let lines: Vec<&[u8]> = data.lines().map(|l| l.as_bytes()).collect();
+pub fn part1(input: &str) -> u32 {
+    let lines: Vec<&[u8]> = input.lines().map(|l| l.as_bytes()).collect();
     let mut sum = 0;
     for (i, &line) in lines.iter().enumerate() {
         let mut j = 0;
@@ -73,9 +71,8 @@ macro_rules! add_to_gears {
     }};
 }
 
-pub fn part2(filename: &str) -> u32 {
-    let data = read_to_string(filename).unwrap();
-    let lines: Vec<&[u8]> = data.lines().map(|l| l.as_bytes()).collect();
+pub fn part2(input: &str) -> u32 {
+    let lines: Vec<&[u8]> = input.lines().map(|l| l.as_bytes()).collect();
     let mut gear_ratios = HashMap::new();
     for (i, &line) in lines.iter().enumerate() {
         let mut j = 0;

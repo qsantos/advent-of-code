@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
 
 fn complement(set: HashSet<usize>) -> HashSet<usize> {
     let min = *set.iter().min().unwrap();
@@ -37,16 +35,12 @@ fn distance(
     (bi - ai) + (bj - aj) + expansion
 }
 
-fn solve(filename: &str, expansion_factor: usize) -> usize {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+fn solve(input: &str, expansion_factor: usize) -> usize {
     let mut galaxies = HashSet::new();
     let mut occupied_rows = HashSet::new();
     let mut occupied_cols = HashSet::new();
     let mut i = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         for (j, c) in line.as_bytes().iter().enumerate() {
             if *c == b'#' {
                 galaxies.insert((i, j));
@@ -54,7 +48,6 @@ fn solve(filename: &str, expansion_factor: usize) -> usize {
                 occupied_cols.insert(j);
             }
         }
-        buf.clear();
         i += 1;
     }
     let expanding_rows = complement(occupied_rows);

@@ -56,12 +56,11 @@ struct Trench {
     vertices: Vec<(i64, i64)>,
 }
 
-fn parse_trench<F: Fn(&str) -> (Direction, u64)>(filename: &str, parse_line: F) -> Trench {
+fn parse_trench<F: Fn(&str) -> (Direction, u64)>(input: &str, parse_line: F) -> Trench {
     let mut boundary = 0;
     let mut vertices = Vec::new();
-    let data = std::fs::read_to_string(filename).unwrap();
     let (mut i, mut j) = (0, 0);
-    for line in data.lines() {
+    for line in input.lines() {
         let (direction, distance) = parse_line(line);
         let (di, dj) = direction.to_delta();
         boundary += distance;
@@ -95,12 +94,12 @@ fn solve(trench: &Trench) -> u64 {
     area + 1 + boundary / 2
 }
 
-pub fn part1(filename: &str) -> u64 {
-    solve(&parse_trench(filename, parse_line1))
+pub fn part1(input: &str) -> u64 {
+    solve(&parse_trench(input, parse_line1))
 }
 
-pub fn part2(filename: &str) -> u64 {
-    solve(&parse_trench(filename, parse_line2))
+pub fn part2(input: &str) -> u64 {
+    solve(&parse_trench(input, parse_line2))
 }
 
 #[cfg(test)]

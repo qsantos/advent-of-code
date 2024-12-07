@@ -340,9 +340,8 @@ impl<'a> System<'a> {
     }
 }
 
-pub fn part1(filename: &str) -> u64 {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let (workflows, parts) = data.trim().split_once("\n\n").unwrap();
+pub fn part1(input: &str) -> u64 {
+    let (workflows, parts) = input.trim().split_once("\n\n").unwrap();
     let system = System::from(workflows);
     parts
         .split('\n')
@@ -352,9 +351,8 @@ pub fn part1(filename: &str) -> u64 {
         .sum()
 }
 
-pub fn part2(filename: &str) -> u64 {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let (workflows, _) = data.trim().split_once("\n\n").unwrap();
+pub fn part2(input: &str) -> u64 {
+    let (workflows, _) = input.trim().split_once("\n\n").unwrap();
     let system = System::from(workflows);
     system.acceptable_ratings()
 }

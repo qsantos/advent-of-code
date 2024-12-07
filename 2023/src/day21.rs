@@ -48,16 +48,14 @@ fn find_start(grid: &[&[u8]]) -> (usize, usize) {
         .unwrap()
 }
 
-pub fn part1(filename: &str, steps: usize) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid: Vec<&[u8]> = data.lines().map(|line| line.as_bytes()).collect();
+pub fn part1(input: &str, steps: usize) -> usize {
+    let grid: Vec<&[u8]> = input.lines().map(|line| line.as_bytes()).collect();
     let start = find_start(&grid);
     reachable(&grid, start, steps)
 }
 
-pub fn part2(filename: &str, steps: usize) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid: Vec<&[u8]> = data.lines().map(|line| line.as_bytes()).collect();
+pub fn part2(input: &str, steps: usize) -> usize {
+    let grid: Vec<&[u8]> = input.lines().map(|line| line.as_bytes()).collect();
     let rows = grid.len();
     let cols = grid[0].len();
 

@@ -105,9 +105,8 @@ fn intersects_xy(a: &Hailstone, b: &Hailstone, min: f64, max: f64) -> bool {
     min <= x && x <= max && min <= y && y <= max
 }
 
-pub fn part1(filename: &str, min: f64, max: f64) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let hail: Vec<_> = data.lines().map(Hailstone::from).collect();
+pub fn part1(input: &str, min: f64, max: f64) -> usize {
+    let hail: Vec<_> = input.lines().map(Hailstone::from).collect();
     let mut count = 0;
     for (i, a) in hail.iter().enumerate() {
         for b in &hail[i + 1..] {
@@ -170,9 +169,8 @@ fn evaluate_candidate_vel_xy(
         .next()
 }
 
-pub fn part2(filename: &str) -> f64 {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let hail: Vec<_> = data.lines().map(Hailstone::from).collect();
+pub fn part2(input: &str) -> f64 {
+    let hail: Vec<_> = input.lines().map(Hailstone::from).collect();
     let mut range = 1;
     loop {
         for svx in -range..=range {

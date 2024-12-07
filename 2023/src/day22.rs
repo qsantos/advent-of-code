@@ -36,9 +36,8 @@ impl Brick {
     }
 }
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let mut bricks: Vec<_> = data.lines().map(Brick::from).collect();
+pub fn part1(input: &str) -> usize {
+    let mut bricks: Vec<_> = input.lines().map(Brick::from).collect();
     bricks.sort_by_key(|brick| brick.start.z);
 
     let mut is_unique_support = HashSet::new();
@@ -79,9 +78,8 @@ pub fn part1(filename: &str) -> usize {
     bricks.len() - is_unique_support.len()
 }
 
-pub fn part2(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let mut bricks: Vec<_> = data.lines().map(Brick::from).collect();
+pub fn part2(input: &str) -> usize {
+    let mut bricks: Vec<_> = input.lines().map(Brick::from).collect();
     bricks.sort_by_key(|brick| brick.start.z);
 
     let mut is_supported_by = HashMap::new();

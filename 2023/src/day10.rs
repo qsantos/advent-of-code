@@ -120,9 +120,8 @@ impl<'a> Grid<'a> {
     }
 }
 
-pub fn part1(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid = Grid::from(data.trim().as_bytes());
+pub fn part1(input: &str) -> usize {
+    let grid = Grid::from(input.trim().as_bytes());
     let start = grid.find_start();
     let mut pos = start;
     let mut dir = grid.start_dir(pos);
@@ -137,9 +136,8 @@ pub fn part1(filename: &str) -> usize {
     (steps + 1) / 2
 }
 
-pub fn part2(filename: &str) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
-    let grid = Grid::from(data.trim().as_bytes());
+pub fn part2(input: &str) -> usize {
+    let grid = Grid::from(input.trim().as_bytes());
     let start = grid.find_start();
     let mut pos = start;
     let mut dir = grid.start_dir(pos);

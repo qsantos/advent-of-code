@@ -22,10 +22,9 @@ fn middle_row<R: AsRef<[u8]>>(block: &[R], d: usize) -> Option<usize> {
     None
 }
 
-pub fn part12(filename: &str, d: usize) -> usize {
-    let data = std::fs::read_to_string(filename).unwrap();
+pub fn part12(input: &str, d: usize) -> usize {
     let mut sum = 0;
-    for block in data.trim().split("\n\n") {
+    for block in input.trim().split("\n\n") {
         let block: Vec<&[u8]> = block.as_bytes().split(|b| *b == b'\n').collect();
         if let Some(middle) = middle_row(&block, d) {
             sum += middle * 100;

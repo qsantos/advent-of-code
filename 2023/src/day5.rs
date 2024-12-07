@@ -1,34 +1,32 @@
 use std::fs::File;
 use std::io::{BufReader, BufRead};
 
-pub fn part1(filename: &str) -> u64 {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part1(input: &str) -> u64 {
+    let mut lines = input.lines();
 
     // read seeds
-    assert_ne!(reader.read_line(&mut buf).unwrap(), 0);
     let seeds: Vec<u64> = {
-        let line = buf.trim();
+        let line = lines.next().unwrap();
         let (_, seeds) = line.split_once(": ").unwrap();
         seeds.split_whitespace().map(|seed| seed.parse().unwrap()).collect()
     };
-    buf.clear();
     // empty line
-    assert_ne!(reader.read_line(&mut buf).unwrap(), 0);
-    buf.clear();
+    lines.next().unwrap();
 
     let mut maps = Vec::new();
+    'outer:
     loop {
         // map name
-        assert_ne!(reader.read_line(&mut buf).unwrap(), 0);
-        buf.clear();
+        let _ = lines.next().unwrap();
 
         // rules
         let mut map = Vec::new();
-        while reader.read_line(&mut buf).unwrap() > 1 {
-            let line = buf.trim();
-
+        for line in lines.by_ref() {
+            if line.is_empty() {
+                // next map
+                maps.push(map);
+                continue 'outer;
+            }
             let (starts, len) = line.rsplit_once(' ').unwrap();
             let (dst_start, src_start) = starts.split_once(' ').unwrap();
 
@@ -37,14 +35,10 @@ pub fn part1(filename: &str) -> u64 {
             let len: u64 = len.parse().unwrap();
 
             map.push((dst_start, src_start, len));
-
-            buf.clear();
         }
-        maps.push(map);
-
-        if buf.is_empty() {
-            break;
-        }
+        // end of lines
+        assert!(lines.next().is_none());
+        break;
     }
 
     let mut numbers = Vec::new();

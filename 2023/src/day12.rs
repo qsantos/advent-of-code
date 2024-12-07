@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
 fn arrangements(springs: &[u8], groups: &Vec<i32>) -> usize {
     // c[i][j] is the number of arrangements when looking at the first i springs and j groups
     let mut c = Vec::new();
@@ -44,30 +41,21 @@ fn arrangements(springs: &[u8], groups: &Vec<i32>) -> usize {
     c[springs.len()][groups.len()]
 }
 
-pub fn part1(filename: &str) -> usize {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part1(input: &str) -> usize {
     let mut sum = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let (springs, groups) = line.split_once(' ').unwrap();
         let springs = springs.as_bytes();
         let groups: Vec<i32> = groups.split(',').map(|g| g.parse().unwrap()).collect();
         let c = arrangements(springs, &groups);
         sum += c;
-        buf.clear();
     }
     sum
 }
 
-pub fn part2(filename: &str) -> usize {
-    let f = File::open(filename).unwrap();
-    let mut reader = BufReader::new(f);
-    let mut buf = String::new();
+pub fn part2(input: &str) -> usize {
     let mut sum = 0;
-    while reader.read_line(&mut buf).unwrap() != 0 {
-        let line = buf.trim();
+    for line in input.lines() {
         let (springs, groups) = line.split_once(' ').unwrap();
         let springs = springs.as_bytes();
         let springs = [springs, springs, springs, springs, springs].join(&b'?');
@@ -76,7 +64,6 @@ pub fn part2(filename: &str) -> usize {
         let c = arrangements(&springs, &groups);
         dbg!(line, c);
         sum += c;
-        buf.clear();
     }
     sum
 }
