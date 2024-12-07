@@ -539,9 +539,13 @@ mod tests {
         assert_eq!(part1(INPUT), 133174);
     }
 
+    fn part2_example(input: &str) -> i64 {
+        follow_path(input, State::next_cube_example)
+    }
+
     #[test]
     fn test_part2() {
-        assert_eq!(part2(EXAMPLE), 5031);
+        assert_eq!(part2_example(EXAMPLE), 5031);
         assert_eq!(part2(INPUT), 15410);
     }
 }
