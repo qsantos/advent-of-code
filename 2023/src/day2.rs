@@ -1,4 +1,4 @@
-pub fn part12(input: &str) -> (u32, u32) {
+fn part12(input: &str) -> (u32, u32) {
     let mut sum = 0;
     let mut total_power = 0;
     let mut game_id = 1;
@@ -32,6 +32,14 @@ pub fn part12(input: &str) -> (u32, u32) {
     (sum, total_power)
 }
 
+pub fn part1(input: &str) -> u32 {
+    part12(input).0
+}
+
+pub fn part2(input: &str) -> u32 {
+    part12(input).1
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -41,7 +49,13 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part12(EXAMPLE), (8, 2286));
-        assert_eq!(part12(INPUT), (2156, 66909));
+        assert_eq!(part1(EXAMPLE), 8);
+        assert_eq!(part1(INPUT), 2156);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 2286);
+        assert_eq!(part2(INPUT), 66909);
     }
 }

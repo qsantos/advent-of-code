@@ -203,7 +203,10 @@ mod tests {
         assert_eq!(part1(EXAMPLE3), 8);
         assert_eq!(part1(EXAMPLE4), 8);
         assert_eq!(part1(INPUT), 7102);
+    }
 
+    #[test]
+    fn test_part2() {
         assert_eq!(part2(EXAMPLE1), 1);
         assert_eq!(part2(EXAMPLE2), 1);
         assert_eq!(part2(EXAMPLE3), 1);

@@ -368,7 +368,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE), 19114);
         assert_eq!(part1(INPUT), 382440);
+    }
 
+    #[test]
+    fn test_part2() {
         assert_eq!(part2(EXAMPLE), 167409079868000);
         assert_eq!(part2(INPUT), 136394217540123);
     }

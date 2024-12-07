@@ -135,7 +135,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE, 6), 16);
         assert_eq!(part1(INPUT, 64), 3666);
+    }
 
+    #[test]
+    fn test_part2() {
         // part2 designed for specific format of input; does not work with example
         assert_eq!(part2(INPUT, 26501365), 609298746763952);
     }

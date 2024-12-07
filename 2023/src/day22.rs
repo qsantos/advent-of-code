@@ -171,7 +171,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE), 5);
         assert_eq!(part1(INPUT), 477);
+    }
 
+    #[test]
+    fn test_part2() {
         assert_eq!(part2(EXAMPLE), 7);
         assert_eq!(part2(INPUT), 61555);
     }

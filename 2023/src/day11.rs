@@ -75,7 +75,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(solve(EXAMPLE, 2), 374);
         assert_eq!(solve(INPUT, 2), 9734203);
+    }
 
+    #[test]
+    fn test_part2() {
         assert_eq!(solve(EXAMPLE, 10), 1030);
         assert_eq!(solve(EXAMPLE, 100), 8410);
         assert_eq!(solve(INPUT, 1000000), 568914596391);

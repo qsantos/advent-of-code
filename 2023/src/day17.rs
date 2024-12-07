@@ -202,7 +202,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE1), 102);
         assert_eq!(part1(INPUT), 1128);
+    }
 
+    #[test]
+    fn test_part2() {
         assert_eq!(part2(EXAMPLE1), 94);
         // NOTE: the route shown as an example is not optimal and has a heat loss of 71
         assert_eq!(part2(EXAMPLE2), 55);

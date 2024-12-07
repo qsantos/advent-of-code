@@ -199,7 +199,10 @@ mod tests {
         assert_eq!(part1(EXAMPLE1), 32000000);
         assert_eq!(part1(EXAMPLE2), 11687500);
         assert_eq!(part1(INPUT), 747304011);
+    }
 
+    #[test]
+    fn test_part2() {
         // See circuit.dia, and circuit.svg
         //
         // To turn rx to high, vr needs to turn to high
