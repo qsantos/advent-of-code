@@ -64,6 +64,14 @@ fn solve(input: &str, expansion_factor: usize) -> usize {
     sum / 2
 }
 
+pub fn part1(input: &str) -> usize {
+    solve(input, 2)
+}
+
+pub fn part2(input: &str) -> usize {
+    solve(input, 1000000)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -73,14 +81,14 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve(EXAMPLE, 2), 374);
-        assert_eq!(solve(INPUT, 2), 9734203);
+        assert_eq!(part1(EXAMPLE), 374);
+        assert_eq!(part1(INPUT), 9734203);
     }
 
     #[test]
     fn test_part2() {
         assert_eq!(solve(EXAMPLE, 10), 1030);
         assert_eq!(solve(EXAMPLE, 100), 8410);
-        assert_eq!(solve(INPUT, 1000000), 568914596391);
+        assert_eq!(part2(INPUT), 568914596391);
     }
 }
