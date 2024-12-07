@@ -183,7 +183,7 @@ fn main() {
     assert_eq!(part1("example"), 35);
     assert_eq!(part1("input"), 484023871);
 
-    println!("{}", part2("example"));
-    println!("{}", part2("input"));
+    assert_eq!(part2("example"), 46);
+    assert_eq!(part2("input"), 46294175);
 
 }

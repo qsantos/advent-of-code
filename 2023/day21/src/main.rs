@@ -130,5 +130,6 @@ fn main() {
     assert_eq!(part1("example", 6), 16);
     assert_eq!(part1("input", 64), 3666);
 
-    assert_eq!(part2("input", 26501365), 0);
+    // part2 designed for specific format of input; does not work with example
+    assert_eq!(part2("input", 26501365), 609298746763952);
 }
