@@ -66,8 +66,7 @@ fn measure_tower(input: &str, iterations: i64) -> i64 {
     // map state to (iteration, tower height)
     let mut last_seen = HashMap::new();
 
-    let mut occupied = Vec::new();
-    occupied.resize(50, 0);
+    let mut occupied = vec![0; 50];
     let mut occupied_bottom = MARGIN_BOTTOM + TALLEST_ROCK - (occupied.len() as i64);
     let mut top = 0;
     let mut current_rock = 0;

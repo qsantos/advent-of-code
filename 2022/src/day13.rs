@@ -9,7 +9,7 @@ enum Value {
 
 impl Value {
     fn read(s: &str) -> Value {
-        fn parse_value(s: &Vec<char>, i: &mut usize) -> Value {
+        fn parse_value(s: &[char], i: &mut usize) -> Value {
             if s[*i] == '[' {
                 let mut v = Vec::new();
                 *i += 1;
@@ -56,7 +56,7 @@ impl PartialOrd for Value {
     }
 }
 
-fn vec_cmp<T>(a: &Vec<T>, b: &Vec<T>) -> Ordering
+fn vec_cmp<T>(a: &[T], b: &[T]) -> Ordering
 where
     T: PartialOrd,
 {

@@ -48,7 +48,7 @@ impl Blueprint {
                 .unwrap();
         }
         // of course, except for obsidian
-        max_robots[3] = std::u32::MAX;
+        max_robots[3] = u32::MAX;
 
         let mut best = 0;
         let mut q = VecDeque::new();
