@@ -489,12 +489,11 @@ impl Instruction {
     }
 }
 
-fn follow_path<F>(filename: &str, next_function: F) -> i64
+fn follow_path<F>(input: &str, next_function: F) -> i64
 where
     F: Fn(&State, &Board) -> State,
 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let (board, instructions) = contents.trim_end().split_once("\n\n").unwrap();
+    let (board, instructions) = input.trim_end().split_once("\n\n").unwrap();
     let board = Board::from(board);
     let regex = Regex::new(r"(\d+|L|R)").unwrap();
     let instructions: Vec<Instruction> = regex
@@ -519,12 +518,30 @@ where
     state.value()
 }
 
-fn main() {
-    // puzzle 1
-    assert_eq!(follow_path("example", State::next_torus), 6032);
-    assert_eq!(follow_path("input", State::next_torus), 133174);
+pub fn part1(input: &str) -> i64 {
+    follow_path(input, State::next_torus)
+}
 
-    // puzzle 2
-    assert_eq!(follow_path("example", State::next_cube_example), 5031);
-    assert_eq!(follow_path("input", State::next_cube_input), 15410);
+pub fn part2(input: &str) -> i64 {
+    follow_path(input, State::next_cube_input)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day22.txt");
+    const INPUT: &str = include_str!("../inputs/day22.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 6032);
+        assert_eq!(part1(INPUT), 133174);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 5031);
+        assert_eq!(part2(INPUT), 15410);
+    }
 }

@@ -91,11 +91,6 @@ impl World {
         }
     }
 
-    fn read_file(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
-        World::read(&contents)
-    }
-
     fn fill_with_sand_without_bottom(&mut self) -> u64 {
         fn aux(world: &mut World, c: Coord) -> (u64, bool) {
             if world.occupied.contains(&c) {
@@ -167,25 +162,30 @@ impl World {
     }
 }
 
-fn count_without_bottom(filename: &str) -> u64 {
-    World::read_file(filename).fill_with_sand_without_bottom()
+pub fn part1(input: &str) -> u64 {
+    World::read(input).fill_with_sand_without_bottom()
 }
 
-fn count_with_bottom(filename: &str) -> u64 {
-    World::read_file(filename).fill_with_sand_with_bottom()
+pub fn part2(input: &str) -> u64 {
+    World::read(input).fill_with_sand_with_bottom()
 }
 
-fn puzzle1() {
-    assert_eq!(count_without_bottom("example"), 24);
-    assert_eq!(count_without_bottom("input"), 655);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(count_with_bottom("example"), 93);
-    assert_eq!(count_with_bottom("input"), 26484);
-}
+    const EXAMPLE: &str = include_str!("../examples/day14.txt");
+    const INPUT: &str = include_str!("../inputs/day14.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 24);
+        assert_eq!(part1(INPUT), 655);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 93);
+        assert_eq!(part2(INPUT), 26484);
+    }
 }

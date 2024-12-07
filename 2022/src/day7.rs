@@ -39,12 +39,11 @@ enum FSNode {
 }
 
 impl FSNode {
-    fn from_commands(filename: &str) -> Self {
+    fn from_commands(input: &str) -> Self {
         let root = FSNode::Directory(DirectoryNode::new("/"));
         let root = Rc::new(RefCell::new(root));
-        let contents = std::fs::read_to_string(filename).unwrap();
         let mut current_path = vec![Rc::clone(&root)];
-        let mut lines = contents.lines().peekable();
+        let mut lines = input.lines().peekable();
         while let Some(command) = lines.next() {
             if command == "$ cd /" {
                 current_path.clear();
@@ -164,29 +163,35 @@ impl FSNode {
     }
 }
 
-fn small_dirs(filename: &str) -> u32 {
-    let fs = FSNode::from_commands(filename);
+pub fn part1(input: &str) -> u32 {
+    let fs = FSNode::from_commands(input);
     fs.sizes_below(100_000)
 }
 
-fn smallest_big_enough(filename: &str) -> u32 {
+pub fn part2(input: &str) -> u32 {
     let total_space = 70_000_000;
     let needed_space = 30_000_000;
-    let fs = FSNode::from_commands(filename);
+    let fs = FSNode::from_commands(input);
     let missing_space = needed_space - (total_space - fs.total_size());
     fs.smallest_above(missing_space).unwrap()
 }
 
-fn puzzle1() {
-    assert_eq!(small_dirs("example"), 95437);
-    assert_eq!(small_dirs("input"), 2104783);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(smallest_big_enough("example"), 24933642);
-    assert_eq!(smallest_big_enough("input"), 5883165);
-}
-fn main() {
-    puzzle1();
-    puzzle2();
+    const EXAMPLE: &str = include_str!("../examples/day7.txt");
+    const INPUT: &str = include_str!("../inputs/day7.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 95437);
+        assert_eq!(part1(INPUT), 2104783);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 24933642);
+        assert_eq!(part2(INPUT), 5883165);
+    }
 }

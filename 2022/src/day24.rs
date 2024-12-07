@@ -14,12 +14,11 @@ struct Map {
 }
 
 impl Map {
-    fn from(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
+    fn from(input: &str) -> Self {
         let mut rows = 0;
         let mut cols = 0;
         let mut blizzards = Vec::new();
-        for (i, line) in contents.lines().skip(1).enumerate() {
+        for (i, line) in input.lines().skip(1).enumerate() {
             let i = i as i32;
             for (j, c) in line.chars().skip(1).enumerate() {
                 let j = j as i32;
@@ -98,15 +97,15 @@ impl Map {
     }
 }
 
-fn direct_path(filename: &str) -> i32 {
-    let map = Map::from(filename);
+pub fn part1(input: &str) -> i32 {
+    let map = Map::from(input);
     map.find_path(0, (-1, 0), (map.rows - 1, map.cols - 1))
         .unwrap()
         + 1
 }
 
-fn there_and_back_and_there_again(filename: &str) -> i32 {
-    let map = Map::from(filename);
+pub fn part2(input: &str) -> i32 {
+    let map = Map::from(input);
     let a = map
         .find_path(0, (-1, 0), (map.rows - 1, map.cols - 1))
         .unwrap()
@@ -120,12 +119,22 @@ fn there_and_back_and_there_again(filename: &str) -> i32 {
     c
 }
 
-fn main() {
-    // part 1
-    assert_eq!(direct_path("example"), 18);
-    assert_eq!(direct_path("input"), 326);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    // part 2
-    assert_eq!(there_and_back_and_there_again("example"), 54);
-    assert_eq!(there_and_back_and_there_again("input"), 976);
+    const EXAMPLE: &str = include_str!("../examples/day24.txt");
+    const INPUT: &str = include_str!("../inputs/day24.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 18);
+        assert_eq!(part1(INPUT), 326);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 54);
+        assert_eq!(part2(INPUT), 976);
+    }
 }

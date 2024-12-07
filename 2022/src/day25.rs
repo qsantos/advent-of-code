@@ -47,13 +47,21 @@ fn to_snafu_number(mut n: i64) -> String {
     ret.chars().rev().collect()
 }
 
-fn sum(filename: &str) -> String {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let sum = contents.lines().map(from_snafu_number).sum::<i64>();
+pub fn part1(input: &str) -> String {
+    let sum = input.lines().map(from_snafu_number).sum::<i64>();
     to_snafu_number(sum)
 }
 
-fn main() {
-    assert_eq!(sum("example"), "2=-1=0");
-    assert_eq!(sum("input"), "2--1=0=-210-1=00=-=1");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day25.txt");
+    const INPUT: &str = include_str!("../inputs/day25.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), "2=-1=0");
+        assert_eq!(part1(INPUT), "2--1=0=-210-1=00=-=1");
+    }
 }

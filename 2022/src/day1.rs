@@ -1,13 +1,7 @@
-use std::fs::File;
-use std::io::{prelude::BufRead, BufReader};
-
-fn read_elves(filename: &str) -> Vec<i32> {
+fn read_elves(input: &str) -> Vec<i32> {
     let mut ret = vec![];
-    let file = File::open(filename).expect("Could not open the file");
-    let reader = BufReader::new(file);
     let mut current_elf = 0;
-    for line in reader.lines() {
-        let line = line.expect("Failed to read line");
+    for line in input.lines() {
         if line.is_empty() {
             ret.push(current_elf);
             current_elf = 0;
@@ -20,28 +14,33 @@ fn read_elves(filename: &str) -> Vec<i32> {
     ret
 }
 
-fn most_caloric_elf(filename: &str) -> i32 {
-    let elves = read_elves(filename);
+pub fn part1(input: &str) -> i32 {
+    let elves = read_elves(input);
     *elves.iter().max().expect("No elves!")
 }
 
-fn puzzle1() {
-    assert_eq!(most_caloric_elf("example"), 24000);
-    assert_eq!(most_caloric_elf("input"), 69310);
-}
-
-fn most_caloric_elves(filename: &str, count: usize) -> i32 {
-    let mut elves = read_elves(filename);
+pub fn part2(input: &str, count: usize) -> i32 {
+    let mut elves = read_elves(input);
     elves.sort();
     elves.iter().rev().take(count).sum()
 }
 
-fn puzzle2() {
-    assert_eq!(most_caloric_elves("example", 3), 45000);
-    assert_eq!(most_caloric_elves("input", 3), 206104);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    const EXAMPLE: &str = include_str!("../examples/day1.txt");
+    const INPUT: &str = include_str!("../inputs/day1.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 24000);
+        assert_eq!(part1(INPUT), 69310);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE, 3), 45000);
+        assert_eq!(part2(INPUT, 3), 206104);
+    }
 }

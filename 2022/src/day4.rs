@@ -23,12 +23,11 @@ impl Range {
     }
 }
 
-fn count_relations<T>(filename: &str, relation: T) -> i32
+fn count_relations<T>(input: &str, relation: T) -> i32
 where
     T: Fn(&Range, &Range) -> bool,
 {
-    std::fs::read_to_string(filename)
-        .unwrap()
+    input
         .lines()
         .map(|line| {
             let parts: Vec<&str> = line.split(',').collect();
@@ -40,17 +39,30 @@ where
         .sum()
 }
 
-fn puzzle1() {
-    assert_eq!(count_relations("example", Range::contains), 2);
-    assert_eq!(count_relations("input", Range::contains), 540);
+pub fn part1(input: &str) -> i32 {
+    count_relations(input, Range::contains)
 }
 
-fn puzzle2() {
-    assert_eq!(count_relations("example", Range::overlaps), 4);
-    assert_eq!(count_relations("input", Range::overlaps), 872);
+pub fn part2(input: &str) -> i32 {
+    count_relations(input, Range::overlaps)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day4.txt");
+    const INPUT: &str = include_str!("../inputs/day4.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 2);
+        assert_eq!(part1(INPUT), 540);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 4);
+        assert_eq!(part2(INPUT), 872);
+    }
 }

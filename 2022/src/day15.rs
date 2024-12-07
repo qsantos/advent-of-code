@@ -68,9 +68,8 @@ impl IntervalBound {
     }
 }
 
-fn count_not_beacons_at(filename: &str, y: i64) -> i64 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let sensors: Vec<Sensor> = contents.lines().map(Sensor::read).collect();
+pub fn part1(input: &str, y: i64) -> i64 {
+    let sensors: Vec<Sensor> = input.lines().map(Sensor::read).collect();
     let mut bounds = Vec::new();
     for sensor in sensors {
         let dy = sensor.position.y.abs_diff(y);
@@ -106,9 +105,8 @@ fn count_not_beacons_at(filename: &str, y: i64) -> i64 {
     count
 }
 
-fn find_distress_beacon(filename: &str, size: i64) -> i64 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let sensors: Vec<Sensor> = contents.lines().map(Sensor::read).collect();
+pub fn part2(input: &str, size: i64) -> i64 {
+    let sensors: Vec<Sensor> = input.lines().map(Sensor::read).collect();
 
     for y in 0..size {
         let mut bounds = Vec::new();
@@ -139,17 +137,22 @@ fn find_distress_beacon(filename: &str, size: i64) -> i64 {
     unreachable!();
 }
 
-fn puzzle1() {
-    assert_eq!(count_not_beacons_at("example", 10), 26);
-    assert_eq!(count_not_beacons_at("input", 2_000_000), 4_582_667);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(find_distress_beacon("example", 20), 56000011);
-    assert_eq!(find_distress_beacon("input", 4_000_000), 10961118625406);
-}
+    const EXAMPLE: &str = include_str!("../examples/day15.txt");
+    const INPUT: &str = include_str!("../inputs/day15.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE, 10), 26);
+        assert_eq!(part1(INPUT, 2_000_000), 4_582_667);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE, 20), 56000011);
+        assert_eq!(part2(INPUT, 4_000_000), 10961118625406);
+    }
 }

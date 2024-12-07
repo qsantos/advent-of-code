@@ -1,8 +1,7 @@
 use std::collections::HashSet;
 
-fn read_grid(filename: &str) -> Vec<Vec<i32>> {
-    std::fs::read_to_string(filename)
-        .unwrap()
+fn read_grid(input: &str) -> Vec<Vec<i32>> {
+    input
         .lines()
         .map(|line| {
             line.chars()
@@ -12,8 +11,8 @@ fn read_grid(filename: &str) -> Vec<Vec<i32>> {
         .collect()
 }
 
-fn count_visible_trees(filename: &str) -> usize {
-    let grid = read_grid(filename);
+pub fn part1(input: &str) -> usize {
+    let grid = read_grid(input);
     let rows = grid.len();
     let cols = grid[0].len();
 
@@ -68,11 +67,6 @@ fn count_visible_trees(filename: &str) -> usize {
     visible_trees.len()
 }
 
-fn puzzle1() {
-    assert_eq!(count_visible_trees("example"), 21);
-    assert_eq!(count_visible_trees("input"), 1812);
-}
-
 struct TakeWhileInclusive<I, P> {
     iter: I,
     flag: bool,
@@ -117,8 +111,8 @@ where
     TakeWhileInclusive::new(iter, predicate)
 }
 
-fn highest_scenic_score(filename: &str) -> usize {
-    let grid = read_grid(filename);
+pub fn part2(input: &str) -> usize {
+    let grid = read_grid(input);
     let rows = grid.len();
     let cols = grid[0].len();
 
@@ -140,12 +134,22 @@ fn highest_scenic_score(filename: &str) -> usize {
         .unwrap()
 }
 
-fn puzzle2() {
-    assert_eq!(highest_scenic_score("example"), 8);
-    assert_eq!(highest_scenic_score("input"), 315495);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    const EXAMPLE: &str = include_str!("../examples/day8.txt");
+    const INPUT: &str = include_str!("../inputs/day8.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 21);
+        assert_eq!(part1(INPUT), 1812);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 8);
+        assert_eq!(part2(INPUT), 315495);
+    }
 }

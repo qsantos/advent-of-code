@@ -19,14 +19,8 @@ impl Coord {
 struct Grid(Vec<Vec<char>>);
 
 impl Grid {
-    fn read(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
-        Grid(
-            contents
-                .lines()
-                .map(|line| line.chars().collect())
-                .collect(),
-        )
+    fn read(input: &str) -> Self {
+        Grid(input.lines().map(|line| line.chars().collect()).collect())
     }
 
     fn contains(&self, coord: &Coord) -> bool {
@@ -61,8 +55,8 @@ impl Grid {
     }
 }
 
-fn count_steps(filename: &str, target: char) -> Option<u32> {
-    let grid = Grid::read(filename);
+fn count_steps(input: &str, target: char) -> Option<u32> {
+    let grid = Grid::read(input);
     let start = grid.find_char('E').unwrap();
 
     let mut seen = HashSet::new();
@@ -90,17 +84,30 @@ fn count_steps(filename: &str, target: char) -> Option<u32> {
     None
 }
 
-fn puzzle1() {
-    assert_eq!(count_steps("example", 'S').unwrap(), 31);
-    assert_eq!(count_steps("input", 'S').unwrap(), 408);
+pub fn part1(input: &str) -> u32 {
+    count_steps(input, 'S').unwrap()
 }
 
-fn puzzle2() {
-    assert_eq!(count_steps("example", 'a').unwrap(), 29);
-    assert_eq!(count_steps("input", 'a').unwrap(), 399);
+pub fn part2(input: &str) -> u32 {
+    count_steps(input, 'a').unwrap()
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day12.txt");
+    const INPUT: &str = include_str!("../inputs/day12.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 31);
+        assert_eq!(part1(INPUT), 408);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 29);
+        assert_eq!(part2(INPUT), 399);
+    }
 }

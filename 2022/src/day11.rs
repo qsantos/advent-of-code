@@ -176,29 +176,41 @@ fn top_monkeys(monkeys: &[Monkey]) -> u64 {
     a * b
 }
 
-fn find_top_monkeys<F>(filename: &str, n_rounds: usize, round: F) -> u64
+fn find_top_monkeys<F>(input: &str, n_rounds: usize, round: F) -> u64
 where
     F: Fn(&mut [Monkey]),
 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let mut monkeys: Vec<_> = contents.split("\n\n").map(Monkey::read).collect();
+    let mut monkeys: Vec<_> = input.split("\n\n").map(Monkey::read).collect();
     for _ in 0..n_rounds {
         round(&mut monkeys);
     }
     top_monkeys(&monkeys)
 }
 
-fn puzzle1() {
-    assert_eq!(find_top_monkeys("example", 20, round1), 10605);
-    assert_eq!(find_top_monkeys("input", 20, round1), 120756);
+pub fn part1(input: &str) -> u64 {
+    find_top_monkeys(input, 20, round1)
 }
 
-fn puzzle2() {
-    assert_eq!(find_top_monkeys("example", 10_000, round2), 2713310158);
-    assert_eq!(find_top_monkeys("input", 10_000, round2), 39109444654);
+pub fn part2(input: &str) -> u64 {
+    find_top_monkeys(input, 10_000, round2)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day11.txt");
+    const INPUT: &str = include_str!("../inputs/day11.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 10605);
+        assert_eq!(part1(INPUT), 120756);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 2713310158);
+        assert_eq!(part2(INPUT), 39109444654);
+    }
 }

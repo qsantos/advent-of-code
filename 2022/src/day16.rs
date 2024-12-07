@@ -51,12 +51,11 @@ struct State {
 }
 
 impl Cave {
-    fn read(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
+    fn read(input: &str) -> Self {
         let mut tunnels = HashMap::new();
         let r = Regex::new(r"Valve (\S*) has flow rate=(\d+); tunnels? leads? to valves? (.*)")
             .unwrap();
-        for line in contents.lines() {
+        for line in input.lines() {
             let caps = r.captures(line).unwrap();
             let id = ValveID::from(&caps[1]);
             let flow_rate = caps[2].parse().unwrap();
@@ -162,14 +161,14 @@ impl Cave {
     }
 }
 
-fn single(filename: &str) -> u32 {
-    let cave = Cave::read(filename);
+pub fn part1(input: &str) -> u32 {
+    let cave = Cave::read(input);
     let end_states = cave.end_states(30);
     *end_states.values().max().unwrap()
 }
 
-fn pair(filename: &str) -> u32 {
-    let cave = Cave::read(filename);
+pub fn part2(input: &str) -> u32 {
+    let cave = Cave::read(input);
     let end_states = cave.end_states(26);
 
     let mut best = 0;
@@ -183,17 +182,22 @@ fn pair(filename: &str) -> u32 {
     best
 }
 
-fn puzzle1() {
-    assert_eq!(single("example"), 1651);
-    assert_eq!(single("input"), 1940);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(pair("example"), 1707);
-    assert_eq!(pair("input"), 2469);
-}
+    const EXAMPLE: &str = include_str!("../examples/day16.txt");
+    const INPUT: &str = include_str!("../inputs/day16.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 1651);
+        assert_eq!(part1(INPUT), 1940);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 1707);
+        assert_eq!(part2(INPUT), 2469);
+    }
 }

@@ -83,10 +83,9 @@ impl Ord for Value {
     }
 }
 
-fn right_order_pairs(filename: &str) -> usize {
-    let contents = std::fs::read_to_string(filename).unwrap();
+pub fn part1(input: &str) -> usize {
     let mut total = 0;
-    for (i, pair) in contents.split("\n\n").enumerate() {
+    for (i, pair) in input.split("\n\n").enumerate() {
         let values: Vec<_> = pair.lines().map(Value::read).collect();
         assert_eq!(values.len(), 2);
         let left = &values[0];
@@ -98,11 +97,10 @@ fn right_order_pairs(filename: &str) -> usize {
     total
 }
 
-fn order_packets(filename: &str) -> usize {
-    let contents = std::fs::read_to_string(filename).unwrap();
+pub fn part2(input: &str) -> usize {
     let divider1 = Value::read("[[2]]");
     let divider2 = Value::read("[[6]]");
-    let mut packets: Vec<Value> = contents
+    let mut packets: Vec<Value> = input
         .lines()
         .filter(|s| !s.is_empty())
         .map(Value::read)
@@ -115,17 +113,22 @@ fn order_packets(filename: &str) -> usize {
     idx1 * idx2
 }
 
-fn puzzle1() {
-    assert_eq!(right_order_pairs("example"), 13);
-    assert_eq!(right_order_pairs("input"), 5393);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(order_packets("example"), 140);
-    assert_eq!(order_packets("input"), 26712);
-}
+    const EXAMPLE: &str = include_str!("../examples/day13.txt");
+    const INPUT: &str = include_str!("../inputs/day13.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 13);
+        assert_eq!(part1(INPUT), 5393);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 140);
+        assert_eq!(part2(INPUT), 26712);
+    }
 }

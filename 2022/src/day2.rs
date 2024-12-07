@@ -1,6 +1,3 @@
-use std::fs::File;
-use std::io::{prelude::BufRead, BufReader};
-
 #[derive(Clone)]
 enum Move {
     Rock,
@@ -98,15 +95,12 @@ impl RoundResult {
     }
 }
 
-fn score_of_file<F>(filename: &str, move_selector: F) -> i32
+fn score_of_file<F>(input: &str, move_selector: F) -> i32
 where
     F: Fn(&Move, &str) -> Move,
 {
-    let file = File::open(filename).expect("Could not open file");
-    let reader = BufReader::new(file);
     let mut total_score = 0;
-    for line in reader.lines() {
-        let line = line.expect("Could not read line");
+    for line in input.lines() {
         let parts = line.split(' ');
         let parts: Vec<&str> = parts.collect();
         assert!(parts.len() == 2);
@@ -117,20 +111,33 @@ where
     total_score
 }
 
-fn puzzle1() {
+pub fn part1(input: &str) -> i32 {
     let move_selector = |_opponent_move: &Move, xyz: &str| Move::from_xyz(xyz);
-    assert_eq!(score_of_file("example", move_selector), 15);
-    assert_eq!(score_of_file("input", move_selector), 12855);
+    score_of_file(input, move_selector)
 }
 
-fn puzzle2() {
+pub fn part2(input: &str) -> i32 {
     let move_selector =
         |opponent_move: &Move, xyz: &str| RoundResult::from_xyz(xyz).needed_move(opponent_move);
-    assert_eq!(score_of_file("example", move_selector), 12);
-    assert_eq!(score_of_file("input", move_selector), 13726);
+    score_of_file(input, move_selector)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day2.txt");
+    const INPUT: &str = include_str!("../inputs/day2.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 15);
+        assert_eq!(part1(INPUT), 12855);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 12);
+        assert_eq!(part2(INPUT), 13726);
+    }
 }

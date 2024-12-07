@@ -117,35 +117,38 @@ impl Blueprint {
     }
 }
 
-fn total_quality_level(filename: &str) -> u32 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let blueprints = contents.lines().map(Blueprint::parse);
+pub fn part1(input: &str) -> u32 {
+    let blueprints = input.lines().map(Blueprint::parse);
     blueprints
         .enumerate()
         .map(|(i, blueprint)| blueprint.max_geodes(24) * (i as u32 + 1))
         .sum()
 }
 
-fn first_three(filename: &str) -> u32 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let blueprints = contents.lines().map(Blueprint::parse);
+pub fn part2(input: &str) -> u32 {
+    let blueprints = input.lines().map(Blueprint::parse);
     blueprints
         .take(3)
         .map(|blueprint| blueprint.max_geodes(32))
         .product()
 }
 
-fn puzzle1() {
-    assert_eq!(total_quality_level("example"), 33);
-    assert_eq!(total_quality_level("input"), 1009);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(first_three("example"), 3472);
-    assert_eq!(first_three("input"), 18816);
-}
+    const EXAMPLE: &str = include_str!("../examples/day19.txt");
+    const INPUT: &str = include_str!("../inputs/day19.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 33);
+        assert_eq!(part1(INPUT), 1009);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 3472);
+        assert_eq!(part2(INPUT), 18816);
+    }
 }

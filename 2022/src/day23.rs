@@ -6,10 +6,9 @@ struct Elves {
 }
 
 impl Elves {
-    fn from(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
+    fn from(input: &str) -> Self {
         let mut elves = HashSet::new();
-        for (i, line) in contents.lines().enumerate() {
+        for (i, line) in input.lines().enumerate() {
             for (j, c) in line.chars().enumerate() {
                 match c {
                     '.' => (),
@@ -101,26 +100,36 @@ impl Elves {
     }
 }
 
-fn do_rounds(filename: &str, count: usize) -> usize {
-    let mut elves = Elves::from(filename);
+pub fn part1(input: &str, count: usize) -> usize {
+    let mut elves = Elves::from(input);
     for _ in 0..count {
         elves.round();
     }
     elves.count_empty()
 }
 
-fn count_rounds(filename: &str) -> usize {
-    let mut elves = Elves::from(filename);
+pub fn part2(input: &str) -> usize {
+    let mut elves = Elves::from(input);
     while elves.round() {}
     elves.round + 1
 }
 
-fn main() {
-    // puzzle 1
-    assert_eq!(do_rounds("example", 10), 110);
-    assert_eq!(do_rounds("input", 10), 4056);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    // puzzle 1
-    assert_eq!(count_rounds("example"), 20);
-    assert_eq!(count_rounds("input"), 999);
+    const EXAMPLE: &str = include_str!("../examples/day23.txt");
+    const INPUT: &str = include_str!("../inputs/day23.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE, 10), 110);
+        assert_eq!(part1(INPUT, 10), 4056);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 20);
+        assert_eq!(part2(INPUT), 999);
+    }
 }

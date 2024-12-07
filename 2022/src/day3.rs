@@ -1,6 +1,4 @@
 use std::collections::HashSet;
-use std::fs::{read_to_string, File};
-use std::io::{prelude::BufRead, BufReader};
 
 fn char_priority(c: char) -> u32 {
     match c {
@@ -10,12 +8,9 @@ fn char_priority(c: char) -> u32 {
     }
 }
 
-fn priority_of_filename(filename: &str) -> u32 {
+pub fn part1(input: &str) -> u32 {
     let mut total_priority = 0;
-    let file = File::open(filename).expect("Could not open file");
-    let reader = BufReader::new(file);
-    for line in reader.lines() {
-        let line = line.expect("Could not read line");
+    for line in input.lines() {
         assert_eq!(line.len() % 2, 0);
         let (r1, r2) = line.split_at(line.len() / 2);
         let [s1, s2] = [r1, r2].map(|r| r.chars().collect::<HashSet<_>>());
@@ -27,10 +22,9 @@ fn priority_of_filename(filename: &str) -> u32 {
     total_priority
 }
 
-fn badges_of_filename(filename: &str) -> u32 {
+pub fn part2(input: &str) -> u32 {
     let mut total_priority = 0;
-    let contents = read_to_string(filename).expect("Could not read file");
-    let lines: Vec<_> = contents.lines().collect();
+    let lines: Vec<_> = input.lines().collect();
     for group in lines.chunks_exact(3) {
         let d = group
             .iter()
@@ -44,17 +38,22 @@ fn badges_of_filename(filename: &str) -> u32 {
     total_priority
 }
 
-fn puzzle1() {
-    assert_eq!(priority_of_filename("example"), 157);
-    assert_eq!(priority_of_filename("input"), 8493);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(badges_of_filename("example"), 70);
-    assert_eq!(badges_of_filename("input"), 2552);
-}
+    const EXAMPLE: &str = include_str!("../examples/day3.txt");
+    const INPUT: &str = include_str!("../inputs/day3.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 157);
+        assert_eq!(part1(INPUT), 8493);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 70);
+        assert_eq!(part2(INPUT), 2552);
+    }
 }

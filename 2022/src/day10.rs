@@ -1,5 +1,4 @@
-fn signal_strength(filename: &str) -> i32 {
-    let contents = std::fs::read_to_string(filename).unwrap();
+pub fn part1(input: &str) -> i32 {
     let mut cycle = 0;
     let mut regx = 1;
     let mut total_signal_strength = 0;
@@ -11,7 +10,7 @@ fn signal_strength(filename: &str) -> i32 {
         }
     };
 
-    for line in contents.lines() {
+    for line in input.lines() {
         let command: Vec<&str> = line.split(' ').collect();
         let opcode = command[0];
         match opcode {
@@ -28,8 +27,7 @@ fn signal_strength(filename: &str) -> i32 {
     total_signal_strength
 }
 
-fn draw(filename: &str) {
-    let contents = std::fs::read_to_string(filename).unwrap();
+pub fn part2(input: &str) {
     let mut cycle = 0;
     let mut regx = 1;
 
@@ -46,7 +44,7 @@ fn draw(filename: &str) {
         cycle += 1;
     };
 
-    for line in contents.lines() {
+    for line in input.lines() {
         let command: Vec<&str> = line.split(' ').collect();
         let opcode = command[0];
         match opcode {
@@ -62,17 +60,22 @@ fn draw(filename: &str) {
     }
 }
 
-fn puzzle1() {
-    assert_eq!(signal_strength("example"), 13140);
-    assert_eq!(signal_strength("input"), 14540);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    draw("example");
-    draw("input");
-}
+    const EXAMPLE: &str = include_str!("../examples/day10.txt");
+    const INPUT: &str = include_str!("../inputs/day10.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 13140);
+        assert_eq!(part1(INPUT), 14540);
+    }
+
+    #[test]
+    fn test_part2() {
+        part2(EXAMPLE);
+        part2(INPUT);
+    }
 }

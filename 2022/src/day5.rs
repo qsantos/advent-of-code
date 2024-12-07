@@ -68,9 +68,8 @@ impl Action {
     }
 }
 
-fn move_creates(filename: &str, reverse: bool) -> String {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let parts: Vec<&str> = contents.split("\n\n").collect();
+fn move_creates(input: &str, reverse: bool) -> String {
+    let parts: Vec<&str> = input.split("\n\n").collect();
     assert_eq!(parts.len(), 2);
     let mut map = Map::from_str(parts[0]);
     for action in parts[1].lines() {
@@ -80,17 +79,30 @@ fn move_creates(filename: &str, reverse: bool) -> String {
     map.code()
 }
 
-fn puzzle1() {
-    assert_eq!(move_creates("example", true), "CMZ");
-    assert_eq!(move_creates("input", true), "FJSRQCFTN");
+pub fn part1(input: &str) -> String {
+    move_creates(input, true)
 }
 
-fn puzzle2() {
-    assert_eq!(move_creates("example", false), "MCD");
-    assert_eq!(move_creates("input", false), "CJVLJQPHS");
+pub fn part2(input: &str) -> String {
+    move_creates(input, false)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day5.txt");
+    const INPUT: &str = include_str!("../inputs/day5.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), "CMZ");
+        assert_eq!(part1(INPUT), "FJSRQCFTN");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), "MCD");
+        assert_eq!(part2(INPUT), "CJVLJQPHS");
+    }
 }

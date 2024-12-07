@@ -31,9 +31,8 @@ impl Rock {
     }
 }
 
-fn measure_tower(filename: &str, iterations: i64) -> i64 {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let jets: Vec<i64> = contents
+fn measure_tower(input: &str, iterations: i64) -> i64 {
+    let jets: Vec<i64> = input
         .trim()
         .chars()
         .map(|c| match c {
@@ -133,19 +132,30 @@ fn measure_tower(filename: &str, iterations: i64) -> i64 {
     top
 }
 
-fn puzzle1() {
-    let count = 2022;
-    assert_eq!(measure_tower("example", count), 3068);
-    assert_eq!(measure_tower("input", count), 3206);
+pub fn part1(input: &str) -> i64 {
+    measure_tower(input, 2022)
 }
 
-fn puzzle2() {
-    let count = 1_000_000_000_000;
-    assert_eq!(measure_tower("example", count), 1_514_285_714_288);
-    assert_eq!(measure_tower("input", count), 1_602_881_844_347);
+pub fn part2(input: &str) -> i64 {
+    measure_tower(input, 1_000_000_000_000)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day17.txt");
+    const INPUT: &str = include_str!("../inputs/day17.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 3068);
+        assert_eq!(part1(INPUT), 3206);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 1_514_285_714_288);
+        assert_eq!(part2(INPUT), 1_602_881_844_347);
+    }
 }

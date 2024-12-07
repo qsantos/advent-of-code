@@ -33,8 +33,8 @@ impl<T: Eq + Hash> MultiSet<T> {
     }
 }
 
-fn marker_position(filename: &str, marker_length: usize) -> usize {
-    let chars: Vec<char> = std::fs::read_to_string(filename).unwrap().chars().collect();
+fn marker_position(input: &str, marker_length: usize) -> usize {
+    let chars: Vec<char> = input.chars().collect();
     let mut marker_characters = MultiSet::new();
     for i in 0..chars.len() {
         if marker_characters.item_counts.len() == marker_length {
@@ -48,25 +48,42 @@ fn marker_position(filename: &str, marker_length: usize) -> usize {
     unreachable!();
 }
 
-fn puzzle1() {
-    assert_eq!(marker_position("example1", 4), 7);
-    assert_eq!(marker_position("example2", 4), 5);
-    assert_eq!(marker_position("example3", 4), 6);
-    assert_eq!(marker_position("example4", 4), 10);
-    assert_eq!(marker_position("example5", 4), 11);
-    assert_eq!(marker_position("input", 4), 1757);
+pub fn part1(input: &str) -> usize {
+    marker_position(input, 4)
 }
 
-fn puzzle2() {
-    assert_eq!(marker_position("example1", 14), 19);
-    assert_eq!(marker_position("example2", 14), 23);
-    assert_eq!(marker_position("example3", 14), 23);
-    assert_eq!(marker_position("example4", 14), 29);
-    assert_eq!(marker_position("example5", 14), 26);
-    assert_eq!(marker_position("input", 14), 2950);
+pub fn part2(input: &str) -> usize {
+    marker_position(input, 14)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE1: &str = include_str!("../examples/day6-1.txt");
+    const EXAMPLE2: &str = include_str!("../examples/day6-2.txt");
+    const EXAMPLE3: &str = include_str!("../examples/day6-3.txt");
+    const EXAMPLE4: &str = include_str!("../examples/day6-4.txt");
+    const EXAMPLE5: &str = include_str!("../examples/day6-5.txt");
+    const INPUT: &str = include_str!("../inputs/day6.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE1), 7);
+        assert_eq!(part1(EXAMPLE2), 5);
+        assert_eq!(part1(EXAMPLE3), 6);
+        assert_eq!(part1(EXAMPLE4), 10);
+        assert_eq!(part1(EXAMPLE5), 11);
+        assert_eq!(part1(INPUT), 1757);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE1), 19);
+        assert_eq!(part2(EXAMPLE2), 23);
+        assert_eq!(part2(EXAMPLE3), 23);
+        assert_eq!(part2(EXAMPLE4), 29);
+        assert_eq!(part2(EXAMPLE5), 26);
+        assert_eq!(part2(INPUT), 2950);
+    }
 }

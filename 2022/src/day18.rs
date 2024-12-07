@@ -26,9 +26,8 @@ impl Cube {
     }
 }
 
-fn surface(filename: &str) -> usize {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let cubes: HashSet<Cube> = contents.lines().map(Cube::from).collect();
+pub fn part1(input: &str) -> usize {
+    let cubes: HashSet<Cube> = input.lines().map(Cube::from).collect();
     cubes
         .iter()
         .map(|cube| {
@@ -40,9 +39,8 @@ fn surface(filename: &str) -> usize {
         .sum()
 }
 
-fn external_surface(filename: &str) -> usize {
-    let contents = std::fs::read_to_string(filename).unwrap();
-    let cubes: HashSet<Cube> = contents.lines().map(Cube::from).collect();
+pub fn part2(input: &str) -> usize {
+    let cubes: HashSet<Cube> = input.lines().map(Cube::from).collect();
 
     let lower_bounds: Vec<i32> = (0..3)
         .map(|i| cubes.iter().map(|cube| cube.0[i]).min().unwrap() - 1)
@@ -80,17 +78,22 @@ fn external_surface(filename: &str) -> usize {
         .sum()
 }
 
-fn puzzle1() {
-    assert_eq!(surface("example"), 64);
-    assert_eq!(surface("input"), 4340);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-fn puzzle2() {
-    assert_eq!(external_surface("example"), 58);
-    assert_eq!(external_surface("input"), 2468);
-}
+    const EXAMPLE: &str = include_str!("../examples/day18.txt");
+    const INPUT: &str = include_str!("../inputs/day18.txt");
 
-fn main() {
-    puzzle1();
-    puzzle2();
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 64);
+        assert_eq!(part1(INPUT), 4340);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 58);
+        assert_eq!(part2(INPUT), 2468);
+    }
 }

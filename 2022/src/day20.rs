@@ -2,12 +2,11 @@ mod implicit_treap;
 
 use implicit_treap::ImplicitTreap;
 
-fn decrypt(filename: &str, decryption_key: i64, iterations: usize) -> i64 {
-    let contents = std::fs::read_to_string(filename).unwrap();
+fn decrypt(input: &str, decryption_key: i64, iterations: usize) -> i64 {
     let mut treap = ImplicitTreap::new();
     let mut node_keys = Vec::new();
     let mut zero_idx = 0;
-    for (i, line) in contents.lines().enumerate() {
+    for (i, line) in input.lines().enumerate() {
         let number = line.parse::<i64>().unwrap();
         let node_key = treap.push(number * decryption_key);
         node_keys.push(node_key);
@@ -33,17 +32,30 @@ fn decrypt(filename: &str, decryption_key: i64, iterations: usize) -> i64 {
     a + b + c
 }
 
-fn puzzle1() {
-    assert_eq!(decrypt("example", 1, 1), 3);
-    assert_eq!(decrypt("input", 1, 1), 5904);
+pub fn part1(input: &str) -> i64 {
+    decrypt(input, 1, 1)
 }
 
-fn puzzle2() {
-    assert_eq!(decrypt("example", 811589153, 10), 1623178306);
-    assert_eq!(decrypt("input", 811589153, 10), 8332585833851);
+pub fn part2(input: &str) -> i64 {
+    decrypt(input, 811589153, 10)
 }
 
-fn main() {
-    puzzle1();
-    puzzle2();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day20.txt");
+    const INPUT: &str = include_str!("../inputs/day20.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 3);
+        assert_eq!(part1(INPUT), 5904);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 1623178306);
+        assert_eq!(part2(INPUT), 8332585833851);
+    }
 }

@@ -61,10 +61,9 @@ struct Graph {
 }
 
 impl Graph {
-    fn from(filename: &str) -> Self {
-        let contents = std::fs::read_to_string(filename).unwrap();
+    fn from(input: &str) -> Self {
         let mut nodes = HashMap::new();
-        for line in contents.lines() {
+        for line in input.lines() {
             let (name, children) = line.split_once(": ").unwrap();
             let parts: Vec<&str> = children.split(' ').collect();
             let node = match parts.len() {
@@ -177,12 +176,30 @@ impl Graph {
     }
 }
 
-fn main() {
-    // puzzle 1
-    assert_eq!(Graph::from("example").eval(), 152);
-    assert_eq!(Graph::from("input").eval(), 83056452926300);
+pub fn part1(input: &str) -> i64 {
+    Graph::from(input).eval()
+}
 
-    // puzzle 2
-    assert_eq!(Graph::from("example").solve(), 301);
-    assert_eq!(Graph::from("input").solve(), 3469704905529);
+pub fn part2(input: &str) -> i64 {
+    Graph::from(input).solve()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE: &str = include_str!("../examples/day21.txt");
+    const INPUT: &str = include_str!("../inputs/day21.txt");
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(EXAMPLE), 152);
+        assert_eq!(part1(INPUT), 83056452926300);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE), 301);
+        assert_eq!(part2(INPUT), 3469704905529);
+    }
 }
