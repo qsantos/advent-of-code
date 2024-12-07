@@ -187,7 +187,7 @@ impl<'a> Rule<'a> {
     }
 }
 
-impl<'a> Debug for Rule<'a> {
+impl Debug for Rule<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         match self {
             Rule::Conditional(rule) => {
@@ -246,7 +246,7 @@ impl<'a> Workflow<'a> {
     }
 }
 
-impl<'a> Debug for Workflow<'a> {
+impl Debug for Workflow<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let mut it = self.rules.iter();
         if let Some(rule) = it.next() {

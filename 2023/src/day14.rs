@@ -57,7 +57,7 @@ fn rotate(grid: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
     ret
 }
 
-fn total_load(grid: &Vec<Vec<u8>>) -> usize {
+fn total_load(grid: &[Vec<u8>]) -> usize {
     let rows = grid.len();
     let mut total_load = 0;
     for (i, row) in grid.iter().enumerate() {

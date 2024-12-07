@@ -1,4 +1,4 @@
-fn arrangements(springs: &[u8], groups: &Vec<i32>) -> usize {
+fn arrangements(springs: &[u8], groups: &[i32]) -> usize {
     // c[i][j] is the number of arrangements when looking at the first i springs and j groups
     let mut c = Vec::new();
 

@@ -39,8 +39,7 @@ fn solve(input: &str, expansion_factor: usize) -> usize {
     let mut galaxies = HashSet::new();
     let mut occupied_rows = HashSet::new();
     let mut occupied_cols = HashSet::new();
-    let mut i = 0;
-    for line in input.lines() {
+    for (i, line) in input.lines().enumerate() {
         for (j, c) in line.as_bytes().iter().enumerate() {
             if *c == b'#' {
                 galaxies.insert((i, j));
@@ -48,7 +47,6 @@ fn solve(input: &str, expansion_factor: usize) -> usize {
                 occupied_cols.insert(j);
             }
         }
-        i += 1;
     }
     let expanding_rows = complement(occupied_rows);
     let expanding_cols = complement(occupied_cols);
