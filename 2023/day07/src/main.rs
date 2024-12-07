@@ -170,5 +170,5 @@ fn main() {
     assert_eq!(part1("input"), 253205868);
 
     assert_eq!(part2("example"), 5905);
-    assert_eq!(part2("input"), 253205868);
+    assert_eq!(part2("input"), 253907829);
 }
