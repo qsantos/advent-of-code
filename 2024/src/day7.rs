@@ -6,20 +6,16 @@ pub fn part1(input: &str) -> impl Display {
         let (left, right) = line.split_once(": ").unwrap();
         let left: u64 = left.parse().unwrap();
         let right: Vec<u64> = right.split(' ').map(|x| x.parse().unwrap()).collect();
-        fn aux(left: u64, right: &[u64], i: usize, acc: u64) -> usize {
+        fn aux(left: u64, right: &[u64], i: usize, acc: u64) -> bool {
             if i == right.len() {
-                if acc == left {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                return acc == left;
             }
             if acc > left {
-                return 0;
+                return false;
             }
-            aux(left, right, i + 1, acc + right[i]) + aux(left, right, i + 1, acc * right[i])
+            aux(left, right, i + 1, acc + right[i]) || aux(left, right, i + 1, acc * right[i])
         }
-        if aux(left, &right, 1, right[0]) != 0 {
+        if aux(left, &right, 1, right[0]) {
             total += left;
         }
     }
