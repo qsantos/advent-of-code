@@ -27,19 +27,21 @@ pub fn part1(input: &str) -> i32 {
     total_signal_strength
 }
 
-pub fn part2(input: &str) {
+pub fn part2(input: &str) -> String {
     let mut cycle = 0;
     let mut regx = 1;
+
+    let mut output = String::new();
 
     let mut next_cycle = |regx: i32| {
         let col = cycle % 40;
         if regx.abs_diff(col) <= 1 {
-            print!("#");
+            output.push('#');
         } else {
-            print!(".");
+            output.push('.');
         }
         if col == 39 {
-            println!();
+            output.push('\n');
         }
         cycle += 1;
     };
@@ -58,6 +60,8 @@ pub fn part2(input: &str) {
             _ => unreachable!(),
         }
     }
+
+    output
 }
 
 #[cfg(test)]
@@ -75,7 +79,26 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        part2(EXAMPLE);
-        part2(INPUT);
+        const EXAMPLE_OUTPUT: &str = "\
+            ##..##..##..##..##..##..##..##..##..##..\n\
+            ###...###...###...###...###...###...###.\n\
+            ####....####....####....####....####....\n\
+            #####.....#####.....#####.....#####.....\n\
+            ######......######......######......####\n\
+            #######.......#######.......#######.....\n\
+        ";
+
+        // EHZFZHCZ
+        const INPUT_OUTPUT: &str = "\
+            ####.#..#.####.####.####.#..#..##..####.\n\
+            #....#..#....#.#.......#.#..#.#..#....#.\n\
+            ###..####...#..###....#..####.#......#..\n\
+            #....#..#..#...#.....#...#..#.#.....#...\n\
+            #....#..#.#....#....#....#..#.#..#.#....\n\
+            ####.#..#.####.#....####.#..#..##..####.\n\
+        ";
+
+        assert_eq!(part2(EXAMPLE), EXAMPLE_OUTPUT);
+        assert_eq!(part2(INPUT), INPUT_OUTPUT);
     }
 }
