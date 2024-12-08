@@ -122,10 +122,13 @@ fn count_energized(grid: &[&[u8]], start: State) -> usize {
 
 pub fn part1(input: &str) -> usize {
     let grid: Vec<&[u8]> = input.trim().as_bytes().split(|b| *b == b'\n').collect();
-    count_energized(&grid, State {
-        position: Position { i: 0, j: -1 },
-        direction: Direction::Right,
-    })
+    count_energized(
+        &grid,
+        State {
+            position: Position { i: 0, j: -1 },
+            direction: Direction::Right,
+        },
+    )
 }
 
 pub fn part2(input: &str) -> usize {
@@ -135,24 +138,36 @@ pub fn part2(input: &str) -> usize {
 
     let mut v = Vec::new();
     for i in 0..rows {
-        v.push(count_energized(&grid, State {
-            position: Position { i, j: -1 },
-            direction: Direction::Right,
-        }));
-        v.push(count_energized(&grid, State {
-            position: Position { i, j: cols },
-            direction: Direction::Left,
-        }));
+        v.push(count_energized(
+            &grid,
+            State {
+                position: Position { i, j: -1 },
+                direction: Direction::Right,
+            },
+        ));
+        v.push(count_energized(
+            &grid,
+            State {
+                position: Position { i, j: cols },
+                direction: Direction::Left,
+            },
+        ));
     }
     for j in 0..cols {
-        v.push(count_energized(&grid, State {
-            position: Position { i: -1, j },
-            direction: Direction::Down,
-        }));
-        v.push(count_energized(&grid, State {
-            position: Position { i: rows, j },
-            direction: Direction::Up,
-        }));
+        v.push(count_energized(
+            &grid,
+            State {
+                position: Position { i: -1, j },
+                direction: Direction::Down,
+            },
+        ));
+        v.push(count_energized(
+            &grid,
+            State {
+                position: Position { i: rows, j },
+                direction: Direction::Up,
+            },
+        ));
     }
     v.into_iter().max().unwrap()
 }

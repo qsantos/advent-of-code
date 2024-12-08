@@ -95,9 +95,10 @@ pub fn part2(input: &str) -> i64 {
         .collect();
     // with the asserts in detect_cycle, we now we want to solve x = 0 mod n_i for various n_i. In
     // this case, we can just use LCM
-    lcm_many(nodes
-        .into_iter()
-        .map(|n| detect_cycle(directions, &network, n))
+    lcm_many(
+        nodes
+            .into_iter()
+            .map(|n| detect_cycle(directions, &network, n)),
     )
 }
 

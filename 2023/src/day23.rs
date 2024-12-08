@@ -5,11 +5,7 @@ type Coord = (usize, usize);
 pub fn part1(input: &str) -> usize {
     let grid: Vec<&[u8]> = input.lines().map(|line| line.as_bytes()).collect();
 
-    fn aux(
-        grid: &[&[u8]],
-        (x, y): Coord,
-        visited: &mut HashSet<Coord>,
-    ) -> Option<usize> {
+    fn aux(grid: &[&[u8]], (x, y): Coord, visited: &mut HashSet<Coord>) -> Option<usize> {
         let rows = grid.len();
         let cols = grid[0].len();
         if (x, y) == (rows - 1, cols - 2) {

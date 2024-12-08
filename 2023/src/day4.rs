@@ -5,8 +5,14 @@ pub fn part1(input: &str) -> u32 {
     for line in input.lines() {
         let (_, numbers) = line.split_once(": ").unwrap();
         let (winning, got) = numbers.split_once(" | ").unwrap();
-        let winning: HashSet<u32> = winning.split_whitespace().map(|n| n.trim().parse().unwrap()).collect();
-        let got: HashSet<u32> = got.split_whitespace().map(|n| n.trim().parse().unwrap()).collect();
+        let winning: HashSet<u32> = winning
+            .split_whitespace()
+            .map(|n| n.trim().parse().unwrap())
+            .collect();
+        let got: HashSet<u32> = got
+            .split_whitespace()
+            .map(|n| n.trim().parse().unwrap())
+            .collect();
         let count = winning.intersection(&got).count() as u32;
         if count != 0 {
             score += 2u32.pow(count - 1);
@@ -24,11 +30,20 @@ pub fn part2(input: &str) -> u32 {
         total_card_count += card_count;
         let (_, numbers) = line.split_once(": ").unwrap();
         let (winning, got) = numbers.split_once(" | ").unwrap();
-        let winning: HashSet<u32> = winning.split_whitespace().map(|n| n.trim().parse().unwrap()).collect();
-        let got: HashSet<u32> = got.split_whitespace().map(|n| n.trim().parse().unwrap()).collect();
+        let winning: HashSet<u32> = winning
+            .split_whitespace()
+            .map(|n| n.trim().parse().unwrap())
+            .collect();
+        let got: HashSet<u32> = got
+            .split_whitespace()
+            .map(|n| n.trim().parse().unwrap())
+            .collect();
         let winning_number_count = winning.intersection(&got).count() as u32;
         for offset in 1..=winning_number_count {
-            card_counts.entry(card + offset).and_modify(|e| *e += card_count).or_insert(card_count);
+            card_counts
+                .entry(card + offset)
+                .and_modify(|e| *e += card_count)
+                .or_insert(card_count);
         }
         card += 1;
     }

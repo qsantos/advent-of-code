@@ -22,7 +22,11 @@ fn arrangements(springs: &[u8], groups: &[i32]) -> usize {
             if j > 0 {
                 let group_size = groups[j - 1] as usize;
                 // group elements
-                if i >= group_size && springs[(i - 1) - (group_size - 1)..=(i - 1)].iter().all(|s| *s == b'#' || *s == b'?') {
+                if i >= group_size
+                    && springs[(i - 1) - (group_size - 1)..=(i - 1)]
+                        .iter()
+                        .all(|s| *s == b'#' || *s == b'?')
+                {
                     if i == group_size {
                         count += c[0][j - 1];
                     } else {

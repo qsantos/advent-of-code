@@ -101,7 +101,9 @@ pub fn part2(input: &str) -> u32 {
             for gear in gears {
                 gear_ratios
                     .entry(gear)
-                    .and_modify(|e: &mut HashSet<u32>| { e.insert(number); } )
+                    .and_modify(|e: &mut HashSet<u32>| {
+                        e.insert(number);
+                    })
                     .or_insert(HashSet::from([number]));
             }
         }

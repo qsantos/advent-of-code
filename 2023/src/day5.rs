@@ -5,14 +5,16 @@ pub fn part1(input: &str) -> u64 {
     let seeds: Vec<u64> = {
         let line = lines.next().unwrap();
         let (_, seeds) = line.split_once(": ").unwrap();
-        seeds.split_whitespace().map(|seed| seed.parse().unwrap()).collect()
+        seeds
+            .split_whitespace()
+            .map(|seed| seed.parse().unwrap())
+            .collect()
     };
     // empty line
     lines.next().unwrap();
 
     let mut maps = Vec::new();
-    'outer:
-    loop {
+    'outer: loop {
         // map name
         let _ = lines.next().unwrap();
 
@@ -64,7 +66,9 @@ pub fn part2(input: &str) -> u64 {
     let mut ranges = Vec::new();
     let line = lines.next().unwrap();
     let (_, seeds) = line.split_once(": ").unwrap();
-    let mut numbers = seeds.split_whitespace().map(|seed| seed.parse::<u64>().unwrap());
+    let mut numbers = seeds
+        .split_whitespace()
+        .map(|seed| seed.parse::<u64>().unwrap());
     while let Some(start) = numbers.next() {
         let len = numbers.next().unwrap();
         ranges.push((start, len));
@@ -73,8 +77,7 @@ pub fn part2(input: &str) -> u64 {
     lines.next().unwrap();
 
     let mut maps = Vec::new();
-    'outer:
-    loop {
+    'outer: loop {
         // map name
         let _ = lines.next().unwrap();
 
@@ -133,7 +136,8 @@ pub fn part2(input: &str) -> u64 {
                     } else {
                         // range ends after map range, keep remaining range
                         let mapped_range_len = *map_src_start + *map_len - start;
-                        new_ranges.push((start - *map_src_start + *map_dst_start, mapped_range_len));
+                        new_ranges
+                            .push((start - *map_src_start + *map_dst_start, mapped_range_len));
                         // remaining part
                         start = *map_src_start + *map_len;
                         len -= mapped_range_len;
@@ -184,7 +188,7 @@ mod tests {
     #[test]
     fn test_part1() {
         assert_eq!(part1(EXAMPLE), 35);
-        //assert_eq!(part1(INPUT), 484023871);
+        assert_eq!(part1(INPUT), 484023871);
     }
 
     #[test]

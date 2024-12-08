@@ -7,14 +7,19 @@ fn transpose(block: &[&[u8]]) -> Vec<Vec<u8>> {
 }
 
 fn hamming(a: &[u8], b: &[u8]) -> usize {
-    a.iter().zip(b.iter()).map(|(a, b)| if a == b { 0 } else { 1 }).sum()
+    a.iter()
+        .zip(b.iter())
+        .map(|(a, b)| if a == b { 0 } else { 1 })
+        .sum()
 }
 
 fn middle_row<R: AsRef<[u8]>>(block: &[R], d: usize) -> Option<usize> {
     let rows = block.len();
     for middle in 1..rows {
         let width = middle.min(rows - middle);
-        let h: usize = (0..width).map(|i| hamming(block[middle - 1 - i].as_ref(), block[middle + i].as_ref())).sum();
+        let h: usize = (0..width)
+            .map(|i| hamming(block[middle - 1 - i].as_ref(), block[middle + i].as_ref()))
+            .sum();
         if h == d {
             return Some(middle);
         }

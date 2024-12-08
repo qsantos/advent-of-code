@@ -24,14 +24,14 @@ impl HandType {
         counts.sort();
         counts.reverse();
         match counts[..] {
-                [5] => HandType::FiveOfAKind,
-                [4, 1] => HandType::FourOfAKind,
-                [3, 2] => HandType::FullHouse,
-                [3, 1, 1] => HandType::ThreeOfAKind,
-                [2, 2, 1] => HandType::TwoPair,
-                [2, 1, 1, 1] => HandType::OnePair,
-                [1, 1, 1, 1, 1] => HandType::HighCard,
-                _ => panic!("Unexpected card counts {:?}", counts),
+            [5] => HandType::FiveOfAKind,
+            [4, 1] => HandType::FourOfAKind,
+            [3, 2] => HandType::FullHouse,
+            [3, 1, 1] => HandType::ThreeOfAKind,
+            [2, 2, 1] => HandType::TwoPair,
+            [2, 1, 1, 1] => HandType::OnePair,
+            [1, 1, 1, 1, 1] => HandType::HighCard,
+            _ => panic!("Unexpected card counts {:?}", counts),
         }
     }
 

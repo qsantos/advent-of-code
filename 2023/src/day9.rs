@@ -2,7 +2,12 @@ fn next_of(numbers: &[i64]) -> i64 {
     if numbers.iter().all(|n| *n == 0) {
         0
     } else {
-        let diffs: Vec<i64> = numbers.iter().skip(1).zip(numbers.iter()).map(|(a, b)| a - b).collect();
+        let diffs: Vec<i64> = numbers
+            .iter()
+            .skip(1)
+            .zip(numbers.iter())
+            .map(|(a, b)| a - b)
+            .collect();
         numbers.last().unwrap() + next_of(&diffs)
     }
 }
@@ -20,7 +25,12 @@ fn prev_of(numbers: &[i64]) -> i64 {
     if numbers.iter().all(|n| *n == 0) {
         0
     } else {
-        let diffs: Vec<i64> = numbers.iter().skip(1).zip(numbers.iter()).map(|(a, b)| a - b).collect();
+        let diffs: Vec<i64> = numbers
+            .iter()
+            .skip(1)
+            .zip(numbers.iter())
+            .map(|(a, b)| a - b)
+            .collect();
         numbers[0] - prev_of(&diffs)
     }
 }

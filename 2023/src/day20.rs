@@ -265,6 +265,9 @@ mod tests {
         //
         // The first time rx turns to HIGH corresponds to the first time all four of ds/dt/bd/cs turn to HHIGH.
         // So it first turns HIGH when the number of button presses is the a smallest number which is a multiple of these four numbers.
-        assert_eq!(lcm_many([3889, 3943, 3761, 3821].into_iter()), 220366255099387);
+        assert_eq!(
+            lcm_many([3889, 3943, 3761, 3821].into_iter()),
+            220366255099387
+        );
     }
 }
