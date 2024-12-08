@@ -46,7 +46,12 @@ pub fn part1(input: &str) -> impl Display {
     count_steps(&grid)
 }
 
-fn loops_with_obstacle(grid: &[&[u8]], pos: (i64, i64), dir: (i64, i64), obstacle: (i64, i64)) -> bool {
+fn loops_with_obstacle(
+    grid: &[&[u8]],
+    pos: (i64, i64),
+    dir: (i64, i64),
+    obstacle: (i64, i64),
+) -> bool {
     let rows = grid.len() as i64;
     let cols = grid[0].len() as i64;
     let (mut i, mut j) = pos;
