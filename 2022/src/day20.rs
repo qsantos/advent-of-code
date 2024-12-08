@@ -1,6 +1,4 @@
-mod implicit_treap;
-
-use implicit_treap::ImplicitTreap;
+use crate::implicit_treap::ImplicitTreap;
 
 fn decrypt(input: &str, decryption_key: i64, iterations: usize) -> i64 {
     let mut treap = ImplicitTreap::new();
