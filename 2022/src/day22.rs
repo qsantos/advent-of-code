@@ -526,6 +526,10 @@ pub fn part2(input: &str) -> i64 {
     follow_path(input, State::next_cube_input)
 }
 
+pub fn part2_example(input: &str) -> i64 {
+    follow_path(input, State::next_cube_example)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -537,10 +541,6 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE), 6032);
         assert_eq!(part1(INPUT), 133174);
-    }
-
-    fn part2_example(input: &str) -> i64 {
-        follow_path(input, State::next_cube_example)
     }
 
     #[test]
