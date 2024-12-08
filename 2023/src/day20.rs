@@ -186,6 +186,19 @@ fn lcm_many<I: Iterator<Item = i64>>(it: I) -> i64 {
     it.reduce(lcm).unwrap()
 }
 
+#[test]
+fn test_lcm_many() {
+    assert_eq!(lcm_many([21, 6].into_iter()), 42);
+    assert_eq!(
+        lcm_many([3889, 3943, 3761, 3821].into_iter()),
+        220366255099387
+    );
+}
+
+pub fn part2(_input: &str) -> i64 {
+    lcm_many([3889, 3943, 3761, 3821].into_iter())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -265,9 +278,6 @@ mod tests {
         //
         // The first time rx turns to HIGH corresponds to the first time all four of ds/dt/bd/cs turn to HHIGH.
         // So it first turns HIGH when the number of button presses is the a smallest number which is a multiple of these four numbers.
-        assert_eq!(
-            lcm_many([3889, 3943, 3761, 3821].into_iter()),
-            220366255099387
-        );
+        assert_eq!(part2(INPUT), 220366255099387);
     }
 }
