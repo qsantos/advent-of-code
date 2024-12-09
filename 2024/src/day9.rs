@@ -1,5 +1,15 @@
 use std::fmt::Display;
 
+fn file_hash(mut position: u64, file_index: u64, file_size: u64) -> u64 {
+    // TODO: triangle sum
+    let mut res = 0;
+    for _ in 0..file_size {
+        res += position * file_index;
+        position += 1;
+    }
+    res
+}
+
 pub fn part1(input: &str) -> impl Display {
     let numbers: Vec<u64> = input
         .chars()
@@ -38,13 +48,7 @@ pub fn part1(input: &str) -> impl Display {
         }
         forward_index += 1;
     }
-    // TODO: triangle sum
-    while remaining > 0 {
-        let file_index = backward_index / 2;
-        res += position * file_index;
-        position += 1;
-        remaining -= 1;
-    }
+    res += file_hash(position as u64, backward_index as u64 / 2, remaining) as usize;
     res
 }
 
@@ -99,23 +103,17 @@ pub fn part2(input: &str) -> impl Display {
             .position(|fs| fs.size >= file.size);
         if let Some(free_space_index) = free_space {
             // move the file to the free space and update checksum
-            let mut position = free_spaces[free_space_index].position;
-            // TODO: triangle sum
-            for _ in 0..file.size {
-                res += position * file.index;
-                position += 1;
-            }
+            res += file_hash(
+                free_spaces[free_space_index].position,
+                file.index,
+                file.size,
+            );
             // update the free space
             free_spaces[free_space_index].size -= file.size;
             free_spaces[free_space_index].position += file.size;
         } else {
             // keep the file at its position and update checksum
-            let mut position = file.position;
-            // TODO: triangle sum
-            for _ in 0..file.size {
-                res += position * file.index;
-                position += 1;
-            }
+            res += file_hash(file.position, file.index, file.size);
         }
     }
     res
