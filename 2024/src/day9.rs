@@ -1,13 +1,11 @@
 use std::fmt::Display;
 
-fn file_hash(mut position: u64, file_index: u64, file_size: u64) -> u64 {
-    // TODO: triangle sum
-    let mut res = 0;
-    for _ in 0..file_size {
-        res += position * file_index;
-        position += 1;
-    }
-    res
+fn file_hash(position: u64, file_index: u64, file_size: u64) -> u64 {
+    // a1 = position * file_index
+    // an = (position + file_size - 1) * file_index
+    // n = file_size
+    // n * (a1 + an) / 2
+    file_size * file_index * (2 * position + file_size - 1) / 2
 }
 
 pub fn part1(input: &str) -> impl Display {
