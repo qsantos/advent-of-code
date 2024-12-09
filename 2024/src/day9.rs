@@ -109,6 +109,9 @@ pub fn part2(input: &str) -> impl Display {
             // update the free space
             free_spaces[free_space_index].size -= file.size;
             free_spaces[free_space_index].position += file.size;
+            if free_spaces[free_space_index].size == 0 {
+                free_spaces.remove(free_space_index);
+            }
         } else {
             // keep the file at its position and update checksum
             res += file_hash(file.position, file.index, file.size);
