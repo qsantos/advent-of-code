@@ -31,9 +31,8 @@ pub fn part1(input: &str) -> impl Display {
         }
         forward_index += 1;
         // free space
-        let free_size = numbers[forward_index];
-        // TODO: triangle sum
-        for _ in 0..free_size {
+        let mut free_size = numbers[forward_index];
+        while free_size > 0 {
             if remaining == 0 {
                 backward_index -= 2;
                 if forward_index >= backward_index {
@@ -41,10 +40,11 @@ pub fn part1(input: &str) -> impl Display {
                 }
                 remaining = numbers[backward_index];
             }
-            let file_index = backward_index / 2;
-            res += position * file_index;
-            position += 1;
-            remaining -= 1;
+            let usable = free_size.min(remaining);
+            res += file_hash(position as u64, backward_index as u64 / 2, usable) as usize;
+            position += usable as usize;
+            free_size -= usable;
+            remaining -= usable;
         }
         forward_index += 1;
     }
