@@ -75,7 +75,6 @@ pub fn part2(input: &str) -> impl Display {
     score
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
