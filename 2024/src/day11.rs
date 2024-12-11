@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
+fn update_count(map: &mut HashMap<u64, u64>, key: u64, count: u64) {
+    map.entry(key).and_modify(|c| *c += count).or_insert(count);
+}
+
 pub fn part12(input: &str, count: usize) -> u64 {
     let numbers: Vec<u64> = input
         .split_whitespace()
@@ -11,28 +15,16 @@ pub fn part12(input: &str, count: usize) -> u64 {
         let mut new_numbers = HashMap::new();
         for (number, count) in numbers {
             if number == 0 {
-                new_numbers
-                    .entry(1)
-                    .and_modify(|c| *c += count)
-                    .or_insert(count);
+                update_count(&mut new_numbers, 1, count);
                 continue;
             }
             let digits = number.ilog10() + 1;
             if digits % 2 == 0 {
                 let divider = 10u64.pow(digits / 2);
-                new_numbers
-                    .entry(number / divider)
-                    .and_modify(|c| *c += count)
-                    .or_insert(count);
-                new_numbers
-                    .entry(number % divider)
-                    .and_modify(|c| *c += count)
-                    .or_insert(count);
+                update_count(&mut new_numbers, number / divider, count);
+                update_count(&mut new_numbers, number % divider, count);
             } else {
-                new_numbers
-                    .entry(number * 2024)
-                    .and_modify(|c| *c += count)
-                    .or_insert(count);
+                update_count(&mut new_numbers, number * 2024, count);
             }
         }
         numbers = new_numbers;
