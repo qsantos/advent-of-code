@@ -1,10 +1,8 @@
+use std::collections::HashSet;
 use std::fmt::Display;
 
-pub fn quadrans_after_steps(input: &str, steps: usize, width: i64, height: i64) -> usize {
-    assert!(width > 0);
-    assert!(height > 0);
-    let steps = steps as i64;
-    let mut quadrants = vec![0, 0, 0, 0];
+pub fn parse(input: &str) -> Vec<(i64, i64, i64, i64)> {
+    let mut posvel = Vec::new();
     for line in input.lines() {
         let (pos, vel) = line.split_once(' ').unwrap();
         let pos = pos.strip_prefix("p=").unwrap();
@@ -15,10 +13,36 @@ pub fn quadrans_after_steps(input: &str, steps: usize, width: i64, height: i64) 
         let py: i64 = py.parse().unwrap();
         let vx: i64 = vx.parse().unwrap();
         let vy: i64 = vy.parse().unwrap();
+        posvel.push((px, py, vx, vy));
+    }
+    posvel
+}
+
+pub fn step(
+    posvel: &Vec<(i64, i64, i64, i64)>,
+    steps: usize,
+    width: i64,
+    height: i64,
+) -> Vec<(i64, i64)> {
+    assert!(width > 0);
+    assert!(height > 0);
+    let steps = steps as i64;
+    let mut ret = Vec::new();
+    for (px, py, vx, vy) in posvel {
         let x = (px + steps * vx).rem_euclid(width);
         let y = (py + steps * vy).rem_euclid(height);
-        let mid_x = width / 2;
-        let mid_y = height / 2;
+        ret.push((x, y));
+    }
+    ret
+}
+
+pub fn quadrants(pos: &Vec<(i64, i64)>, width: i64, height: i64) -> Vec<usize> {
+    assert!(width > 0);
+    assert!(height > 0);
+    let mid_x = width / 2;
+    let mid_y = height / 2;
+    let mut quadrants = vec![0, 0, 0, 0];
+    for (x, y) in pos {
         match (x.cmp(&mid_x), y.cmp(&mid_y)) {
             (std::cmp::Ordering::Less, std::cmp::Ordering::Less) => quadrants[0] += 1,
             (std::cmp::Ordering::Less, std::cmp::Ordering::Greater) => quadrants[1] += 1,
@@ -27,15 +51,68 @@ pub fn quadrans_after_steps(input: &str, steps: usize, width: i64, height: i64) 
             _ => (),
         }
     }
-    quadrants.into_iter().product()
+    quadrants
+}
+
+pub fn quadrants_after_steps(input: &str, steps: usize, width: i64, height: i64) -> usize {
+    let posvel = parse(input);
+    let pos = step(&posvel, steps, width, height);
+    quadrants(&pos, width, height).into_iter().product()
+}
+
+fn has_bar(width: i64, height: i64, pos: &HashSet<(i64, i64)>, threshold: usize) -> bool {
+    let mut bar = 0;
+    for y in 0..height {
+        for x in 0..width {
+            if pos.contains(&(x, y)) {
+                bar += 1;
+                if bar >= threshold {
+                    return true;
+                }
+            } else {
+                bar = 0;
+            }
+        }
+    }
+    false
+}
+
+fn print(width: i64, height: i64, robots: &HashSet<(i64, i64)>) {
+    for y in 0..height {
+        for x in 0..width {
+            if robots.contains(&(x, y)) {
+                print!("#");
+            } else {
+                print!(".");
+            }
+        }
+        println!();
+    }
 }
 
 pub fn part1_example(input: &str) -> impl Display {
-    quadrans_after_steps(input, 100, 11, 7)
+    quadrants_after_steps(input, 100, 11, 7)
 }
 
 pub fn part1(input: &str) -> impl Display {
-    quadrans_after_steps(input, 100, 101, 103)
+    quadrants_after_steps(input, 100, 101, 103)
+}
+
+pub fn part2(input: &str) -> impl Display {
+    let posvel = parse(input);
+    let width = 101;
+    let height = 103;
+    let mut steps = 0;
+    loop {
+        let pos = step(&posvel, steps, width, height);
+        let robots: HashSet<_> = pos.into_iter().collect();
+        if has_bar(width, height, &robots, 10) {
+            println!("Step: {}", steps);
+            print(width, height, &robots);
+            return steps;
+        }
+        steps += 1;
+    }
 }
 
 #[cfg(test)]
@@ -49,5 +126,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1_example(EXAMPLE).to_string(), "12");
         assert_eq!(part1(INPUT).to_string(), "231782040");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT).to_string(), "6475");
     }
 }
