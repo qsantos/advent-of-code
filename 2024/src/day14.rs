@@ -60,19 +60,22 @@ pub fn quadrants_after_steps(input: &str, steps: usize, width: i64, height: i64)
     quadrants(&pos, width, height).into_iter().product()
 }
 
-fn has_bar(width: i64, height: i64, pos: &HashSet<(i64, i64)>, threshold: usize) -> bool {
-    let mut bar = 0;
-    for y in 0..height {
-        for x in 0..width {
-            if pos.contains(&(x, y)) {
-                bar += 1;
-                if bar >= threshold {
-                    return true;
-                }
-            } else {
-                bar = 0;
+fn has_bar(robots: &mut Vec<(i64, i64)>, threshold: usize) -> bool {
+    robots.sort();
+    let mut px = i64::MIN;
+    let mut py = i64::MIN;
+    let mut length = 0;
+    for &mut (x, y) in robots {
+        if (x, y) == (px, py + 1) {
+            length += 1;
+            if length >= threshold {
+                return true;
             }
+        } else {
+            length = 0;
         }
+        px = x;
+        py = y;
     }
     false
 }
@@ -104,10 +107,9 @@ pub fn part2(input: &str) -> impl Display {
     let height = 103;
     let mut steps = 0;
     loop {
-        let pos = step(&posvel, steps, width, height);
-        let robots: HashSet<_> = pos.into_iter().collect();
-        if has_bar(width, height, &robots, 10) {
-            println!("Step: {}", steps);
+        let mut pos = step(&posvel, steps, width, height);
+        if has_bar(&mut pos, 10) {
+            let robots: HashSet<_> = pos.into_iter().collect();
             print(width, height, &robots);
             return steps;
         }
