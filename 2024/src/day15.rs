@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
 fn find_start(map: &[&mut [u8]]) -> (i32, i32) {
-    for (y, row) in map.iter().enumerate() {
-        for (x, &cell) in row.iter().enumerate() {
+    for (i, row) in map.iter().enumerate() {
+        for (j, &cell) in row.iter().enumerate() {
             if cell == b'@' {
-                return (x as i32, y as i32);
+                return (i as i32, j as i32);
             }
         }
     }
@@ -82,6 +82,151 @@ pub fn part1(input: &str) -> impl Display {
     total
 }
 
+pub fn part2(input: &str) -> impl Display {
+    let (map, moves) = input.split_once("\n\n").unwrap();
+    let map = map
+        .replace("#", "##")
+        .replace("O", "[]")
+        .replace(".", "..")
+        .replace("@", "@.");
+    let mut map = map.as_bytes().to_vec();
+    let mut map: Vec<&mut [u8]> = map.split_mut(|&b| b == b'\n').collect();
+    let rows = map.len() as i32;
+    let cols = map[0].len() as i32;
+    let (mut i, mut j) = find_start(&map);
+    println!("i: {}, j: {}", i, j);
+    println!();
+    'outer: for &move_ in moves.as_bytes() {
+        if move_ == b'\n' {
+            continue;
+        }
+        print_map(&map);
+        println!("Move: {}", move_ as char);
+        println!();
+        let (di, dj) = dir_to_didj(move_);
+        if di == 0 {
+            // horizontal move
+            // check first cell
+            let mut n = 1;
+            let nj = j + dj * n;
+            let fc = map[i as usize][nj as usize];
+            if fc == b'#' {
+                continue 'outer; // skip move
+            } else if fc == b'.' {
+            } else {
+                n += 2;
+                // check next cells
+                loop {
+                    let nj = j + dj * n;
+                    if !(0..cols).contains(&nj) {
+                        continue 'outer; // skip move
+                    }
+                    let c = map[i as usize][nj as usize];
+                    if c == b'.' {
+                        break; // move the boxes
+                    } else if c == fc {
+                        n += 2;
+                    } else {
+                        continue 'outer; // skip move
+                    }
+                }
+            }
+            // move the boxes
+            if n > 1 {
+                let a = map[i as usize][(j + dj) as usize];
+                let b = map[i as usize][(j + dj * 2) as usize];
+                // left:
+                // ..[][]@
+                // a = ]
+                // b = [
+                // n = 5
+                //  k = 5: [ (b)
+                //  k = 4: ] (a)
+                //  k = 3: [ (b)
+                //  k = 2: ] (a)
+                //  k = 1: @
+                //  k = 0: .
+                // right:
+                // @[][]..
+                // a = [
+                // b = ]
+                // n = 5
+                //  k = 5: ] (b)
+                //  k = 4: [ (a)
+                //  k = 3: ] (b)
+                //  k = 2: [ (a)
+                //  k = 1: @
+                //  k = 0: .
+                for k in 2..=n {
+                    let side = if k % 2 == 0 { a } else { b };
+                    map[i as usize][(j + k * dj) as usize] = side;
+                }
+            }
+            // move the robot
+            let nj = j + dj;
+            map[i as usize][nj as usize] = b'@';
+            map[i as usize][j as usize] = b'.';
+            j = nj;
+        } else {
+            // vertical move
+            // check first cell
+            let mut n = 1;
+            let ni = i + di * n;
+            let fc = map[ni as usize][j as usize];
+            if fc == b'#' {
+                continue 'outer; // skip move
+            } else if fc == b'.' {
+            } else {
+                n += 1;
+                // check next cells
+                loop {
+                    let ni = i + di * n;
+                    if !(0..rows).contains(&ni) {
+                        continue 'outer; // skip move
+                    }
+                    let c = map[ni as usize][j as usize];
+                    if c == b'.' {
+                        break; // move the boxes
+                    } else if c == fc {
+                        n += 1;
+                    } else {
+                        continue 'outer; // skip move
+                    }
+                }
+            }
+            // move the boxes
+            if n > 1 {
+                let ni = i + di * n;
+                map[ni as usize][j as usize] = fc;
+                if fc == b'[' {
+                    map[ni as usize][(j + 1) as usize] = b']';
+                    map[(i + di) as usize][(j + 1) as usize] = b'.';
+                } else {
+                    map[ni as usize][(j - 1) as usize] = b'[';
+                    map[(i + di) as usize][(j - 1) as usize] = b'.';
+                }
+            }
+            // move the robot
+            let ni = i + di;
+            map[ni as usize][j as usize] = b'@';
+            map[i as usize][j as usize] = b'.';
+            i = ni;
+        }
+    }
+    print_map(&map);
+    println!();
+    // sum GPS coordinates
+    let mut total = 0;
+    for (i, row) in map.iter().enumerate() {
+        for (j, &cell) in row.iter().enumerate() {
+            if cell == b'[' {
+                total += i * 100 + j;
+            }
+        }
+    }
+    total
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -95,5 +240,11 @@ mod tests {
         assert_eq!(part1(EXAMPLE1).to_string(), "2028");
         assert_eq!(part1(EXAMPLE2).to_string(), "10092");
         assert_eq!(part1(INPUT).to_string(), "1475249");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE2).to_string(), "9021");
+        assert_eq!(part2(INPUT).to_string(), "");
     }
 }
