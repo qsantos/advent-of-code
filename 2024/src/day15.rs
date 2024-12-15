@@ -82,6 +82,60 @@ pub fn part1(input: &str) -> impl Display {
     total
 }
 
+fn try_move_v(map: &[&mut [u8]], i: i32, j: i32, di: i32) -> bool {
+    let rows = map.len() as i32;
+    let cols = map[0].len() as i32;
+    if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
+        return false;
+    }
+    let c = map[i as usize][j as usize];
+    match c {
+        b'.' => true,
+        b'@' => try_move_v(map, i + di, j, di),
+        b'[' => try_move_v(map, i + di, j, di) && try_move_v(map, i + di, j + 1, di),
+        b']' => try_move_v(map, i + di, j - 1, di) && try_move_v(map, i + di, j, di),
+        b'#' => false,
+        _ => panic!("Invalid cell {}", c as char),
+    }
+}
+
+fn do_move_v(map: &mut [&mut [u8]], i: i32, j: i32, di: i32) {
+    let rows = map.len() as i32;
+    let cols = map[0].len() as i32;
+    if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
+        panic!("Trying to move out of the map");
+    }
+    let c = map[i as usize][j as usize];
+    match c {
+        b'.' => (),
+        b'@' => {
+            do_move_v(map, i + di, j, di);
+            map[(i + di) as usize][j as usize] = b'@';
+            map[i as usize][j as usize] = b'.';
+        }
+        b'[' => {
+            do_move_v(map, i + di, j, di);
+            do_move_v(map, i + di, j + 1, di);
+            map[(i + di) as usize][j as usize] = b'[';
+            map[(i + di) as usize][(j + 1) as usize] = b']';
+            map[i as usize][j as usize] = b'.';
+            map[i as usize][(j + 1) as usize] = b'.';
+        }
+        b']' => {
+            do_move_v(map, i + di, j - 1, di);
+            do_move_v(map, i + di, j, di);
+            map[(i + di) as usize][(j - 1) as usize] = b'[';
+            map[(i + di) as usize][j as usize] = b']';
+            map[i as usize][(j - 1) as usize] = b'.';
+            map[i as usize][j as usize] = b'.';
+        }
+        b'#' => {
+            panic!("Trying to move to a wall");
+        }
+        _ => panic!("Invalid cell {}", c as char),
+    }
+}
+
 pub fn part2(input: &str) -> impl Display {
     let (map, moves) = input.split_once("\n\n").unwrap();
     let map = map
@@ -91,18 +145,15 @@ pub fn part2(input: &str) -> impl Display {
         .replace("@", "@.");
     let mut map = map.as_bytes().to_vec();
     let mut map: Vec<&mut [u8]> = map.split_mut(|&b| b == b'\n').collect();
-    let rows = map.len() as i32;
     let cols = map[0].len() as i32;
     let (mut i, mut j) = find_start(&map);
-    println!("i: {}, j: {}", i, j);
-    println!();
     'outer: for &move_ in moves.as_bytes() {
         if move_ == b'\n' {
             continue;
         }
-        print_map(&map);
-        println!("Move: {}", move_ as char);
-        println!();
+        //print_map(&map);
+        //println!("move: {}", move_ as char);
+        //println!();
         let (di, dj) = dir_to_didj(move_);
         if di == 0 {
             // horizontal move
@@ -169,52 +220,12 @@ pub fn part2(input: &str) -> impl Display {
             j = nj;
         } else {
             // vertical move
-            // check first cell
-            let mut n = 1;
-            let ni = i + di * n;
-            let fc = map[ni as usize][j as usize];
-            if fc == b'#' {
-                continue 'outer; // skip move
-            } else if fc == b'.' {
-            } else {
-                n += 1;
-                // check next cells
-                loop {
-                    let ni = i + di * n;
-                    if !(0..rows).contains(&ni) {
-                        continue 'outer; // skip move
-                    }
-                    let c = map[ni as usize][j as usize];
-                    if c == b'.' {
-                        break; // move the boxes
-                    } else if c == fc {
-                        n += 1;
-                    } else {
-                        continue 'outer; // skip move
-                    }
-                }
+            if try_move_v(&map, i, j, di) {
+                do_move_v(&mut map, i, j, di);
+                i += di;
             }
-            // move the boxes
-            if n > 1 {
-                let ni = i + di * n;
-                map[ni as usize][j as usize] = fc;
-                if fc == b'[' {
-                    map[ni as usize][(j + 1) as usize] = b']';
-                    map[(i + di) as usize][(j + 1) as usize] = b'.';
-                } else {
-                    map[ni as usize][(j - 1) as usize] = b'[';
-                    map[(i + di) as usize][(j - 1) as usize] = b'.';
-                }
-            }
-            // move the robot
-            let ni = i + di;
-            map[ni as usize][j as usize] = b'@';
-            map[i as usize][j as usize] = b'.';
-            i = ni;
         }
     }
-    print_map(&map);
-    println!();
     // sum GPS coordinates
     let mut total = 0;
     for (i, row) in map.iter().enumerate() {
@@ -245,6 +256,6 @@ mod tests {
     #[test]
     fn test_part2() {
         assert_eq!(part2(EXAMPLE2).to_string(), "9021");
-        assert_eq!(part2(INPUT).to_string(), "");
+        assert_eq!(part2(INPUT).to_string(), "1509724");
     }
 }
