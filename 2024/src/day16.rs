@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::{BinaryHeap, HashMap, HashSet};
 use std::fmt::Display;
 
 fn find_pos(grid: &[&[u8]], target: u8) -> (i32, i32) {
@@ -109,6 +109,81 @@ pub fn part1(input: &str) -> impl Display {
     panic!("No path found");
 }
 
+pub fn part2(input: &str) -> impl Display {
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
+    let rows = grid.len() as i32;
+    let cols = grid[0].len() as i32;
+    let start = find_pos(&grid, b'S');
+    let mut q = BinaryHeap::new();
+    let (i, j) = start;
+    q.push(StateWithScore::new(i, j));
+    let mut visited: HashMap<State, Option<State>> = HashMap::new();
+    visited.insert(State::new(i, j), None);
+    let mut best_score = None;
+    let mut spots = HashSet::new();
+    while let Some(StateWithScore { score, state }) = q.pop() {
+        let State { i, j, di, dj } = state;
+        if best_score.map(|best| score > best).unwrap_or(false) {
+            continue;
+        }
+        if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
+            continue;
+        }
+        let c = grid[i as usize][j as usize];
+        if c == b'E' {
+            best_score = Some(score);
+            let mut state = state.clone();
+            spots.insert((state.i, state.j));
+            println!("{:?}", state);
+            while let Some(prev) = visited.get(&state).unwrap() {
+                println!("{:?}", prev);
+                spots.insert((state.i, state.j));
+                state = prev.clone();
+            }
+        } else if c == b'.' || c == b'S' {
+            let next_states = [
+                StateWithScore {
+                    score: score + 1,
+                    state: State {
+                        i: i + di,
+                        j: j + dj,
+                        di,
+                        dj,
+                    },
+                },
+                StateWithScore {
+                    score: score + 1000,
+                    state: State {
+                        i,
+                        j,
+                        di: dj,
+                        dj: -di,
+                    },
+                },
+                StateWithScore {
+                    score: score + 1000,
+                    state: State {
+                        i,
+                        j,
+                        di: -dj,
+                        dj: di,
+                    },
+                },
+            ];
+            for next_state in next_states {
+                visited.entry(next_state.state.clone()).or_insert_with(|| {
+                    q.push(next_state);
+                    Some(state.clone())
+                });
+            }
+        } else if c == b'#' {
+        } else {
+            panic!("Invalid cell '{}'", c as char);
+        }
+    }
+    spots.len()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -122,5 +197,12 @@ mod tests {
         assert_eq!(part1(EXAMPLE1).to_string(), "7036");
         assert_eq!(part1(EXAMPLE2).to_string(), "11048");
         assert_eq!(part1(INPUT).to_string(), "83444");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE1).to_string(), "45");
+        assert_eq!(part2(EXAMPLE2).to_string(), "64");
+        assert_eq!(part2(INPUT).to_string(), "");
     }
 }
