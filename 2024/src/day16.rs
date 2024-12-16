@@ -24,21 +24,21 @@ impl State {
     fn new(i: i32, j: i32) -> Self {
         Self { i, j, di: 0, dj: 1 }
     }
+
+    fn rev(&self) -> Self {
+        Self {
+            i: self.i,
+            j: self.j,
+            di: -self.di,
+            dj: -self.dj,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct StateWithScore {
     score: i32,
     state: State,
-}
-
-impl StateWithScore {
-    fn new(i: i32, j: i32) -> Self {
-        Self {
-            score: 0,
-            state: State::new(i, j),
-        }
-    }
 }
 
 // NOTE: inverted ordering to make it a min-heap
@@ -53,132 +53,110 @@ impl Ord for StateWithScore {
     }
 }
 
-pub fn part1(input: &str) -> impl Display {
-    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
+fn dijkstra(grid: &[&[u8]], start: &[State]) -> HashMap<State, i32> {
     let rows = grid.len() as i32;
     let cols = grid[0].len() as i32;
-    let start = find_pos(&grid, b'S');
     let mut q = BinaryHeap::new();
-    let (i, j) = start;
-    q.push(StateWithScore::new(i, j));
-    let mut visited = HashSet::new();
+    for state in start {
+        q.push(StateWithScore {
+            score: 0,
+            state: state.clone(),
+        });
+    }
+    let mut visited = HashMap::new();
     while let Some(StateWithScore { score, state }) = q.pop() {
         let State { i, j, di, dj } = state;
-        if !visited.insert(state) {
-            continue;
-        }
         if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
             continue;
         }
         let c = grid[i as usize][j as usize];
-        if c == b'E' {
-            return score;
-        } else if c == b'.' || c == b'S' {
-            q.push(StateWithScore {
-                score: score + 1,
-                state: State {
-                    i: i + di,
-                    j: j + dj,
-                    di,
-                    dj,
-                },
-            });
-            q.push(StateWithScore {
-                score: score + 1000,
-                state: State {
-                    i,
-                    j,
-                    di: dj,
-                    dj: -di,
-                },
-            });
-            q.push(StateWithScore {
-                score: score + 1000,
-                state: State {
-                    i,
-                    j,
-                    di: -dj,
-                    dj: di,
-                },
-            });
-        } else if c == b'#' {
-        } else {
-            panic!("Invalid cell '{}'", c as char);
+        if c == b'#' {
+            continue;
         }
+        if visited.contains_key(&state) {
+            continue;
+        }
+        visited.insert(state.clone(), score);
+        q.push(StateWithScore {
+            score: score + 1,
+            state: State {
+                i: i + di,
+                j: j + dj,
+                di,
+                dj,
+            },
+        });
+        q.push(StateWithScore {
+            score: score + 1000,
+            state: State {
+                i,
+                j,
+                di: dj,
+                dj: -di,
+            },
+        });
+        q.push(StateWithScore {
+            score: score + 1000,
+            state: State {
+                i,
+                j,
+                di: -dj,
+                dj: di,
+            },
+        });
     }
-    panic!("No path found");
+    visited
+}
+
+fn get_best_score(scores: &HashMap<State, i32>, end: (i32, i32)) -> i32 {
+    scores
+        .iter()
+        .filter_map(|(state, &score)| {
+            if (state.i, state.j) == end {
+                Some(score)
+            } else {
+                None
+            }
+        })
+        .min()
+        .unwrap()
+}
+
+pub fn part1(input: &str) -> impl Display {
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
+    let start = find_pos(&grid, b'S');
+    let end = find_pos(&grid, b'E');
+    let start = State::new(start.0, start.1);
+    let scores = dijkstra(&grid, &[start]);
+    get_best_score(&scores, end)
 }
 
 pub fn part2(input: &str) -> impl Display {
     let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
-    let rows = grid.len() as i32;
-    let cols = grid[0].len() as i32;
+    let orientations = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+    // forward
     let start = find_pos(&grid, b'S');
-    let mut q = BinaryHeap::new();
-    let (i, j) = start;
-    q.push(StateWithScore::new(i, j));
-    let mut visited: HashMap<State, Option<State>> = HashMap::new();
-    visited.insert(State::new(i, j), None);
-    let mut best_score = None;
+    let start = State::new(start.0, start.1);
+    let forward = dijkstra(&grid, &[start]);
+    // backward
+    let end = find_pos(&grid, b'E');
+    let ends: Vec<_> = orientations
+        .iter()
+        .map(|&(di, dj)| State {
+            i: end.0,
+            j: end.1,
+            di,
+            dj,
+        })
+        .collect();
+    let backward = dijkstra(&grid, &ends);
+    // count best spots
+    let best_score = get_best_score(&forward, end);
     let mut spots = HashSet::new();
-    while let Some(StateWithScore { score, state }) = q.pop() {
-        let State { i, j, di, dj } = state;
-        if best_score.map(|best| score > best).unwrap_or(false) {
-            continue;
-        }
-        if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
-            continue;
-        }
-        let c = grid[i as usize][j as usize];
-        if c == b'E' {
-            best_score = Some(score);
-            let mut state = state.clone();
+    for (state, f) in forward {
+        let b = backward[&state.rev()];
+        if f + b == best_score {
             spots.insert((state.i, state.j));
-            println!("{:?}", state);
-            while let Some(prev) = visited.get(&state).unwrap() {
-                println!("{:?}", prev);
-                spots.insert((state.i, state.j));
-                state = prev.clone();
-            }
-        } else if c == b'.' || c == b'S' {
-            let next_states = [
-                StateWithScore {
-                    score: score + 1,
-                    state: State {
-                        i: i + di,
-                        j: j + dj,
-                        di,
-                        dj,
-                    },
-                },
-                StateWithScore {
-                    score: score + 1000,
-                    state: State {
-                        i,
-                        j,
-                        di: dj,
-                        dj: -di,
-                    },
-                },
-                StateWithScore {
-                    score: score + 1000,
-                    state: State {
-                        i,
-                        j,
-                        di: -dj,
-                        dj: di,
-                    },
-                },
-            ];
-            for next_state in next_states {
-                visited.entry(next_state.state.clone()).or_insert_with(|| {
-                    q.push(next_state);
-                    Some(state.clone())
-                });
-            }
-        } else if c == b'#' {
-        } else {
-            panic!("Invalid cell '{}'", c as char);
         }
     }
     spots.len()
