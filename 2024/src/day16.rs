@@ -12,9 +12,8 @@ fn find_pos(grid: &[&[u8]], target: u8) -> (i32, i32) {
     panic!("Target not found");
 }
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct State {
-    score: i32,
     i: i32,
     j: i32,
     di: i32,
@@ -23,23 +22,32 @@ struct State {
 
 impl State {
     fn new(i: i32, j: i32) -> Self {
+        Self { i, j, di: 0, dj: 1 }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct StateWithScore {
+    score: i32,
+    state: State,
+}
+
+impl StateWithScore {
+    fn new(i: i32, j: i32) -> Self {
         Self {
             score: 0,
-            i,
-            j,
-            di: 0,
-            dj: 1,
+            state: State::new(i, j),
         }
     }
 }
 
 // NOTE: inverted ordering to make it a min-heap
-impl PartialOrd for State {
+impl PartialOrd for StateWithScore {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(other.score.cmp(&self.score))
     }
 }
-impl Ord for State {
+impl Ord for StateWithScore {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         other.score.cmp(&self.score)
     }
@@ -52,17 +60,11 @@ pub fn part1(input: &str) -> impl Display {
     let start = find_pos(&grid, b'S');
     let mut q = BinaryHeap::new();
     let (i, j) = start;
-    q.push(State::new(i, j));
+    q.push(StateWithScore::new(i, j));
     let mut visited = HashSet::new();
-    while let Some(state) = q.pop() {
-        let State {
-            score,
-            i,
-            j,
-            di,
-            dj,
-        } = state;
-        if !visited.insert((i, j, di, dj)) {
+    while let Some(StateWithScore { score, state }) = q.pop() {
+        let State { i, j, di, dj } = state;
+        if !visited.insert(state) {
             continue;
         }
         if !(0..rows).contains(&i) || !(0..cols).contains(&j) {
@@ -72,26 +74,32 @@ pub fn part1(input: &str) -> impl Display {
         if c == b'E' {
             return score;
         } else if c == b'.' || c == b'S' {
-            q.push(State {
+            q.push(StateWithScore {
                 score: score + 1,
-                i: i + di,
-                j: j + dj,
-                di,
-                dj,
+                state: State {
+                    i: i + di,
+                    j: j + dj,
+                    di,
+                    dj,
+                },
             });
-            q.push(State {
+            q.push(StateWithScore {
                 score: score + 1000,
-                i,
-                j,
-                di: dj,
-                dj: -di,
+                state: State {
+                    i,
+                    j,
+                    di: dj,
+                    dj: -di,
+                },
             });
-            q.push(State {
+            q.push(StateWithScore {
                 score: score + 1000,
-                i,
-                j,
-                di: -dj,
-                dj: di,
+                state: State {
+                    i,
+                    j,
+                    di: -dj,
+                    dj: di,
+                },
             });
         } else if c == b'#' {
         } else {
