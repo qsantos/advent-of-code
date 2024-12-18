@@ -181,6 +181,6 @@ mod tests {
     fn test_part2() {
         assert_eq!(part2(EXAMPLE1).to_string(), "45");
         assert_eq!(part2(EXAMPLE2).to_string(), "64");
-        assert_eq!(part2(INPUT).to_string(), "");
+        assert_eq!(part2(INPUT).to_string(), "483");
     }
 }
