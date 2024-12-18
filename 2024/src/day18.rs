@@ -1,15 +1,17 @@
 use std::collections::{HashSet, VecDeque};
 use std::fmt::Display;
 
-pub fn fixed_fall(input: &str, size: i64, fallen: usize) -> usize {
-    let bytes: Vec<(i64, i64)> = input
+fn parse(input: &str) -> Vec<(i64, i64)> {
+    input
         .lines()
         .map(|line| {
             let (x, y) = line.split_once(',').unwrap();
             (x.parse().unwrap(), y.parse().unwrap())
         })
-        .collect();
-    let fallen_bytes = &bytes[..fallen];
+        .collect()
+}
+
+fn fixed_fall(bytes: &[(i64, i64)], size: i64) -> Option<usize> {
     let start = (0, 0);
     let end = (size, size);
     let mut q = VecDeque::new();
@@ -20,7 +22,7 @@ pub fn fixed_fall(input: &str, size: i64, fallen: usize) -> usize {
             continue;
         }
         if pos == end {
-            return steps;
+            return Some(steps);
         }
         let (x, y) = pos;
         for &(dx, dy) in &[(0, 1), (0, -1), (1, 0), (-1, 0)] {
@@ -29,21 +31,50 @@ pub fn fixed_fall(input: &str, size: i64, fallen: usize) -> usize {
             if !(0..=size).contains(&nx) || !(0..=size).contains(&ny) {
                 continue;
             }
-            if fallen_bytes.contains(&(nx, ny)) {
+            if bytes.contains(&(nx, ny)) {
                 continue;
             }
             q.push_back((steps + 1, (nx, ny)));
         }
     }
-    unreachable!("No path found");
+    None
+}
+
+fn first_blocker(bytes: &[(i64, i64)], size: i64) -> (i64, i64) {
+    // note would be nice to have partition_point on range, not just on slice
+    let mut start = 0;
+    let mut stop = bytes.len();
+    while stop - start > 1 {
+        let mid = (start + stop) / 2;
+        if fixed_fall(&bytes[..mid], size).is_none() {
+            stop = mid;
+        } else {
+            start = mid;
+        }
+    }
+    bytes[start]
 }
 
 pub fn part1_example(input: &str) -> impl Display {
-    fixed_fall(input, 6, 12)
+    let bytes = parse(input);
+    fixed_fall(&bytes[..12], 6).unwrap()
 }
 
 pub fn part1(input: &str) -> impl Display {
-    fixed_fall(input, 70, 1024)
+    let bytes = parse(input);
+    fixed_fall(&bytes[..1024], 70).unwrap()
+}
+
+pub fn part2_example(input: &str) -> impl Display {
+    let bytes = parse(input);
+    let (x, y) = first_blocker(&bytes, 6);
+    format!("{x},{y}")
+}
+
+pub fn part2(input: &str) -> impl Display {
+    let bytes = parse(input);
+    let (x, y) = first_blocker(&bytes, 70);
+    format!("{x},{y}")
 }
 
 #[cfg(test)]
@@ -57,5 +88,11 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1_example(EXAMPLE).to_string(), "22");
         assert_eq!(part1(INPUT).to_string(), "308");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2_example(EXAMPLE).to_string(), "6,1");
+        assert_eq!(part2(INPUT).to_string(), "46,28");
     }
 }
