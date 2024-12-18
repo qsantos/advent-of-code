@@ -46,7 +46,7 @@ impl State {
         value
     }
 
-    fn combo_operand(&mut self) -> u64{
+    fn combo_operand(&mut self) -> u64 {
         let value = self.program[self.ip];
         self.ip += 1;
         match value {
@@ -66,49 +66,49 @@ impl State {
                 let numerator = self.registers[0];
                 let shift = self.combo_operand();
                 self.registers[0] = if shift > 63 { 0 } else { numerator >> shift };
-            },
+            }
             1 => {
                 // bxl
                 let left = self.registers[1];
                 let right = self.literal_operand();
                 self.registers[1] = left ^ right;
-            },
+            }
             2 => {
                 // bst
                 let v = self.combo_operand();
                 self.registers[1] = v % 8;
-            },
+            }
             3 => {
                 // jnz
                 let t = self.literal_operand();
                 if self.registers[0] != 0 {
                     self.ip = t as usize;
                 }
-            },
+            }
             4 => {
                 // bxc
                 let _ = self.literal_operand();
                 let left = self.registers[1];
                 let right = self.registers[2];
                 self.registers[1] = left ^ right;
-            },
+            }
             5 => {
                 // out
                 let v = self.combo_operand() % 8;
                 self.output.push(v);
-            },
+            }
             6 => {
                 // bdv
                 let numerator = self.registers[0];
                 let shift = self.combo_operand();
                 self.registers[1] = if shift > 63 { 0 } else { numerator >> shift };
-            },
+            }
             7 => {
                 // cdv
                 let numerator = self.registers[0];
                 let shift = self.combo_operand();
                 self.registers[2] = if shift > 63 { 0 } else { numerator >> shift };
-            },
+            }
             v => panic!("unexpected opcode {}", v),
         }
     }
@@ -126,7 +126,11 @@ impl State {
 }
 
 fn format_output(output: &[u64]) -> String {
-    output.iter().map(|v| v.to_string()).collect::<Vec<String>>().join(",")
+    output
+        .iter()
+        .map(|v| v.to_string())
+        .collect::<Vec<String>>()
+        .join(",")
 }
 
 pub fn part1(input: &str) -> impl Display {
@@ -164,10 +168,16 @@ pub fn part2(input: &str) -> impl Display {
             }
             a += 1;
         }
-        set_bits_candidates = candidates.iter().map(|c| c & ((1 << set_bits_count) - 1)).collect();
+        set_bits_candidates = candidates
+            .iter()
+            .map(|c| c & ((1 << set_bits_count) - 1))
+            .collect();
         loop {
             set_bits_count += 1;
-            let new_set_bits_candidates: HashSet<_> = candidates.iter().map(|c| c & ((1 << set_bits_count) - 1)).collect();
+            let new_set_bits_candidates: HashSet<_> = candidates
+                .iter()
+                .map(|c| c & ((1 << set_bits_count) - 1))
+                .collect();
             for candidate in &new_set_bits_candidates {
                 print!("{:20b}", candidate);
             }
@@ -248,4 +258,3 @@ do {
     A = A >> 3
 } while (A != 0);
 */
-
