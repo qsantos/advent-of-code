@@ -12,8 +12,10 @@ pub fn part1(input: &str) -> impl Display {
             return true;
         }
         for towel in towels {
-            if design.starts_with(towel) && aux(towels, &design[towel.len()..]) {
-                return true;
+            if let Some(suffix) = design.strip_prefix(towel) {
+                if aux(towels, suffix) {
+                    return true;
+                }
             }
         }
         false
