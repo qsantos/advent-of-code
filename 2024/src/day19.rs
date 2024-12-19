@@ -1,29 +1,37 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-pub fn part1(input: &str) -> impl Display {
+fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
     let (towels, designs) = input.split_once("\n\n").unwrap();
-    let mut towels: Vec<&str> = towels.split(", ").collect();
-    let designs: Vec<&str> = designs.lines().collect();
-    towels.sort_by_key(|towel| -(towel.len() as isize));
+    let towels = towels.split(", ").collect();
+    let designs = designs.lines().collect();
+    (towels, designs)
+}
 
-    fn aux(towels: &[&str], design: &str) -> bool {
-        if design.is_empty() {
-            return true;
-        }
-        for towel in towels {
-            if let Some(suffix) = design.strip_prefix(towel) {
-                if aux(towels, suffix) {
-                    return true;
-                }
-            }
-        }
-        false
+fn count_combinations<'a>(towels: &[&str], design: &'a str, memo: &mut HashMap<&'a str, usize>) -> usize {
+    if design.is_empty() {
+        return 1;
     }
+    if let Some(&count) = memo.get(design) {
+        return count;
+    }
+    let mut count = 0;
+    for towel in towels {
+        if let Some(suffix) = design.strip_prefix(towel) {
+            count += count_combinations(towels, suffix, memo);
+        }
+    }
+    memo.insert(design, count);
+    count
+}
 
+pub fn part1(input: &str) -> impl Display {
+    let (towels, designs) = parse(input);
+
+    let mut memo = HashMap::new();
     let mut count = 0;
     for design in designs {
-        if aux(&towels, design) {
+        if count_combinations(&towels, design, &mut memo) != 0 {
             count += 1;
         }
     }
@@ -31,32 +39,11 @@ pub fn part1(input: &str) -> impl Display {
 }
 
 pub fn part2(input: &str) -> impl Display {
-    let (towels, designs) = input.split_once("\n\n").unwrap();
-    let mut towels: Vec<&str> = towels.split(", ").collect();
-    let designs: Vec<&str> = designs.lines().collect();
-    towels.sort_by_key(|towel| -(towel.len() as isize));
-
+    let (towels, designs) = parse(input);
     let mut memo = HashMap::new();
-    fn aux<'a>(towels: &[&str], design: &'a str, memo: &mut HashMap<&'a str, usize>) -> usize {
-        if design.is_empty() {
-            return 1;
-        }
-        if let Some(&count) = memo.get(design) {
-            return count;
-        }
-        let mut count = 0;
-        for towel in towels {
-            if let Some(suffix) = design.strip_prefix(towel) {
-                count += aux(towels, suffix, memo);
-            }
-        }
-        memo.insert(design, count);
-        count
-    }
-
     let mut count = 0;
     for design in designs {
-        count += aux(&towels, design, &mut memo);
+        count += count_combinations(&towels, design, &mut memo);
     }
     count
 }
