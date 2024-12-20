@@ -8,7 +8,11 @@ fn parse(input: &str) -> (Vec<&str>, Vec<&str>) {
     (towels, designs)
 }
 
-fn count_combinations<'a>(towels: &[&str], design: &'a str, memo: &mut HashMap<&'a str, usize>) -> usize {
+fn count_combinations<'a>(
+    towels: &[&str],
+    design: &'a str,
+    memo: &mut HashMap<&'a str, usize>,
+) -> usize {
     if design.is_empty() {
         return 1;
     }
