@@ -1,5 +1,5 @@
-use std::collections::{VecDeque, HashMap};
 use std::collections::hash_map::Entry;
+use std::collections::{HashMap, VecDeque};
 use std::fmt::Display;
 
 fn find(grid: &[&[u8]], c: u8) -> (isize, isize) {
@@ -13,7 +13,11 @@ fn find(grid: &[&[u8]], c: u8) -> (isize, isize) {
     panic!("Did not find '{}'", c as char);
 }
 
-fn dijkstra(grid: &[&[u8]], start: (isize, isize), end: (isize, isize)) -> HashMap<(isize, isize), isize> {
+fn dijkstra(
+    grid: &[&[u8]],
+    start: (isize, isize),
+    end: (isize, isize),
+) -> HashMap<(isize, isize), isize> {
     let mut queue = VecDeque::new();
     queue.push_back((0, start));
     let mut visited = HashMap::new();
@@ -35,7 +39,11 @@ fn dijkstra(grid: &[&[u8]], start: (isize, isize), end: (isize, isize)) -> HashM
     visited
 }
 
-fn dijkstra_cheat(grid: &[&[u8]], start: (isize, isize), max_d: isize) -> HashMap<(isize, isize), isize> {
+fn dijkstra_cheat(
+    grid: &[&[u8]],
+    start: (isize, isize),
+    max_d: isize,
+) -> HashMap<(isize, isize), isize> {
     let rows = grid.len() as isize;
     let cols = grid[0].len() as isize;
     let mut queue = VecDeque::new();
@@ -64,11 +72,7 @@ fn dijkstra_cheat(grid: &[&[u8]], start: (isize, isize), max_d: isize) -> HashMa
 }
 
 pub fn cheat(input: &str, max_length: isize, threshold: isize) -> usize {
-    let grid: Vec<&[u8]> = input
-        .trim()
-        .as_bytes()
-        .split(|&b| b == b'\n')
-        .collect();
+    let grid: Vec<&[u8]> = input.trim().as_bytes().split(|&b| b == b'\n').collect();
     let start = find(&grid, b'S');
     let end = find(&grid, b'E');
     let steps_from_start = dijkstra(&grid, start, end);
