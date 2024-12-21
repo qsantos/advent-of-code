@@ -1,179 +1,173 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
 use std::fmt::Display;
 
-pub fn type_on_keypad(line: &str) -> usize {
+fn numeric_keypad_shortest(line: &str) -> String {
     let line = line.as_bytes();
-    let start1 = (3, 2);
-    let start2 = (0, 2);
-    let start3 = (0, 2);
-    let start = (0, start1, start2, start3);
-    let mut q = VecDeque::new();
-    q.push_back((0, start));
-    let mut visited = HashSet::new();
-    while let Some((length, state)) = q.pop_front() {
-        if !visited.insert(state) {
-            continue;
-        }
-        let (typed, pos1, pos2, pos3) = state;
-        // We type on:
-        //     +---+---+
-        //     | ^ | A |
-        // +---+---+---+
-        // | < | v | > |
-        // +---+---+---+
+    // +---+---+---+
+    // | 7 | 8 | 9 |
+    // +---+---+---+
+    // | 4 | 5 | 6 |
+    // +---+---+---+
+    // | 1 | 2 | 3 |
+    // +---+---+---+
+    //     | 0 | A |
+    //     +---+---+
+    const KEYPAD: [&[u8]; 4] = [b"789", b"456", b"123", b" 0A"];
+    let start = (0, 3, 2);
+    let mut q = Vec::new();
+    q.push(start);
+    let mut visited = HashMap::new();
+    let mut new_states = Vec::new();
+    while let Some(state) = q.pop() {
+        let (typed, i, j) = state;
+        new_states.clear();
         // left
-        if pos3 != (0, 1) && pos3 != (1, 0) {
-            let new_pos3 = (pos3.0, pos3.1 - 1);
-            let new_state = (typed, pos1, pos2, new_pos3);
-            q.push_back((length + 1, new_state));
+        if j != 0 && (i, j) != (3, 1) {
+            new_states.push(('<', (typed, i, j - 1)));
         }
         // right
-        if pos3.1 != 2 {
-            let new_pos3 = (pos3.0, pos3.1 + 1);
-            let new_state = (typed, pos1, pos2, new_pos3);
-            q.push_back((length + 1, new_state));
+        if j != 2 {
+            new_states.push(('>', (typed, i, j + 1)));
         }
         // up
-        if pos3.0 != 0 && pos3 != (1, 0) {
-            let new_pos3 = (pos3.0 - 1, pos3.1);
-            let new_state = (typed, pos1, pos2, new_pos3);
-            q.push_back((length + 1, new_state));
+        if i != 0 {
+            new_states.push(('^', (typed, i - 1, j)));
         }
         // down
-        if pos3.0 != 1 {
-            let new_pos3 = (pos3.0 + 1, pos3.1);
-            let new_state = (typed, pos1, pos2, new_pos3);
-            q.push_back((length + 1, new_state));
+        if i != 3 && (i, j) != (2, 0) {
+            new_states.push(('v', (typed, i + 1, j)));
         }
-        // A
-        // Robot 3 types on:
-        //     +---+---+
-        //     | ^ | A |
-        // +---+---+---+
-        // | < | v | > |
-        // +---+---+---+
-        match pos3 {
-            (1, 0) => {
-                // left
-                if pos2 != (0, 1) && pos2 != (1, 0) {
-                    let new_pos2 = (pos2.0, pos2.1 - 1);
-                    let new_state = (typed, pos1, new_pos2, pos3);
-                    q.push_back((length + 1, new_state));
+        // press
+        if line[typed] == KEYPAD[i][j] {
+            if typed + 1 == line.len() {
+                let mut path = "A".to_string();
+                let mut state = (typed, i, j);
+                while let Some(&(dir, prev_state)) = visited.get(&state) {
+                    path.push(dir);
+                    state = prev_state;
+                    if state == start {
+                        break;
+                    }
                 }
-                continue;
+                path = path.chars().rev().collect();
+                return path;
             }
-            (1, 2) => {
-                // right
-                if pos2.1 != 2 {
-                    let new_pos2 = (pos2.0, pos2.1 + 1);
-                    let new_state = (typed, pos1, new_pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (0, 1) => {
-                // up
-                if pos2.0 != 0 && pos2 != (1, 0) {
-                    let new_pos2 = (pos2.0 - 1, pos2.1);
-                    let new_state = (typed, pos1, new_pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (1, 1) => {
-                // down
-                if pos2.0 != 1 {
-                    let new_pos2 = (pos2.0 + 1, pos2.1);
-                    let new_state = (typed, pos1, new_pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (0, 2) => {
-                // A
-            }
-            _ => panic!("Invalid pos3: {:?}", pos3),
+            new_states.push(('A', (typed + 1, i, j)));
         }
-        // Robot 2 types on:
-        //     +---+---+
-        //     | ^ | A |
-        // +---+---+---+
-        // | < | v | > |
-        // +---+---+---+
-        match pos2 {
-            (1, 0) => {
-                // left
-                if pos1.1 != 0 && pos1 != (3, 1) {
-                    let new_pos1 = (pos1.0, pos1.1 - 1);
-                    let new_state = (typed, new_pos1, pos2, pos3);
-                    q.push_back((length + 1, new_state));
+        for &(dir, new_state) in new_states.iter() {
+            match visited.entry(new_state) {
+                Entry::Occupied(_) => continue,
+                Entry::Vacant(e) => {
+                    e.insert((dir, state));
+                    q.push(new_state);
                 }
-                continue;
             }
-            (1, 2) => {
-                // right
-                if pos1.1 != 2 {
-                    let new_pos1 = (pos1.0, pos1.1 + 1);
-                    let new_state = (typed, new_pos1, pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (0, 1) => {
-                // up
-                if pos1.0 != 0 {
-                    let new_pos1 = (pos1.0 - 1, pos1.1);
-                    let new_state = (typed, new_pos1, pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (1, 1) => {
-                // down
-                if pos1.0 != 3 && pos1 != (2, 0) {
-                    let new_pos1 = (pos1.0 + 1, pos1.1);
-                    let new_state = (typed, new_pos1, pos2, pos3);
-                    q.push_back((length + 1, new_state));
-                }
-                continue;
-            }
-            (0, 2) => {
-                // A
-            }
-            _ => panic!("Invalid pos1: {:?}", pos1),
         }
-        // Robot 1 types on:
-        // +---+---+---+
-        // | 7 | 8 | 9 |
-        // +---+---+---+
-        // | 4 | 5 | 6 |
-        // +---+---+---+
-        // | 1 | 2 | 3 |
-        // +---+---+---+
-        //     | 0 | A |
-        //     +---+---+
-        const KEYPAD: [&[u8]; 4] = [b"789", b"456", b"123", b" 0A"];
-        if KEYPAD[pos1.0][pos1.1] != line[typed] {
-            continue;
-        }
-        if typed + 1 == line.len() {
-            return length + 1;
-        }
-        let new_state = (typed + 1, pos1, pos2, pos3);
-        q.push_back((length + 1, new_state));
     }
     panic!("No solution found");
 }
 
-pub fn part1(input: &str) -> impl Display {
+#[test]
+fn numeric_keypad_shortest_test() {
+    assert_eq!(numeric_keypad_shortest("029A").len(), "<A^A>^^AvvvA".len());
+}
+
+fn directional_keypad_shortest(line: &str) -> String {
+    let line = line.as_bytes();
+    //     +---+---+
+    //     | ^ | A |
+    // +---+---+---+
+    // | < | v | > |
+    // +---+---+---+
+    const KEYPAD: [&[u8]; 2] = [b" ^A", b"<v>"];
+    let start = (0, 0, 2);
+    let mut q = Vec::new();
+    q.push(start);
+    let mut visited = HashMap::new();
+    let mut new_states = Vec::new();
+    while let Some(state) = q.pop() {
+        let (typed, i, j) = state;
+        new_states.clear();
+        // left
+        if (i, j) != (0, 1) && (i, j) != (1, 0) {
+            new_states.push(('<', (typed, i, j - 1)));
+        }
+        // right
+        if j != 2 {
+            new_states.push(('>', (typed, i, j + 1)));
+        }
+        // up
+        if i != 0 && (i, j) != (1, 0) {
+            new_states.push(('^', (typed, i - 1, j)));
+        }
+        // down
+        if i != 1 {
+            new_states.push(('v', (typed, i + 1, j)));
+        }
+        // press
+        if line[typed] == KEYPAD[i][j] {
+            if typed + 1 == line.len() {
+                let mut path = "A".to_string();
+                let mut state = (typed, i, j);
+                while let Some(&(dir, prev_state)) = visited.get(&state) {
+                    path.push(dir);
+                    state = prev_state;
+                    if state == start {
+                        break;
+                    }
+                }
+                path = path.chars().rev().collect();
+                return path;
+            }
+            new_states.push(('A', (typed + 1, i, j)));
+        }
+        for &(dir, new_state) in new_states.iter() {
+            match visited.entry(new_state) {
+                Entry::Occupied(_) => continue,
+                Entry::Vacant(e) => {
+                    e.insert((dir, state));
+                    q.push(new_state);
+                }
+            }
+        }
+    }
+    panic!("No solution found");
+}
+
+#[test]
+fn directional_keypad_shortest_test() {
+    assert_eq!(
+        directional_keypad_shortest("<A^A>^^AvvvA").len(),
+        "v<<A>>^A<A>AvA<^AA>A<vAAA>^A".len()
+    );
+    assert_eq!(
+        directional_keypad_shortest("v<<A>>^A<A>AvA<^AA>A<vAAA>^A").len(),
+        "<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A".len()
+    );
+}
+
+pub fn solve(input: &str, n_robots: usize) -> usize {
     let mut total = 0;
     for line in input.lines() {
-        let length = type_on_keypad(line);
+        let mut instructions = numeric_keypad_shortest(line);
+        for _ in 0..n_robots {
+            instructions = directional_keypad_shortest(&instructions);
+        }
+        let length = instructions.len();
         let numeric = line.strip_suffix("A").unwrap();
         let value: usize = numeric.parse().unwrap();
         total += length * value;
     }
     total
+}
+
+pub fn part1(input: &str) -> impl Display {
+    solve(input, 3)
+}
+
+pub fn part2(input: &str) -> impl Display {
+    solve(input, 25)
 }
 
 #[cfg(test)]
@@ -187,5 +181,10 @@ mod tests {
     fn test_part1() {
         assert_eq!(part1(EXAMPLE).to_string(), "126384");
         assert_eq!(part1(INPUT).to_string(), "162740");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT).to_string(), "");
     }
 }
