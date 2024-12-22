@@ -1,10 +1,15 @@
 use std::fmt::Display;
 
-fn nth_secret(mut secret: u64, n: usize) -> u64 {
+fn next_secret(mut secret: i64) -> i64 {
+    secret = ((secret * 64) ^ secret) % 16777216;
+    secret = ((secret / 32) ^ secret) % 16777216;
+    secret = ((secret * 2048) ^ secret) % 16777216;
+    secret
+}
+
+fn nth_secret(mut secret: i64, n: usize) -> i64 {
     for _ in 0..n {
-        secret = ((secret * 64) ^ secret) % 16777216;
-        secret = ((secret / 32) ^ secret) % 16777216;
-        secret = ((secret * 2048) ^ secret) % 16777216;
+        secret = next_secret(secret);
     }
     secret
 }
@@ -31,19 +36,56 @@ pub fn part1(input: &str) -> impl Display {
     input
         .lines()
         .map(|line| nth_secret(line.parse().unwrap(), 2000))
-        .sum::<u64>()
+        .sum::<i64>()
+}
+
+pub fn part2(input: &str) -> impl Display {
+    let mut bananas_per_changes = vec![0i64; 20 * 20 * 20 * 20];
+    for line in input.lines() {
+        let mut secret: i64 = line.parse().unwrap();
+        let new_secret = next_secret(secret);
+        let mut d1 = new_secret % 10 - secret % 10;
+        secret = new_secret;
+        let new_secret = next_secret(secret);
+        let mut d2 = new_secret % 10 - secret % 10;
+        secret = new_secret;
+        let new_secret = next_secret(secret);
+        let mut d3 = new_secret % 10 - secret % 10;
+        secret = new_secret;
+        let mut seen = vec![false; 20 * 20 * 20 * 20];
+        for _ in 0..1997 {
+            let new_secret = next_secret(secret);
+            let d4 = new_secret % 10 - secret % 10;
+            secret = new_secret;
+            let i = (((d1 + 10) * 20 + (d2 + 10)) * 20 + (d3 + 10)) * 20 + (d4 + 10);
+            let i = i as usize;
+            if !seen[i] {
+                seen[i] = true;
+                bananas_per_changes[i] += secret % 10;
+            }
+            (d1, d2, d3) = (d2, d3, d4);
+        }
+    }
+    bananas_per_changes.into_iter().max().unwrap()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str = include_str!("../examples/day22.txt");
+    const EXAMPLE1: &str = include_str!("../examples/day22-1.txt");
+    const EXAMPLE2: &str = include_str!("../examples/day22-2.txt");
     const INPUT: &str = include_str!("../inputs/day22.txt");
 
     #[test]
     fn test_part1() {
-        assert_eq!(part1(EXAMPLE).to_string(), "37327623");
+        assert_eq!(part1(EXAMPLE1).to_string(), "37327623");
         assert_eq!(part1(INPUT).to_string(), "13004408787");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(EXAMPLE2).to_string(), "23");
+        assert_eq!(part2(INPUT).to_string(), "1455");
     }
 }
