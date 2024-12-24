@@ -64,6 +64,7 @@ mod tests {
 
     const EXAMPLE1: &str = include_str!("../examples/day24-1.txt");
     const EXAMPLE2: &str = include_str!("../examples/day24-2.txt");
+    const EXAMPLE3: &str = include_str!("../examples/day24-3.txt");
     const INPUT: &str = include_str!("../inputs/day24.txt");
 
     #[test]
@@ -71,5 +72,11 @@ mod tests {
         assert_eq!(part1(EXAMPLE1).to_string(), "4");
         assert_eq!(part1(EXAMPLE2).to_string(), "2024");
         assert_eq!(part1(INPUT).to_string(), "58740594706150");
+    }
+
+    #[test]
+    fn test_part2() {
+        // Done by hand, see day24-orig.dot and day24-fixed.dot
+        // cvh,dbb,hbk,kvn,tfn,z14,z18,z23
     }
 }
