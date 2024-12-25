@@ -94,11 +94,77 @@ impl Action {
                         .map(|dj| (di as i8, dj as i8))
                 })
                 .unwrap();
-            ret.push(Action {
-                di: ti - i,
-                dj: tj - j,
-                a: 1,
-            });
+            let di = ti - i;
+            let dj = tj - j;
+            let a = 1;
+            use std::cmp::Ordering;
+            match (di.cmp(&0), dj.cmp(&0)) {
+                (Ordering::Less, Ordering::Less) => {
+                    // Best to group the expensive left moves by doing <^ instead of ^<
+                    // But we can only do so when we are not moving from the lower right corner
+                    if i != 3 {
+                        // A → < → ^ → A
+                        ret.push(Action { di: 1, dj: -2, a: -dj });
+                        ret.push(Action { di: -1, dj: 1, a: -di });
+                        ret.push(Action { di: 0, dj: 1, a });
+                    } else {
+                        // A → ^ → < → A
+                        ret.push(Action { di: 0, dj: -1, a: -di });
+                        ret.push(Action { di: 1, dj: -1, a: -dj });
+                        ret.push(Action { di: -1, dj: 2, a });
+                    }
+                }
+                (Ordering::Less, Ordering::Equal) => {
+                    // No choice
+                    // A → ^ → A
+                    ret.push(Action { di: 0, dj: -1, a: -di });
+                    ret.push(Action { di: 0, dj: 1, a });
+                }
+                (Ordering::Less, Ordering::Greater) => {
+                    // ^ and > are as expensive as each other, so we can do them in any order
+                    // A → ^ → > → A
+                    ret.push(Action { di: 0, dj: -1, a: -di });
+                    ret.push(Action { di: 1, dj: 1, a: dj });
+                    ret.push(Action { di: -1, dj: 0, a });
+                }
+                (Ordering::Equal, Ordering::Less) => {
+                    // No choice
+                    // A → < → A
+                    ret.push(Action { di: 1, dj: -2, a: -dj });
+                    ret.push(Action { di: -1, dj: 2, a });
+                }
+                (Ordering::Equal, Ordering::Equal) => {
+                    // No choice
+                    // A
+                    ret.push(Action { di: 0, dj: 0, a });
+                }
+                (Ordering::Equal, Ordering::Greater) => {
+                    // No choice
+                    // A → > → A
+                    ret.push(Action { di: 1, dj: 0, a: dj });
+                    ret.push(Action { di: -1, dj: 0, a });
+                }
+                (Ordering::Greater, Ordering::Less) => {
+                    // Best to group the expensive left moves by doing <v instead of v<
+                    // This never ends up in the lower right corner
+                    // A → < → v → A
+                    ret.push(Action { di: 1, dj: -2, a: -dj });
+                    ret.push(Action { di: 0, dj: 1, a: di });
+                    ret.push(Action { di: -1, dj: 1, a });
+                }
+                (Ordering::Greater, Ordering::Equal) => {
+                    // No choice
+                    // A → v → A
+                    ret.push(Action { di: 1, dj: -1, a: di });
+                    ret.push(Action { di: -1, dj: 1, a });
+                }
+                (Ordering::Greater, Ordering::Greater) => {
+                    // A → v → > → A
+                    ret.push(Action { di: 1, dj: -1, a: di });
+                    ret.push(Action { di: 0, dj: 1, a: dj });
+                    ret.push(Action { di: -1, dj: 0, a });
+                }
+            }
             i = ti;
             j = tj;
         }
@@ -114,88 +180,68 @@ impl Action {
         // +---+---+---+
         // | < | v | > |
         // +---+---+---+
-        if di < 0 {
-            // Move from A to ^: <, followed by -di presses of A
-            ret.push(Action {
-                di: 0,
-                dj: -1,
-                a: -di,
-            });
-            if dj < 0 {
-                // Move from ^ to <: v<, followed by -dj presses of A
-                ret.push(Action {
-                    di: 1,
-                    dj: -1,
-                    a: -dj,
-                });
-                // Move from < to A: >>^, followed by a presses of A
-                ret.push(Action { di: -1, dj: 2, a });
-            } else if dj == 0 {
-                // Move from ^ to A: >, followed by a presses of A
+        use std::cmp::Ordering;
+        match (di.cmp(&0), dj.cmp(&0)) {
+            (Ordering::Less, Ordering::Less) => {
+                // Best to group the expensive left moves by doing <^ instead of ^<
+                // A → < → ^ → A
+                ret.push(Action { di: 1, dj: -2, a: -dj });
+                ret.push(Action { di: -1, dj: 1, a: -di });
                 ret.push(Action { di: 0, dj: 1, a });
-            } else {
-                // Move from ^ to >: v>, followed by dj presses of A
-                ret.push(Action {
-                    di: 1,
-                    dj: 1,
-                    a: dj,
-                });
-                // Move from > to A: ^, followed by a presses of A
+            }
+            (Ordering::Less, Ordering::Equal) => {
+                // No choice
+                // A → ^ → A
+                ret.push(Action { di: 0, dj: -1, a: -di });
+                ret.push(Action { di: 0, dj: 1, a });
+            }
+            (Ordering::Less, Ordering::Greater) => {
+                // ^ and > are as expensive as each other, so we can do them in any order
+                // A → ^ → > → A
+                ret.push(Action { di: 0, dj: -1, a: -di });
+                ret.push(Action { di: 1, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
             }
-        } else if di == 0 {
-            if dj < 0 {
-                // Move from A to <: v<<, followed by -dj presses of A
-                ret.push(Action {
-                    di: 1,
-                    dj: -2,
-                    a: -dj,
-                });
-                // Move from < to A: >>^, followed by a presses of A
+            (Ordering::Equal, Ordering::Less) => {
+                // No choice
+                // A → < → A
+                ret.push(Action { di: 1, dj: -2, a: -dj });
                 ret.push(Action { di: -1, dj: 2, a });
-            } else if dj == 0 {
-                // Don't move, followed by a presses of A
+            }
+            (Ordering::Equal, Ordering::Equal) => {
+                // No choice
+                // A
                 ret.push(Action { di: 0, dj: 0, a });
-            } else {
-                // Move from A to >: v, followed by dj presses of A
-                ret.push(Action {
-                    di: 1,
-                    dj: 0,
-                    a: dj,
-                });
-                // Move from > to A: ^, followed by a presses of A
+            }
+            (Ordering::Equal, Ordering::Greater) => {
+                // No choice
+                // A → > → A
+                ret.push(Action { di: 1, dj: 0, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
             }
-        } else {
-            // Move from A to v: v<, followed by -di presses of A
-            ret.push(Action {
-                di: 1,
-                dj: -1,
-                a: di,
-            });
-            if dj < 0 {
-                // Move from v to <: <, followed by -dj presses of A
-                ret.push(Action {
-                    di: 0,
-                    dj: -1,
-                    a: -dj,
-                });
-                // Move from < to A: >>^, followed by a presses of A
-                ret.push(Action { di: -1, dj: 2, a });
-            } else if dj == 0 {
-                // Move from v to A: >^, followed by a presses of A
+            (Ordering::Greater, Ordering::Less) => {
+                // Best to group the expensive left moves by doing <v instead of v<
+                // A → < → v → A
+                ret.push(Action { di: 1, dj: -2, a: -dj });
+                ret.push(Action { di: 0, dj: 1, a: di });
                 ret.push(Action { di: -1, dj: 1, a });
-            } else {
-                // Move from v to >: >, followed by dj presses of A
-                ret.push(Action {
-                    di: 0,
-                    dj: 1,
-                    a: dj,
-                });
-                // Move from > to A: ^, followed by a presses of A
+            }
+            (Ordering::Greater, Ordering::Equal) => {
+                // No choice
+                // A → v → A
+                ret.push(Action { di: 1, dj: -1, a: di });
+                ret.push(Action { di: -1, dj: 1, a });
+            }
+            (Ordering::Greater, Ordering::Greater) => {
+                // A → v → > → A
+                ret.push(Action { di: 1, dj: -1, a: di });
+                ret.push(Action { di: 0, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
             }
         }
+        assert_eq!(ret.iter().map(|action| action.di).sum::<i8>(), 0);
+        assert_eq!(ret.iter().map(|action| action.dj).sum::<i8>(), 0);
+        assert!(ret.iter().all(|action| action.a > 0));
         ret
     }
 
@@ -203,26 +249,6 @@ impl Action {
         (self.di.abs() + self.dj.abs() + self.a.abs()) as usize
     }
 }
-
-// Fails on last line of example:
-
-// [^A,                 ^^<<A,                                     >>A,               vvvA]
-// [<A,         >A,     <AA,         v<AA,           ^>>A,         vAA,       ^A,     v<AAA,           ^>A]
-// [v<<A, ^>>A, vA, ^A, v<<A, ^>>AA, v<A, <A, ^>>AA, <A, v>AA, ^A, v<A, ^>AA, <A, >A, v<A, <A, ^>>AAA, <A, v>A, ^A]
-//
-// [^A,                 <<^^A,                                 >>A,               vvvA
-// [<A,         >A,     v<<AA,           >^AA,         >A,     vAA,       ^A,     <vAAA,           >^A]
-// [<v<A, >>^A, vA, ^A, <vA, <AA, >>^AA, vA, <^A, >AA, vA, ^A, <vA, >^AA, <A, >A, <v<A, >A, >^AAA, vA, <^A, >A]
-
-// [^^<<A,
-// [<AA,         v<AA,           ^>>A
-// [v<<A, ^>>AA, v<A, <A, ^>>AA, <A, v>AA, ^A
-//  9            10              8
-//
-// [<<^^A,
-// [v<<AA,           >^AA,         >A
-// [<vA, <AA, >>^AA, vA, <^A, >AA, vA, ^A
-//  11               8             4
 
 impl std::fmt::Debug for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -248,22 +274,43 @@ impl std::fmt::Debug for Action {
     }
 }
 
-// [^A, ^^<<A, >>A, vvvA]
-// [<A, >A, <AA, v<AA, ^>>A, vAA, ^A, v<AAA, ^>A]
-// [v<<A, ^>>A, vA, ^A, v<<A, ^>>AA, v<A, <A, ^>>AA, <A, v>AA, ^A, v<A, ^>AA, <A, >A, v<A, <A, ^>>AAA, <A, v>A, ^A]
-
 pub fn type_on_keypad(line: &str, n_robots: usize) -> usize {
     let mut actions = Action::from_line(line);
     println!("{:?}", actions);
-    for _ in 0..n_robots {
+    for _ in 1..n_robots {
         let mut new_actions = Vec::new();
         for action in &actions {
             new_actions.extend(action.perform());
         }
         actions = new_actions;
-        println!("{:?}", actions);
+        println!(
+            "{:?} ({})",
+            actions,
+            actions
+                .iter()
+                .map(|&action| action.presses())
+                .sum::<usize>()
+        );
     }
     actions.into_iter().map(|action| action.presses()).sum()
+}
+
+pub fn type_on_keypad_fast(line: &str, n_robots: usize) -> usize {
+    let mut actions = Action::from_line(line);
+    let mut counts = HashMap::new();
+    for action in actions {
+        *counts.entry(action).or_insert(0) += 1;
+    }
+    for _ in 1..n_robots {
+        let mut new_counts = HashMap::new();
+        for (&action, &count) in &counts {
+            for action in action.perform() {
+                *new_counts.entry(action).or_insert(0) += count;
+            }
+        }
+        counts = new_counts;
+    }
+    counts.iter().map(|(&action, &count)| action.presses() * count).sum()
 }
 
 pub fn part1(input: &str) -> impl Display {
@@ -281,7 +328,7 @@ pub fn part1(input: &str) -> impl Display {
 pub fn part2(input: &str) -> impl Display {
     let mut total = 0;
     for line in input.lines() {
-        let length = type_on_keypad(line, 25);
+        let length = type_on_keypad_fast(line, 25);
         let numeric = line.strip_suffix("A").unwrap();
         let value: usize = numeric.parse().unwrap();
         total += length * value;
@@ -304,6 +351,7 @@ mod tests {
 
     #[test]
     fn test_part2() {
+        // NOTE: 124470813061430 is too low
         assert_eq!(part2(INPUT).to_string(), "");
     }
 }
