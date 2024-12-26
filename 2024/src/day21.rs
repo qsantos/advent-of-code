@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt::Display;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -126,6 +126,9 @@ impl Action {
                     ret.push(Action { di: 0, dj: -1, a: -di });
                     ret.push(Action { di: 1, dj: 1, a: dj });
                     ret.push(Action { di: -1, dj: 0, a });
+                    //ret.push(Action { di: 1, dj: 0, a: dj });
+                    //ret.push(Action { di: -1, dj: -1, a: -di });
+                    //ret.push(Action { di: 0, dj: 1, a });
                 }
                 (Ordering::Equal, Ordering::Less) => {
                     // No choice
@@ -151,6 +154,9 @@ impl Action {
                     ret.push(Action { di: 1, dj: -2, a: -dj });
                     ret.push(Action { di: 0, dj: 1, a: di });
                     ret.push(Action { di: -1, dj: 1, a });
+                    //ret.push(Action { di: 1, dj: -1, a: di });
+                    //ret.push(Action { di: 0, dj: -1, a: -dj });
+                    //ret.push(Action { di: -1, dj: 2, a });
                 }
                 (Ordering::Greater, Ordering::Equal) => {
                     // No choice
@@ -163,6 +169,9 @@ impl Action {
                     ret.push(Action { di: 1, dj: -1, a: di });
                     ret.push(Action { di: 0, dj: 1, a: dj });
                     ret.push(Action { di: -1, dj: 0, a });
+                    //ret.push(Action { di: 1, dj: -1, a: dj });
+                    //ret.push(Action { di: 0, dj: 1, a: di });
+                    //ret.push(Action { di: -1, dj: 0, a });
                 }
             }
             i = ti;
@@ -188,6 +197,9 @@ impl Action {
                 ret.push(Action { di: 1, dj: -2, a: -dj });
                 ret.push(Action { di: -1, dj: 1, a: -di });
                 ret.push(Action { di: 0, dj: 1, a });
+                //ret.push(Action { di: 0, dj: -1, a: -di });
+                //ret.push(Action { di: 1, dj: -1, a: -dj });
+                //ret.push(Action { di: -1, dj: 2, a });
             }
             (Ordering::Less, Ordering::Equal) => {
                 // No choice
@@ -201,6 +213,9 @@ impl Action {
                 ret.push(Action { di: 0, dj: -1, a: -di });
                 ret.push(Action { di: 1, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
+                //ret.push(Action { di: 0, dj: 1, a: dj });
+                //ret.push(Action { di: -1, dj: -1, a: -di });
+                //ret.push(Action { di: 1, dj: 0, a });
             }
             (Ordering::Equal, Ordering::Less) => {
                 // No choice
@@ -225,6 +240,9 @@ impl Action {
                 ret.push(Action { di: 1, dj: -2, a: -dj });
                 ret.push(Action { di: 0, dj: 1, a: di });
                 ret.push(Action { di: -1, dj: 1, a });
+                //ret.push(Action { di: 1, dj: -1, a: -dj });
+                //ret.push(Action { di: 0, dj: -1, a: di });
+                //ret.push(Action { di: -1, dj: 2, a });
             }
             (Ordering::Greater, Ordering::Equal) => {
                 // No choice
@@ -237,6 +255,9 @@ impl Action {
                 ret.push(Action { di: 1, dj: -1, a: di });
                 ret.push(Action { di: 0, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
+                //ret.push(Action { di: 1, dj: 0, a: dj });
+                //ret.push(Action { di: 0, dj: -1, a: di });
+                //ret.push(Action { di: -1, dj: 1, a });
             }
         }
         assert_eq!(ret.iter().map(|action| action.di).sum::<i8>(), 0);
@@ -283,14 +304,14 @@ pub fn type_on_keypad(line: &str, n_robots: usize) -> usize {
             new_actions.extend(action.perform());
         }
         actions = new_actions;
-        println!(
-            "{:?} ({})",
-            actions,
-            actions
-                .iter()
-                .map(|&action| action.presses())
-                .sum::<usize>()
-        );
+        //println!(
+        //    "{:?} ({})",
+        //    actions,
+        //    actions
+        //        .iter()
+        //        .map(|&action| action.presses())
+        //        .sum::<usize>()
+        //);
     }
     actions.into_iter().map(|action| action.presses()).sum()
 }
@@ -310,7 +331,7 @@ pub fn type_on_keypad_fast(line: &str, n_robots: usize) -> usize {
         }
         counts = new_counts;
     }
-    counts.iter().map(|(&action, &count)| action.presses() * count).sum()
+    counts.into_iter().map(|(action, count)| action.presses() * count).sum()
 }
 
 pub fn part1(input: &str) -> impl Display {
@@ -352,6 +373,7 @@ mod tests {
     #[test]
     fn test_part2() {
         // NOTE: 124470813061430 is too low
+        // NOTE: 126001501992682 is too low too
         assert_eq!(part2(INPUT).to_string(), "");
     }
 }
