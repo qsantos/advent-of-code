@@ -103,8 +103,7 @@ impl Action {
             let moves = match (di.cmp(&0), dj.cmp(&0)) {
                 (Ordering::Less, Ordering::Less) => {
                     // Best to group the expensive left moves by doing <^ instead of ^<
-                    // But we can only do this when this would not make us go through the lower
-                    // left corner
+                    // We can only do this when it would not go through the lower left corner
                     if i != 3 || tj != 0 {
                         "<^A"
                     } else {
@@ -218,11 +217,13 @@ impl Action {
                 "^A"
             }
             (Ordering::Less, Ordering::Greater) => {
-                // ^ and > are as expensive as each other, so we can do them in any order
-                // TODO: can be invalid
-                // TODO: actually needed
-                "^>A"
-                //">^A"
+                // TODO
+                // We can only do this when it would not go through the upper left corner
+                if j != 0 {
+                    "^>A"
+                } else {
+                    ">^A"
+                }
             }
             (Ordering::Equal, Ordering::Less) => {
                 // No choice
@@ -237,10 +238,13 @@ impl Action {
                 ">A"
             }
             (Ordering::Greater, Ordering::Less) => {
-                // Best to group the expensive left moves by doing <v instead of v<
-                // TODO: can be invalid
-                "<vA"
-                //"v<A"
+                // TODO
+                // We can only do this when it would not go through the upper left corner
+                if j + dj != 0 {
+                    "<vA"
+                } else {
+                    "v<A"
+                }
             }
             (Ordering::Greater, Ordering::Equal) => {
                 // No choice
@@ -353,7 +357,10 @@ pub fn type_on_keypad_fast(line: &str, n_robots: usize) -> usize {
         }
         counts = new_counts;
     }
-    counts.into_iter().map(|(action, count)| action.presses() * count).sum()
+    counts
+        .into_iter()
+        .map(|(action, count)| action.presses() * count)
+        .sum()
 }
 
 pub fn part1(input: &str) -> impl Display {
@@ -394,11 +401,6 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        // NOTE: 124470813061430 is too low
-        // NOTE: 124279571121670 is too low
-        // NOTE: 126001501992682 is too low too
-        // NOTE: 241523801340054 is not the right answer
-        //       325733727725166
-        assert_eq!(part2(INPUT).to_string(), "");
+        assert_eq!(part2(INPUT).to_string(), "203640915832208");
     }
 }
