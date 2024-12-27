@@ -101,8 +101,9 @@ impl Action {
             match (di.cmp(&0), dj.cmp(&0)) {
                 (Ordering::Less, Ordering::Less) => {
                     // Best to group the expensive left moves by doing <^ instead of ^<
-                    // But we can only do so when we are not moving from the lower right corner
-                    if i != 3 {
+                    // But we can only do this when this would not make us go through the lower
+                    // left corner
+                    if i != 3 || tj != 0 {
                         // A → < → ^ → A
                         ret.push(Action { di: 1, dj: -2, a: -dj });
                         ret.push(Action { di: -1, dj: 1, a: -di });
