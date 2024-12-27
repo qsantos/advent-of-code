@@ -64,7 +64,7 @@ mod tests {
 
     const EXAMPLE1: &str = include_str!("../examples/day24-1.txt");
     const EXAMPLE2: &str = include_str!("../examples/day24-2.txt");
-    const EXAMPLE3: &str = include_str!("../examples/day24-3.txt");
+    //const EXAMPLE3: &str = include_str!("../examples/day24-3.txt");
     const INPUT: &str = include_str!("../inputs/day24.txt");
 
     #[test]

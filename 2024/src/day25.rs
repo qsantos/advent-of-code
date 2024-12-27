@@ -8,12 +8,14 @@ pub fn part1(input: &str) -> impl Display {
         let mut values = [0; 5];
         if grid[0][0] == b'#' {
             // lock
+            #[allow(clippy::needless_range_loop)]
             for j in 0..5 {
                 values[j] = (0..7).position(|i| grid[i][j] != b'#').unwrap() as u8 - 1;
             }
             locks.push(values);
         } else {
             // key
+            #[allow(clippy::needless_range_loop)]
             for j in 0..5 {
                 values[j] = (0..7).rev().position(|i| grid[i][j] != b'#').unwrap() as u8 - 1;
             }
