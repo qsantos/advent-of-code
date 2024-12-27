@@ -74,6 +74,8 @@ const DIR_START: Point = Point::new(0, 2);
 // a > 0 corresponds to the number of A
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 struct Action {
+    i: i8,
+    j: i8,
     di: i8,
     dj: i8,
     a: i8,
@@ -179,6 +181,8 @@ impl Action {
                     _ => unreachable!(),
                 };
                 ret.push(Action {
+                    i: dir_i,
+                    j: dir_j,
                     di: dir_di,
                     dj: dir_dj,
                     a,
@@ -193,7 +197,7 @@ impl Action {
 
     /// Return the higher level actions needed to perform the given action.
     fn perform(&self) -> Vec<Action> {
-        let &Action { di, dj, a } = self;
+        let &Action { i, j, di, dj, a } = self;
         let mut ret = Vec::new();
         //     +---+---+
         //     | ^ | A |
@@ -269,6 +273,8 @@ impl Action {
                 _ => unreachable!(),
             };
             ret.push(Action {
+                i: dir_i,
+                j: dir_j,
                 di: dir_di,
                 dj: dir_dj,
                 a,
@@ -289,7 +295,7 @@ impl Action {
 
 impl std::fmt::Debug for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let &Action { di, dj, a } = self;
+        let &Action { i, j, di, dj, a } = self;
         for _ in 0..di.abs() {
             if di > 0 {
                 write!(f, "v")?;
