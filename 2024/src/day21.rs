@@ -102,8 +102,12 @@ impl Action {
             use std::cmp::Ordering;
             let moves = match (di.cmp(&0), dj.cmp(&0)) {
                 (Ordering::Less, Ordering::Less) => {
-                    // Best to group the expensive left moves by doing <^ instead of ^<
-                    // We can only do this when it would not go through the lower left corner
+                    // Pressing <^A needs ↙←A↗A→A
+                    // In turn, these three actions require 6, 4 and 2 moves respectively
+                    // Pressing ^<A needs ←A↙A→↗A
+                    // In turn, these three actions require 6, 6 and 4 moves respectively
+                    // The first is more efficient.
+                    // We can only use this when it would not go through the lower left corner
                     if i != 3 || tj != 0 {
                         "<^A"
                     } else {
@@ -115,11 +119,14 @@ impl Action {
                     "^A"
                 }
                 (Ordering::Less, Ordering::Greater) => {
-                    // ^ and > are as expensive as each other, so we can do them in any order
-                    // This never goes through the lower right corner
-                    // TODO: actually needed
+                    // Pressing >^A needs ↓A↖A→A
+                    // In turn, these three actions require 2, 6 and 2 moves respectively
+                    // Pressing ^>A needs ←A↘A↑A
+                    // In turn, these three actions require 6, 4 and 2 moves respectively
+                    // The first is more efficient.
+                    // This never goes through the lower left corner
                     "^>A"
-                    //">^A"
+                    // TODO: wrong
                 }
                 (Ordering::Equal, Ordering::Less) => {
                     // No choice
@@ -134,26 +141,28 @@ impl Action {
                     ">A"
                 }
                 (Ordering::Greater, Ordering::Less) => {
-                    // Best to group the expensive left moves by doing <v instead of v<
+                    // <vA would need ↙←A→A↑A
+                    // In turn, these three actions require 6, 2 and 2 moves respectively
+                    // v<A would need ↙A←A→↗A
+                    // In turn, these three actions require 6, 6 and 4 moves respectively
+                    // The first is more efficient.
                     // This never goes through the lower right corner
-                    // TODO: check
                     "<vA"
-                    //"v<A"
                 }
                 (Ordering::Greater, Ordering::Equal) => {
                     // No choice
                     "vA"
                 }
                 (Ordering::Greater, Ordering::Greater) => {
-                    // Best to group the expensive left move with another move
-                    // But we can only do this when this would not get us through the lower left
-                    // corner
+                    // v>A would need ↙A→A↑A
+                    // In turn, these three actions require 6, 2 and 2 moves respectively
+                    // >vA would need ↓A←A↗A
+                    // In turn, these three actions require 2, 6 and 4 moves respectively
+                    // The first is more efficient.
+                    // We can only do this when it would not go through the lower left corner
                     if j != 0 || ti != 3 {
-                        // Left move is with bottom move, the bottom move will be done while coming
-                        // back from the left move, saving a left (and a right) press
                         "v>A"
                     } else {
-                        // Left move is alone, will require two left and two right presses
                         ">vA"
                     }
                 }
@@ -206,24 +215,31 @@ impl Action {
         use std::cmp::Ordering;
         let moves = match (di.cmp(&0), dj.cmp(&0)) {
             (Ordering::Less, Ordering::Less) => {
-                // Best to group the expensive left moves by doing <^ instead of ^<
+                // <^A would need ↙←A↗A→A
+                // In turn, these three actions require 6, 4 and 2 moves respectively
+                // ^<A would need ←A↙A→↗A
+                // In turn, these three actions require 6, 6 and 4 moves respectively
+                // The first is more efficient.
                 // This never goes through the upper left corner
-                // TODO: check
                 "<^A"
-                //"^<A"
             }
             (Ordering::Less, Ordering::Equal) => {
                 // No choice
                 "^A"
             }
             (Ordering::Less, Ordering::Greater) => {
-                // TODO
+                // >^A would need ↓A↖A→A
+                // In turn, these three actions require 2, 6 and 2 moves respectively
+                // ^>A would need ←A↘A↑A
+                // In turn, these three actions require 6, 4 and 2 moves respectively
+                // The first is more efficient.
                 // We can only do this when it would not go through the upper left corner
                 if j != 0 {
                     "^>A"
                 } else {
                     ">^A"
                 }
+                //TODO: wrong
             }
             (Ordering::Equal, Ordering::Less) => {
                 // No choice
@@ -238,7 +254,11 @@ impl Action {
                 ">A"
             }
             (Ordering::Greater, Ordering::Less) => {
-                // TODO
+                // <vA would need ↙←A→A↗A
+                // In turn, these three actions require 6, 2 and 4 moves respectively
+                // v<A would need ↙A←A→↗A
+                // In turn, these three actions require 6, 6 and 4 moves respectively
+                // The first is more efficient.
                 // We can only do this when it would not go through the upper left corner
                 if j + dj != 0 {
                     "<vA"
@@ -251,6 +271,11 @@ impl Action {
                 "vA"
             }
             (Ordering::Greater, Ordering::Greater) => {
+                // v>A would need ↙A→A↑A
+                // In turn, these three actions require 6, 2 and 2 moves respectively
+                // >vA would need ↓A←A↗A
+                // In turn, these three actions require 2, 6 and 4 moves respectively
+                // The first is more efficient.
                 // This never goes through the upper left corner
                 "v>A"
             }
