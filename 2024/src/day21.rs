@@ -1,22 +1,6 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-struct Point {
-    i: i32,
-    j: i32,
-}
-
-impl Point {
-    const fn new(i: i32, j: i32) -> Self {
-        Self { i, j }
-    }
-
-    const fn dist(&self, other: Self) -> i32 {
-        (self.i - other.i).abs() + (self.j - other.j).abs()
-    }
-}
-
 // +---+---+---+
 // | 7 | 8 | 9 |
 // +---+---+---+
@@ -27,7 +11,6 @@ impl Point {
 //     | 0 | A |
 //     +---+---+
 const NUM_KEYPAD: [&[u8]; 4] = [b"789", b"456", b"123", b" 0A"];
-const NUM_START: Point = Point::new(3, 2);
 
 //     +---+---+
 //     | ^ | A |
@@ -35,7 +18,6 @@ const NUM_START: Point = Point::new(3, 2);
 // | < | v | > |
 // +---+---+---+
 const DIR_KEYPAD: [&[u8]; 2] = [b" ^A", b"<v>"];
-const DIR_START: Point = Point::new(0, 2);
 
 // NOTES:
 // - When typing a number, all the robots have to be pressing "A". This ensures that typing the
@@ -205,7 +187,7 @@ impl Action {
 
     /// Return the higher level actions needed to perform the given action.
     fn perform(&self) -> Vec<Action> {
-        let &Action { i, j, di, dj, a } = self;
+        let &Action { i: _i, j, di, dj, a } = self;
         let mut ret = Vec::new();
         //     +---+---+
         //     | ^ | A |
@@ -324,7 +306,7 @@ impl Action {
 
 impl std::fmt::Debug for Action {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let &Action { i, j, di, dj, a } = self;
+        let &Action { i: _i, j: _j, di, dj, a } = self;
         for _ in 0..di.abs() {
             if di > 0 {
                 write!(f, "v")?;
@@ -368,7 +350,7 @@ pub fn type_on_keypad(line: &str, n_robots: usize) -> usize {
 }
 
 pub fn type_on_keypad_fast(line: &str, n_robots: usize) -> usize {
-    let mut actions = Action::from_line(line);
+    let actions = Action::from_line(line);
     let mut counts = HashMap::new();
     for action in actions {
         *counts.entry(action).or_insert(0) += 1;
