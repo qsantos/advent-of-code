@@ -167,12 +167,21 @@ impl Action {
                 }
                 (Ordering::Greater, Ordering::Greater) => {
                     // A → v → > → A
-                    ret.push(Action { di: 1, dj: -1, a: di });
-                    ret.push(Action { di: 0, dj: 1, a: dj });
-                    ret.push(Action { di: -1, dj: 0, a });
-                    //ret.push(Action { di: 1, dj: -1, a: dj });
-                    //ret.push(Action { di: 0, dj: 1, a: di });
-                    //ret.push(Action { di: -1, dj: 0, a });
+                    // Best to group the expensive left move with another move
+                    // But we can only do this when this would not get us through the lower left
+                    // corner
+                    if j != 0 || ti != 3 {
+                        // Left move is with bottom move, the bottom move will be done while coming
+                        // back from the left move, saving a left (and a right) press
+                        ret.push(Action { di: 1, dj: -1, a: di });
+                        ret.push(Action { di: 0, dj: 1, a: dj });
+                        ret.push(Action { di: -1, dj: 0, a });
+                    } else {
+                        ret.push(Action { di: 1, dj: 0, a: dj });
+                        // Left move is alone, will require two left and two right presses
+                        ret.push(Action { di: 0, dj: -1, a: di });
+                        ret.push(Action { di: -1, dj: 1, a });
+                    }
                 }
             }
             i = ti;
