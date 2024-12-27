@@ -98,97 +98,95 @@ impl Action {
             let dj = tj - j;
             let a = 1;
             use std::cmp::Ordering;
-            match (di.cmp(&0), dj.cmp(&0)) {
+            let moves = match (di.cmp(&0), dj.cmp(&0)) {
                 (Ordering::Less, Ordering::Less) => {
                     // Best to group the expensive left moves by doing <^ instead of ^<
                     // But we can only do this when this would not make us go through the lower
                     // left corner
                     if i != 3 || tj != 0 {
-                        // A → < → ^ → A
-                        ret.push(Action { di: 1, dj: -2, a: -dj });
-                        ret.push(Action { di: -1, dj: 1, a: -di });
-                        ret.push(Action { di: 0, dj: 1, a });
+                        "<^A"
                     } else {
-                        // A → ^ → < → A
-                        ret.push(Action { di: 0, dj: -1, a: -di });
-                        ret.push(Action { di: 1, dj: -1, a: -dj });
-                        ret.push(Action { di: -1, dj: 2, a });
+                        "^<A"
                     }
                 }
                 (Ordering::Less, Ordering::Equal) => {
                     // No choice
-                    // A → ^ → A
-                    ret.push(Action { di: 0, dj: -1, a: -di });
-                    ret.push(Action { di: 0, dj: 1, a });
+                    "^A"
                 }
                 (Ordering::Less, Ordering::Greater) => {
                     // ^ and > are as expensive as each other, so we can do them in any order
-                    // A → ^ → > → A
                     // This never goes through the lower right corner
                     // TODO: actually needed
-                    ret.push(Action { di: 0, dj: -1, a: -di });
-                    ret.push(Action { di: 1, dj: 1, a: dj });
-                    ret.push(Action { di: -1, dj: 0, a });
-                    //ret.push(Action { di: 1, dj: 0, a: dj });
-                    //ret.push(Action { di: -1, dj: -1, a: -di });
-                    //ret.push(Action { di: 0, dj: 1, a });
+                    "^>A"
+                    //">^A"
                 }
                 (Ordering::Equal, Ordering::Less) => {
                     // No choice
-                    // A → < → A
-                    ret.push(Action { di: 1, dj: -2, a: -dj });
-                    ret.push(Action { di: -1, dj: 2, a });
+                    "<A"
                 }
                 (Ordering::Equal, Ordering::Equal) => {
                     // No choice
-                    // A
-                    ret.push(Action { di: 0, dj: 0, a });
+                    "A"
                 }
                 (Ordering::Equal, Ordering::Greater) => {
                     // No choice
-                    // A → > → A
-                    ret.push(Action { di: 1, dj: 0, a: dj });
-                    ret.push(Action { di: -1, dj: 0, a });
+                    ">A"
                 }
                 (Ordering::Greater, Ordering::Less) => {
                     // Best to group the expensive left moves by doing <v instead of v<
                     // This never goes through the lower right corner
-                    // A → < → v → A
                     // TODO: check
-                    ret.push(Action { di: 1, dj: -2, a: -dj });
-                    ret.push(Action { di: 0, dj: 1, a: di });
-                    ret.push(Action { di: -1, dj: 1, a });
-                    //ret.push(Action { di: 1, dj: -1, a: di });
-                    //ret.push(Action { di: 0, dj: -1, a: -dj });
-                    //ret.push(Action { di: -1, dj: 2, a });
+                    "<vA"
+                    //"v<A"
                 }
                 (Ordering::Greater, Ordering::Equal) => {
                     // No choice
-                    // A → v → A
-                    ret.push(Action { di: 1, dj: -1, a: di });
-                    ret.push(Action { di: -1, dj: 1, a });
+                    "vA"
                 }
                 (Ordering::Greater, Ordering::Greater) => {
-                    // A → v → > → A
                     // Best to group the expensive left move with another move
                     // But we can only do this when this would not get us through the lower left
                     // corner
                     if j != 0 || ti != 3 {
                         // Left move is with bottom move, the bottom move will be done while coming
                         // back from the left move, saving a left (and a right) press
-                        ret.push(Action { di: 1, dj: -1, a: di });
-                        ret.push(Action { di: 0, dj: 1, a: dj });
-                        ret.push(Action { di: -1, dj: 0, a });
+                        "v>A"
                     } else {
-                        ret.push(Action { di: 1, dj: 0, a: dj });
                         // Left move is alone, will require two left and two right presses
-                        ret.push(Action { di: 0, dj: -1, a: di });
-                        ret.push(Action { di: -1, dj: 1, a });
+                        ">vA"
                     }
                 }
+            };
+            let (mut dir_i, mut dir_j) = (0, 2);
+            for &move_ in moves.as_bytes() {
+                let (dir_ti, dir_tj) = DIR_KEYPAD
+                    .iter()
+                    .enumerate()
+                    .find_map(|(di, row)| {
+                        row.iter()
+                            .position(|&x| x == move_)
+                            .map(|dj| (di as i8, dj as i8))
+                    })
+                    .unwrap();
+                let dir_di = dir_ti - dir_i;
+                let dir_dj = dir_tj - dir_j;
+                let a = match move_ {
+                    b'^' => -di,
+                    b'v' => di,
+                    b'<' => -dj,
+                    b'>' => dj,
+                    b'A' => a,
+                    _ => unreachable!(),
+                };
+                ret.push(Action {
+                    di: dir_di,
+                    dj: dir_dj,
+                    a,
+                });
+                (dir_i, dir_j) = (dir_ti, dir_tj);
             }
-            i = ti;
-            j = tj;
+            assert_eq!((dir_i, dir_j), (0, 2));
+            (i, j) = (ti, tj);
         }
         ret
     }
