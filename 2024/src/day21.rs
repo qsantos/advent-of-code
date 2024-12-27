@@ -124,6 +124,8 @@ impl Action {
                 (Ordering::Less, Ordering::Greater) => {
                     // ^ and > are as expensive as each other, so we can do them in any order
                     // A → ^ → > → A
+                    // This never goes through the lower right corner
+                    // TODO: actually needed
                     ret.push(Action { di: 0, dj: -1, a: -di });
                     ret.push(Action { di: 1, dj: 1, a: dj });
                     ret.push(Action { di: -1, dj: 0, a });
@@ -150,8 +152,9 @@ impl Action {
                 }
                 (Ordering::Greater, Ordering::Less) => {
                     // Best to group the expensive left moves by doing <v instead of v<
-                    // This never ends up in the lower right corner
+                    // This never goes through the lower right corner
                     // A → < → v → A
+                    // TODO: check
                     ret.push(Action { di: 1, dj: -2, a: -dj });
                     ret.push(Action { di: 0, dj: 1, a: di });
                     ret.push(Action { di: -1, dj: 1, a });
@@ -204,6 +207,8 @@ impl Action {
             (Ordering::Less, Ordering::Less) => {
                 // Best to group the expensive left moves by doing <^ instead of ^<
                 // A → < → ^ → A
+                // This never goes through the upper left corner
+                // TODO: check
                 ret.push(Action { di: 1, dj: -2, a: -dj });
                 ret.push(Action { di: -1, dj: 1, a: -di });
                 ret.push(Action { di: 0, dj: 1, a });
@@ -220,6 +225,8 @@ impl Action {
             (Ordering::Less, Ordering::Greater) => {
                 // ^ and > are as expensive as each other, so we can do them in any order
                 // A → ^ → > → A
+                // TODO: can be invalid
+                // TODO: actually needed
                 ret.push(Action { di: 0, dj: -1, a: -di });
                 ret.push(Action { di: 1, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
@@ -247,6 +254,7 @@ impl Action {
             (Ordering::Greater, Ordering::Less) => {
                 // Best to group the expensive left moves by doing <v instead of v<
                 // A → < → v → A
+                // TODO: can be invalid
                 ret.push(Action { di: 1, dj: -2, a: -dj });
                 ret.push(Action { di: 0, dj: 1, a: di });
                 ret.push(Action { di: -1, dj: 1, a });
@@ -262,6 +270,7 @@ impl Action {
             }
             (Ordering::Greater, Ordering::Greater) => {
                 // A → v → > → A
+                // This never goes through the upper left corner
                 ret.push(Action { di: 1, dj: -1, a: di });
                 ret.push(Action { di: 0, dj: 1, a: dj });
                 ret.push(Action { di: -1, dj: 0, a });
@@ -383,7 +392,10 @@ mod tests {
     #[test]
     fn test_part2() {
         // NOTE: 124470813061430 is too low
+        // NOTE: 124279571121670 is too low
         // NOTE: 126001501992682 is too low too
+        // NOTE: 241523801340054 is not the right answer
+        //       325733727725166
         assert_eq!(part2(INPUT).to_string(), "");
     }
 }
